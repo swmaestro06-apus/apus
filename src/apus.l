@@ -20,6 +20,7 @@ int yywrap(void) {
 "c8"    return C8;
 "c16"   return C16;
 "c32"   return C32;
+"str"   return STR;
 "str8"  return STR8;
 "str16" return STR16;
 "str32" return STR32;

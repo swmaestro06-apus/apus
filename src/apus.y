@@ -17,7 +17,7 @@
 %token<int_val> S8 S16 S32 S64
 %token<double_cal> F32 F64
 %token<char_val> C8 C16 C32
-%token<str_val> STR8 STR16 STR32
+%token<str_val> STR STR8 STR16 STR32
 %token STRUCT CONST UNION
 
 %token L_BRACE R_BRACE L_CASE R_CASE OPEN CLOSE
@@ -88,7 +88,7 @@ type_specifier :
     | S8 | S16 | S32 | S64
     | F32 | F64
     | C8 | C16 | C32
-    | STR8 | STR16 | STR32
+    | STR | STR8 | STR16 | STR32
     ;
 
 action_declaration : 
