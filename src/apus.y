@@ -51,9 +51,9 @@ data_declaration :
     | CR
     ;
 type_declaration :
-    type_specifier ID {printf("global var id = %s\n", $2);}
-    | type_specifier ID ASSIGN expression {printf("global var id = %s, val = %d\n", $2, $4);}
-    | type_specifier array {printf("global array\n");}
+    type_specifier ID
+    | type_specifier ID ASSIGN expression
+    | type_specifier array
     ;
 array :
     L_CASE expression R_CASE ID
@@ -79,9 +79,9 @@ local_declaration :
     | CR
     ;
 local_type_declaration :
-    type_specifier ID {printf("local id = %s\n", $2);}
-    | type_specifier ID ASSIGN expression{printf("local id = %s, val = %d\n", $2, $4);}
-    | type_specifier array {printf("local array\n");}
+    type_specifier ID
+    | type_specifier ID ASSIGN expression
+    | type_specifier array
     ;
 type_specifier :
     U8 | U16 | U32 | U64
@@ -92,27 +92,11 @@ type_specifier :
     ;
 
 action_declaration : 
-    DOUBLE_LITERAL {printf("%f\n", $1);}
+    DOUBLE_LITERAL
     ;
 %%
 int yyerror(char const *str) {
 	extern char *yytext;
 	fprintf(stderr, "parser error near %s\n", yytext);
 	return 0;
-}
-
-int main(void) {
-	extern int yyparse(void);
-	extern FILE *yyin;
-	FILE *testfile = fopen("test.txt", "r");
-	if(!testfile) {
-		printf("can't open file\n");
-		return -1;
-	}
-	//yyin = stdin;
-	yyin = testfile;
-	if(yyparse()) {
-		fprintf(stderr, "Error!\n");
-		exit(1);
-	}
 }
