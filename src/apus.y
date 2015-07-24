@@ -96,12 +96,14 @@ primary_expression :
     | DOUBLE_LITERAL
     ;
 union_declaration :
-    UNION ID L_BRACE local_declaration_list R_BRACE
-    | UNION ID CR L_BRACE local_declaration_list R_BRACE
+    UNION ID block_start local_declaration_list R_BRACE
     ;
 struct_declaration :
-    STRUCT ID L_BRACE local_declaration_list R_BRACE
-    | STRUCT ID CR L_BRACE local_declaration_list R_BRACE
+    STRUCT ID block_start local_declaration_list R_BRACE
+    ;
+block_start :
+    L_BRACE
+    | CR L_BRACE
     ;
 local_declaration_list :
     local_declaration
