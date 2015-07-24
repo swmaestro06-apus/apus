@@ -6,6 +6,9 @@ int yywrap(void) {
 	return 1;
 }
 %}
+
+%option yylineno
+
 %%
 "u8"    return U8;
 "u16"   return U16;

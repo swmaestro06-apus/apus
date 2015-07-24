@@ -96,7 +96,8 @@ action_declaration :
     ;
 %%
 int yyerror(char const *str) {
+	extern char yylineno;
 	extern char *yytext;
-	fprintf(stderr, "parser error near %s\n", yytext);
+	fprintf(stderr, "parser error near %s, line is %d\n", yytext, yylineno);
 	return 0;
 }
