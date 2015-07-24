@@ -3,10 +3,10 @@
 #include <stdlib.h>
 %}
 %union {
-	int64_t int_val;
-	double double_val;
-	int char_val;
-	char* str_val;
+    int64_t int_val;
+    double double_val;
+    int char_val;
+    char* str_val;
 }
 %token<int_val> INT_LITERAL
 %token<double_val> DOUBLE_LITERAL
@@ -90,14 +90,13 @@ type_specifier :
     | C8 | C16 | C32
     | STR | STR8 | STR16 | STR32
     ;
-
 action_declaration : 
     DOUBLE_LITERAL
     ;
 %%
 int yyerror(char const *str) {
-	extern char yylineno;
-	extern char *yytext;
-	fprintf(stderr, "parser error near %s, line is %d\n", yytext, yylineno);
-	return 0;
+    extern char yylineno;
+    extern char *yytext;
+    fprintf(stderr, "parser error near %s, line is %d\n", yytext, yylineno);
+    return 0;
 }
