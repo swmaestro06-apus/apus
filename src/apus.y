@@ -3,9 +3,9 @@
 #include <stdlib.h>
 %}
 %union {
-	int int_val;
+	int64_t int_val;
 	double double_val;
-	char char_val;
+	int char_val;
 	char* str_val;
 }
 %token<int_val> INT_LITERAL
