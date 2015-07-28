@@ -25,14 +25,17 @@
 %token INCLUDE IF ELSE FOR EXIT TRUE FALSE RETURN
 
 %right ASSIGN ADDASSIGN SUBASSIGN MULASSIGN DIVASSIGN MODASSIGN
+%left LOR
+%left LAND
 %left OR
+%left XOR
 %left AND
 %left EQL NEQ
 %left LSS GTR LEQ GEQ
 %left LSHIFT RSHIFT
 %left ADD SUB
 %left MUL DIV MOD
-%right NOT
+%right NOT REVERSE
 
 %type<int_val> type_declaration local_type_declaration
 %type<int_val> expression unary_expression primary_expression
