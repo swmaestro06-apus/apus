@@ -76,6 +76,7 @@ int yywrap(void) {
 "!"  { return NOT; }
 "."  { return DOT; }
 ";"  { return SEMI; }
+","  { return COMMA; }
 
 "{"  { return L_BRACE; }
 "}"  { return R_BRACE; }

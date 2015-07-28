@@ -21,7 +21,7 @@
 %token STRUCT CONST UNION
 
 %token L_BRACE R_BRACE L_CASE R_CASE OPEN CLOSE
-%token COMMENT CR QUO DOT VAR SEMI
+%token COMMENT CR QUO DOT VAR SEMI COMMA
 %token INCLUDE IF ELSE FOR EXIT TRUE FALSE RETURN
 
 %right ASSIGN ADDASSIGN SUBASSIGN MULASSIGN DIVASSIGN MODASSIGN ORASSIGN ANDASSIGN XORASSIGN LSASSIGN RSASSIGN
@@ -61,10 +61,23 @@ type_declaration :
     type_specifier ID
     | type_specifier ID ASSIGN expression
     | type_specifier array
+    | STRUCT ID array
     ;
 array :
     L_CASE expression R_CASE ID
-    | L_CASE expression R_CASE ID ASSIGN expression
+    | L_CASE expression R_CASE ID ASSIGN L_CASE arrayinit_list R_CASE
+    ;
+arrayinit_list :
+    arrayinit
+    | arrayinit COMMA arrayinit_list
+    ;
+arrayinit :
+    L_BRACE expression_list R_BRACE
+    | expression_list
+    ;
+expression_list :
+    expression
+    | expression COMMA expression_list
     ;
 expression :
     expression LOR expression
