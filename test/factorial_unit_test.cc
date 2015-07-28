@@ -6,10 +6,10 @@
 TEST(IntegerFunctionTest, negative) {
         EXPECT_EQ(1, factorial(-5));
         EXPECT_EQ(1, factorial(-1));
-        EXPECT_GT(factorial(-10), 0);
+        //EXPECT_GT(factorial(-10), 0);
 }
 
-TEST(IntegerFunctionTest, DISABLED_zero) {
+TEST(IntegerFunctionTest, zero) {
          EXPECT_EQ(1, factorial(0));
 }
 
