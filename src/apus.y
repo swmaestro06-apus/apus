@@ -24,7 +24,7 @@
 %token COMMENT CR QUO DOT VAR SEMI
 %token INCLUDE IF ELSE FOR EXIT TRUE FALSE RETURN
 
-%right ASSIGN
+%right ASSIGN ADDASSIGN SUBASSIGN MULASSIGN DIVASSIGN MODASSIGN ORASSIGN ANDASSIGN XORASSIGN LSASSIGN RSASSIGN
 %left LOR
 %left LAND
 %left OR
@@ -67,7 +67,8 @@ array :
     | L_CASE expression R_CASE ID ASSIGN expression
     ;
 expression :
-    expression LOR expression
+    expression assign_operator expression
+    | expression LOR expression
     | expression LAND expression
     | expression OR expression
     | expression XOR expression
@@ -123,6 +124,12 @@ type_specifier :
     | F32 | F64
     | C8 | C16 | C32
     | STR | STR8 | STR16 | STR32
+    ;
+assign_operator :
+    ASSIGN | ADDASSIGN | SUBASSIGN
+    | MULASSIGN | DIVASSIGN | MODASSIGN
+    | ORASSIGN | ANDASSIGN | XORASSIGN
+    | LSASSIGN | RSASSIGN
     ;
 action_declaration : 
     DOUBLE_LITERAL

@@ -41,15 +41,20 @@ int yywrap(void) {
 "true"    { return TRUE; }
 "false"   { return FALSE; }
 
-"+=" { return ADDASSIGN; }
-"-=" { return SUBASSIGN; }
-"*=" { return MULASSIGN; }
-"/=" { return DIVASSIGN; }
-"%=" { return MODASSIGN; }
-"<<" { return LSHIFT; }
-">>" { return RSHIFT; }
-"||" { return LOR; }
-"&&" { return LAND; }
+"+="  { return ADDASSIGN; }
+"-="  { return SUBASSIGN; }
+"*="  { return MULASSIGN; }
+"/="  { return DIVASSIGN; }
+"%="  { return MODASSIGN; }
+"|="  { return ORASSIGN; }
+"&="  { return ANDASSIGN; }
+"^="  { return XORASSIGN; }
+"<<=" { return LSASSIGN; }
+">>=" { return RSASSIGN; }
+"<<"  { return LSHIFT; }
+">>"  { return RSHIFT; }
+"||"  { return LOR; }
+"&&"  { return LAND; }
  
 "+" { return ADD; }
 "-" { return SUB; }
