@@ -25,6 +25,8 @@
 %token INCLUDE IF ELSE FOR EXIT TRUE FALSE RETURN
 
 %right ASSIGN
+%left LOR
+%left LAND
 %left OR
 %left XOR
 %left AND
@@ -65,7 +67,9 @@ array :
     | L_CASE expression R_CASE ID ASSIGN expression
     ;
 expression :
-    expression OR expression
+    expression LOR expression
+    | expression LAND expression
+    | expression OR expression
     | expression XOR expression
     | expression AND expression
     | expression EQL expression

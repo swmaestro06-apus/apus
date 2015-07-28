@@ -48,6 +48,8 @@ int yywrap(void) {
 "%=" { return MODASSIGN; }
 "<<" { return LSHIFT; }
 ">>" { return RSHIFT; }
+"||" { return LOR; }
+"&&" { return LAND; }
  
 "+" { return ADD; }
 "-" { return SUB; }
