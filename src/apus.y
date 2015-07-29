@@ -3,10 +3,10 @@
 #include <stdlib.h>
 %}
 %union {
-	int int_val;
-	double double_val;
-	char char_val;
-	char* str_val;
+    int64_t int_val;
+    double double_val;
+    int char_val;
+    char* str_val;
 }
 %token<int_val> INT_LITERAL
 %token<double_val> DOUBLE_LITERAL
@@ -17,7 +17,7 @@
 %token<int_val> S8 S16 S32 S64
 %token<double_cal> F32 F64
 %token<char_val> C8 C16 C32
-%token<str_val> STR8 STR16 STR32
+%token<str_val> STR STR8 STR16 STR32
 %token STRUCT CONST UNION
 
 %token L_BRACE R_BRACE L_CASE R_CASE OPEN CLOSE
@@ -51,9 +51,9 @@ data_declaration :
     | CR
     ;
 type_declaration :
-    type_specifier ID {printf("global var id = %s\n", $2);}
-    | type_specifier ID ASSIGN expression {printf("global var id = %s, val = %d\n", $2, $4);}
-    | type_specifier array {printf("global array\n");}
+    type_specifier ID
+    | type_specifier ID ASSIGN expression
+    | type_specifier array
     ;
 array :
     L_CASE expression R_CASE ID
@@ -79,40 +79,24 @@ local_declaration :
     | CR
     ;
 local_type_declaration :
-    type_specifier ID {printf("local id = %s\n", $2);}
-    | type_specifier ID ASSIGN expression{printf("local id = %s, val = %d\n", $2, $4);}
-    | type_specifier array {printf("local array\n");}
+    type_specifier ID
+    | type_specifier ID ASSIGN expression
+    | type_specifier array
     ;
 type_specifier :
     U8 | U16 | U32 | U64
     | S8 | S16 | S32 | S64
     | F32 | F64
     | C8 | C16 | C32
-    | STR8 | STR16 | STR32
+    | STR | STR8 | STR16 | STR32
     ;
-
 action_declaration : 
-    DOUBLE_LITERAL {printf("%f\n", $1);}
+    DOUBLE_LITERAL
     ;
 %%
 int yyerror(char const *str) {
-	extern char *yytext;
-	fprintf(stderr, "parser error near %s\n", yytext);
-	return 0;
-}
-
-int main(void) {
-	extern int yyparse(void);
-	extern FILE *yyin;
-	FILE *testfile = fopen("test.txt", "r");
-	if(!testfile) {
-		printf("can't open file\n");
-		return -1;
-	}
-	//yyin = stdin;
-	yyin = testfile;
-	if(yyparse()) {
-		fprintf(stderr, "Error!\n");
-		exit(1);
-	}
+    extern char yylineno;
+    extern char *yytext;
+    fprintf(stderr, "parser error near %s, line is %d\n", yytext, yylineno);
+    return 0;
 }
