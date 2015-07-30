@@ -1,12 +1,10 @@
 CC = g++
 PRJ_HOME = ..
-GTEST_SRC = $(PRJ_HOME)/gtest_src
-LIBS = $(PRJ_HOME)/include
-LIBS += $(GTEST_SRC)
+INCLUDE_DIR = $(PRJ_HOME)/include
 SRC_DIR = $(PRJ_HOME)/src
 TEST_DIR = $(PRJ_HOME)/test
 
-OPTIONS = -lgtest -pthread -g
+OPTIONS = -pthread -g
 CPP_FILE = factorial.cc
 TEST_FILE = factorial_unit_test.cc
 OBJS = factorial.o factorial_unit_test.o gtest-all.o gtest_main.o
@@ -21,11 +19,12 @@ $(TARGET): $(CPP_FILES)
 	echo "1. compile source code"
 	$(CC) $(OPTIONS) -c $(SRC_DIR)/sample/factorial.cc
 	echo "2. compile test source code"
-	$(CC) $(OPTIONS) -I$(LIBS) -c $(TEST_DIR)/factorial_unit_test.cc
+	$(CC) $(OPTIONS) -isystem$(TEST_DIR) -I$(INCLUDE_DIR) -c $(TEST_DIR)/factorial_unit_test.cc
 	echo "3. compile gtest-all code"
-	$(CC) $(OPTIONS) -I$(LIBS) -c $(GTEST_SRC)/gtest/gtest-all.cc
+	$(CC) $(OPTIONS) -isystem$(TEST_DIR) -c $(TEST_DIR)/gtest/gtest-all.cc
 	echo "4. compile gtest main code"
-	$(CC) $(OPTIONS) -I$(LIBS) -c $(TEST_DIR)/gtest_main.cc
+	$(CC) $(OPTIONS) -isystem$(TEST_DIR) -c $(TEST_DIR)/gtest_main.cc
+	echo "5. make final executable file"
 	$(CC) $(OPTIONS) $(OBJS) -o $(EXE_NAME)
 
 clean:
