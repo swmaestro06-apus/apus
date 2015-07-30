@@ -1,6 +1,6 @@
-#include "for_statement.h"
-#include "expression.h"
-#include "block.h"
+#include "ast/for_statement.h"
+#include "ast/expression.h"
+#include "ast/block.h"
 
 namespace apus {
 
