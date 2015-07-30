@@ -84,7 +84,6 @@ int yywrap(void) {
 "("  { return OPEN; }
 ")"  { return CLOSE; }
 "\n" { return CR; }
-"\"" { return QUO; }
 
 [1-9][0-9]* {
     int temp;
@@ -104,6 +103,10 @@ int yywrap(void) {
     // Sting control : yytext[NUM] 
     return ID;
 }
+
+'([^'\n|\\'])'     { return CHAR_LITERAL; }
+\"([^"\n]|\\\")*\" { return STRING_LITERAL; }
+
 [#]+.*[\n] ;
 [\t ]+ ;
 %%

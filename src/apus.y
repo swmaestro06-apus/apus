@@ -11,6 +11,7 @@
 %token<int_val> INT_LITERAL
 %token<double_val> DOUBLE_LITERAL
 %token<char_val> CHAR_LITERAL
+%token<str_val> STRING_LITERAL
 %token<str_val> ID
 
 %token<int_val> U8 U16 U32 U64
@@ -21,7 +22,7 @@
 %token STRUCT CONST UNION
 
 %token L_BRACE R_BRACE L_CASE R_CASE OPEN CLOSE
-%token COMMENT CR QUO DOT VAR SEMI
+%token COMMENT CR DOT VAR SEMI
 %token INCLUDE IF ELSE FOR EXIT TRUE FALSE RETURN
 
 %right ASSIGN ADDASSIGN SUBASSIGN MULASSIGN DIVASSIGN MODASSIGN ORASSIGN ANDASSIGN XORASSIGN LSASSIGN RSASSIGN
@@ -99,6 +100,8 @@ primary_expression :
     OPEN expression CLOSE
     | INT_LITERAL
     | DOUBLE_LITERAL
+    | CHAR_LITERAL
+    | STRING_LITERAL
     ;
 union_declaration :
     UNION ID block_start local_declaration_list R_BRACE
