@@ -1,5 +1,5 @@
-#include "virtual_machine.h"
-#include "../ast/statement.h"
+#include "vm/virtual_machine.h"
+#include "ast/statement.h"
 
 namespace apus {
 

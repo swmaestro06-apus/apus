@@ -1,5 +1,5 @@
-#include "expression.h"
-#include "value.h"
+#include <ast/expression.h>
+#include <ast/value/value.h>
 
 namespace apus {
 
@@ -40,7 +40,7 @@ namespace apus {
 
         switch (type_) {
             case EXP_ADD: {
-                result = lValue->OperateAdd(rValue);
+                result = lValue->OperateADD(rValue);
                 break;
             }
             default: {

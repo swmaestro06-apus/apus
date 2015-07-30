@@ -1,6 +1,6 @@
-#include "if_statement.h"
-#include "block.h"
-#include "expression.h"
+#include "ast/if_statement.h"
+#include "ast/block.h"
+#include "ast/expression.h"
 
 namespace apus {
 
