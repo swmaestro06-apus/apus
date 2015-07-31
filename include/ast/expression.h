@@ -11,10 +11,23 @@ namespace apus {
     public:
 
         enum Type {
-            EXP_NONE, EXP_OR, EXP_AND, EXP_EQL,
-            EXP_NEQ, EXP_LSS, EXP_GTR, EXP_LEQ,
-            EXP_GEQ, EXP_LSHIFT, EXP_RSHIFT, EXP_ADD,
-            EXP_SUB, EXP_MUL, EXP_DIV, EXP_MOD, EXP_NOT
+            EXP_NONE,
+            EXP_OR,     // '|'
+            EXP_AND,    // '&'
+            EXP_EQL,    // '=='
+            EXP_NEQ,    // '!='
+            EXP_LSS,    // '<'
+            EXP_GTR,    // '>'
+            EXP_LEQ,    // '<='
+            EXP_GEQ,    // '>='
+            EXP_LSHIFT, // '<<'
+            EXP_RSHIFT, // '>>'
+            EXP_ADD,    // '+'
+            EXP_SUB,    // '-'
+            EXP_MUL,    // '*'
+            EXP_DIV,    // '/'
+            EXP_MOD,    // '%'
+            EXP_NOT,    // '!'
         };
 
         Expression(Type type = EXP_NONE);
@@ -51,7 +64,11 @@ namespace apus {
         UnaryExpression(Type type,
                         std::shared_ptr<Expression> expression);
 
+        UnaryExpression(Type type,
+                        Expression* expression);
+
         UnaryExpression(std::shared_ptr<Value> value);
+
         UnaryExpression(Value* value);
 
 
