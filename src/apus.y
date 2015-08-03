@@ -24,14 +24,19 @@
 %token COMMENT CR QUO DOT VAR SEMI
 %token INCLUDE IF ELSE FOR EXIT TRUE FALSE RETURN
 
-%left AND OR
+%right ASSIGN
+%left OR
+%left XOR
+%left AND
 %left EQL NEQ
 %left LSS GTR LEQ GEQ
 %left LSHIFT RSHIFT
 %left ADD SUB
 %left MUL DIV MOD
-%right ASSIGN ADDASSIGN SUBASSIGN MULASSIGN DIVASSIGN MODASSIGN NOT
-%type<int_val> type_declaration local_type_declaration expression
+%right NOT REVERSE
+
+%type<int_val> type_declaration local_type_declaration
+%type<int_val> expression unary_expression primary_expression
 %%
 program :
     declaration_list
@@ -60,7 +65,35 @@ array :
     | L_CASE expression R_CASE ID ASSIGN expression
     ;
 expression :
-    INT_LITERAL
+    expression OR expression
+    | expression XOR expression
+    | expression AND expression
+    | expression EQL expression
+    | expression NEQ expression
+    | expression LSS expression
+    | expression GTR expression
+    | expression LEQ expression
+    | expression GEQ expression
+    | expression LSHIFT expression
+    | expression RSHIFT expression
+    | expression ADD expression
+    | expression SUB expression
+    | expression MUL expression
+    | expression DIV expression
+    | expression MOD expression
+    | unary_expression
+    ;
+unary_expression :
+    primary_expression
+    | NOT unary_expression
+    | REVERSE unary_expression
+    | SUB primary_expression
+    | ADD primary_expression
+    ;
+primary_expression :
+    OPEN expression CLOSE
+    | INT_LITERAL
+    | DOUBLE_LITERAL
     ;
 union_declaration :
     UNION ID L_BRACE local_declaration_list R_BRACE

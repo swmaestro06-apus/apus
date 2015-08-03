@@ -57,6 +57,8 @@ int yywrap(void) {
 "|" { return OR; }
 "&" { return AND; }
 "%" { return MOD; }
+"~" { return REVERSE; }
+"^" { return XOR; }
 
 "==" { return EQL; }
 "<"  { return LSS; }
