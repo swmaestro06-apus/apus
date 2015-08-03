@@ -108,13 +108,8 @@ local_declaration_list :
     | local_declaration local_declaration_list
     ;
 local_declaration :
-    local_type_declaration
+    type_declaration
     | CR
-    ;
-local_type_declaration :
-    type_specifier ID
-    | type_specifier ID ASSIGN expression
-    | type_specifier array
     ;
 type_specifier :
     U8 | U16 | U32 | U64
