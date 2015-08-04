@@ -14,8 +14,8 @@ set(TEST_DIR test)
 set(LEX lex)
 set(YACC yacc)
 
-set(LEX_OUT lex.yy.c)
-set(YACC_OUT y.tab.c)
+set(LEX_OUT lex.yy.cc)
+set(YACC_OUT y.tab.cc)
 
 # lex
 add_custom_target(

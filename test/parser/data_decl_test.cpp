@@ -1,7 +1,8 @@
 #include "gtest/gtest.h"
 
-extern "C" int yyparse(void);
-extern "C" FILE *yyin;
+extern int yyparse(void);
+extern int yy_scan_string(const char *);
+
 static char data_decl_test[] = "\
 struct id {\n\
     u8 aa\n\
@@ -32,8 +33,8 @@ union id6 { u32 aa }\n\
 ";
 
 TEST (ParserTest, DataDeclTest) {
-    FILE *testfile = fmemopen(data_decl_test, sizeof(data_decl_test), "r");
-    yyin = testfile;
+
+    yy_scan_string(data_decl_test);
     int result = yyparse();
 
     EXPECT_EQ (result, 0);
