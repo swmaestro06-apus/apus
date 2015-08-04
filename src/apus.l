@@ -1,12 +1,10 @@
 %{
 #include <stdio.h>
-#include "y.tab.h"
+#include "y.tab.hh"
 
-int yywrap(void) {
-    return 1;
-}
 %}
 
+%option noyywrap
 %option yylineno
 
 %%
@@ -98,7 +96,7 @@ int yywrap(void) {
     return DOUBLE_LITERAL;
 }
 [a-z]+[0-9a-z_]* {
-    yylval.str_val = malloc(yyleng);
+    yylval.str_val = (char*)malloc(yyleng);
     sprintf(yylval.str_val, "%s", yytext);
     // Sting control : yytext[NUM] 
     return ID;
