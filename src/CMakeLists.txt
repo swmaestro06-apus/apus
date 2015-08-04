@@ -25,13 +25,13 @@ add_executable(apus ${SOURCE_FILES} ${HEADER_FILES})
 
 # lex
 add_custom_target(
-    lex ${LEX} ${CMAKE_CURRENT_SOURCE_DIR}/apus.l
+    lex ${LEX} -o lex.yy.cc ${CMAKE_CURRENT_SOURCE_DIR}/apus.l
     COMMENT "exec lex"
 )
 
 # yacc
 add_custom_target(
-    yacc ${YACC} -dv ${CMAKE_CURRENT_SOURCE_DIR}/apus.y
+    yacc ${YACC} -dv -o y.tab.cc ${CMAKE_CURRENT_SOURCE_DIR}/apus.y
     COMMENT "exex yacc"
 )
 
