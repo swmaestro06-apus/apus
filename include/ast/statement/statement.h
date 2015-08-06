@@ -6,8 +6,8 @@ namespace apus {
     class Statement {
     public:
         
-        Statement();
-        virtual ~Statement();
+        Statement() {}
+        virtual ~Statement() {}
         
         virtual void Execute() = 0;
 
