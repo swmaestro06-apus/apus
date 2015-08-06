@@ -17,6 +17,9 @@ namespace apus {
 
         virtual void Execute() override;
 
+        void Break();
+        void Continue();
+
     private:
 
         std::shared_ptr<Expression> initialization_;
@@ -24,6 +27,9 @@ namespace apus {
         std::shared_ptr<Expression> increment_;
 
         std::shared_ptr<Block>      body_;
+
+        bool break_;
+        bool continue_;
     };
 }
 
