@@ -2,7 +2,7 @@
 #define FOR_STATEMENT_H
 
 #include <memory>
-#include "statement.h"
+#include "ast/statement/statement.h"
 
 namespace apus {
 

@@ -1,7 +1,7 @@
 #ifndef BLOCK_H_
 #define BLOCK_H_
 
-#include "statement.h"
+#include "ast/statement/statement.h"
 
 namespace apus {
 

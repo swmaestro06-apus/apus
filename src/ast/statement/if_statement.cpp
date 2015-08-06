@@ -1,5 +1,5 @@
-#include "ast/if_statement.h"
-#include "ast/block.h"
+#include "ast/statement/if_statement.h"
+#include "ast/statement/block.h"
 #include "ast/expression.h"
 
 namespace apus {

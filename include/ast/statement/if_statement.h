@@ -1,7 +1,8 @@
 #ifndef IF_STATEMENT_H_
 #define IF_STATEMENT_H_
+
 #include <memory>
-#include "statement.h"
+#include "ast/statement/statement.h"
 
 namespace apus {
 
