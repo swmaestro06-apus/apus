@@ -1,6 +1,6 @@
-#include <ast/expression.h>
 #include "ast/expression.h"
 #include "ast/value/value.h"
+#include "vm/context.h"
 
 namespace apus {
 
@@ -32,23 +32,14 @@ namespace apus {
 
     }
 
-    std::shared_ptr<Value> BinaryExpression::Evaluate() {
+    std::shared_ptr<Value> BinaryExpression::Evaluate(Context& context) {
 
         std::shared_ptr<Value> result = nullptr;
 
-        std::shared_ptr<Value> lValue = left_expression_->Evaluate();
-        std::shared_ptr<Value> rValue = right_expression_->Evaluate();
+        std::shared_ptr<Value> lValue = left_expression_->Evaluate(context);
+        std::shared_ptr<Value> rValue = right_expression_->Evaluate(context);
 
-        switch (type_) {
-            case EXP_ADD: {
-                result = lValue->OperateADD(rValue);
-                break;
-            }
-            default: {
-                result = nullptr;
-                break;
-            }
-        }
+        result = lValue->Operate(this->getType(), rValue);
 
         return result;
     }
@@ -85,7 +76,7 @@ namespace apus {
 
     }
 
-    std::shared_ptr<Value> UnaryExpression::Evaluate() {
+    std::shared_ptr<Value> UnaryExpression::Evaluate(Context& context) {
 
         std::shared_ptr<Value> result = nullptr;
 
@@ -98,7 +89,7 @@ namespace apus {
             result = value_;
             break;
         default:
-            result = expression_->Evaluate();
+            result = expression_->Evaluate(context);
             break;
         }
 

@@ -21,9 +21,18 @@ namespace apus {
             return std::make_shared<UnsignedIntValue>(value_, size_);
         }
 
+        virtual std::shared_ptr<Value> Promote(
+                const Value& another) const override;
+
+        virtual std::shared_ptr<Value> Operate(
+                const Expression::Type expression_type,
+                const std::shared_ptr<Value>& right) const override;
+
         uint64_t getValue() {
             return value_;
         }
+
+    protected:
 
     };
 

@@ -11,10 +11,13 @@ namespace apus {
 
     class IfStatement : public Statement {
     public:
-        IfStatement();
+        IfStatement(std::shared_ptr<Expression> condition,
+                    std::shared_ptr<Block> true_block,
+                    std::shared_ptr<Block> false_block);
+
         virtual ~IfStatement();
 
-        virtual void Execute() override;
+        virtual void Execute(Context& context) override;
 
     private:
         std::shared_ptr<Expression> condition_;

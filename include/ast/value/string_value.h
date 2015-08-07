@@ -24,10 +24,19 @@ namespace apus {
             return std::make_shared<StringValue>(value_, size_);
         }
 
+        virtual std::shared_ptr<Value> Promote(
+                const Value& another) const override;
+
+        virtual std::shared_ptr<Value> Operate(
+                const Expression::Type expression_type,
+                const std::shared_ptr<Value>& right) const override;
+
         std::string getValue() {
             return value_;
         }
-    private:
+
+    protected:
+
         std::string value_;
     };
 

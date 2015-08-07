@@ -1,10 +1,14 @@
 #include "ast/statement/for_statement.h"
 #include "ast/statement/block.h"
-#include "ast/expression.h"
+#include "vm/context.h"
 
 namespace apus {
 
-    ForStatement::ForStatement() {
+    ForStatement::ForStatement(std::shared_ptr<Expression> initialization,
+                               std::shared_ptr<Expression> termination,
+                               std::shared_ptr<Expression> increment)
+        : initialization_(initialization), termination_(termination),
+          increment_(increment) {
 
     }
 
@@ -12,11 +16,11 @@ namespace apus {
 
     }
 
-    void ForStatement::Execute() {
-        initialization_->Evaluate();
+    void ForStatement::Execute(Context& context) {
+        initialization_->Evaluate(context);
 
-        while (termination_->Evaluate()) {
-            body_->Execute();
+        while (termination_->Evaluate(context)) {
+            body_->Execute(context);
 
             if (break_) {
                 break_ = true;
@@ -27,7 +31,7 @@ namespace apus {
                 continue;
             }
 
-            increment_->Evaluate();
+            increment_->Evaluate(context);
         }
     }
 

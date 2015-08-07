@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <string>
+#include "ast/expression.h"
 
 namespace apus {
 
@@ -28,24 +29,16 @@ namespace apus {
         // Deep Copy function
         inline virtual std::shared_ptr<Value> Copy() const { return nullptr; }
 
-        inline int getSize() { return size_; }
+        inline int getSize() const { return size_; }
 
-        virtual std::shared_ptr<Value> OperateADD(
-                const std::shared_ptr<Value>& right) const { return nullptr; }
+        virtual std::shared_ptr<Value> Promote(const Value& another) const = 0;
 
-        virtual std::shared_ptr<Value> OperateSUB(
-                const std::shared_ptr<Value>& right) const { return nullptr; }
-
-        virtual std::shared_ptr<Value> OperateMUL(
-                const std::shared_ptr<Value>& right) const { return nullptr; }
-
-        virtual std::shared_ptr<Value> OperateDIV(
-                const std::shared_ptr<Value>& right) const { return nullptr; }
-
-        virtual std::shared_ptr<Value> OperateMOD(
+        virtual std::shared_ptr<Value> Operate(
+                const Expression::Type expression_type,
                 const std::shared_ptr<Value>& right) const { return nullptr; }
 
     protected:
+
         int size_;
     };
 

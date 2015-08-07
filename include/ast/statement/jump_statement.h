@@ -17,7 +17,7 @@ namespace apus {
 
         virtual ~BreakStatement();
 
-        virtual void Execute() override;
+        virtual void Execute(Context& context) override;
 
     private:
 
@@ -33,7 +33,7 @@ namespace apus {
 
         virtual ~ContinueStatement();
 
-        virtual void Execute() override;
+        virtual void Execute(Context& context) override;
 
     private:
 
@@ -48,6 +48,8 @@ namespace apus {
         ReturnStatement(Expression* expression);
 
         virtual ~ReturnStatement();
+
+        virtual void Execute(Context& context) override;
 
     private:
 

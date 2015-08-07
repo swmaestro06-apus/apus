@@ -23,22 +23,15 @@ namespace apus {
 
         int64_t getValue() { return value_; }
 
-        virtual std::shared_ptr<Value> OperateADD(
-                const std::shared_ptr<Value>& right) const override;
+        virtual std::shared_ptr<Value> Promote(
+                const Value& another) const override;
 
-        virtual std::shared_ptr<Value> OperateSUB(
-                const std::shared_ptr<Value>& right) const override;
-
-        virtual std::shared_ptr<Value> OperateMUL(
-                const std::shared_ptr<Value>& right) const override;
-
-        virtual std::shared_ptr<Value> OperateDIV(
-                const std::shared_ptr<Value>& right) const override;
-
-        virtual std::shared_ptr<Value> OperateMOD(
+        virtual std::shared_ptr<Value> Operate(
+                const Expression::Type expression_type,
                 const std::shared_ptr<Value>& right) const override;
 
     protected:
+
         int64_t value_;
     };
 

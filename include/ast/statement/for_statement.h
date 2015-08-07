@@ -2,6 +2,7 @@
 #define FOR_STATEMENT_H
 
 #include <memory>
+#include <ast/expression.h>
 #include "ast/statement/statement.h"
 
 namespace apus {
@@ -12,10 +13,13 @@ namespace apus {
     class ForStatement : public Statement {
     public:
 
-        ForStatement();
-        virtual ~ForStatement();
+        ForStatement (std::shared_ptr<Expression> initialization,
+                      std::shared_ptr<Expression> termination,
+                      std::shared_ptr<Expression> increment);
 
-        virtual void Execute() override;
+        virtual ~ForStatement ();
+
+        virtual void Execute(Context& context) override;
 
         void Break();
         void Continue();

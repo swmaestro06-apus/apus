@@ -3,13 +3,15 @@
 
 namespace apus {
 
+    class Context;
+
     class Statement {
     public:
         
         Statement() {}
         virtual ~Statement() {}
         
-        virtual void Execute() = 0;
+        virtual void Execute(Context& context) = 0;
 
     private:
     };

@@ -12,7 +12,7 @@ namespace apus {
         Block();
         virtual ~Block();
 
-        virtual void Execute() override;
+        virtual void Execute(Context& context) override;
 
         void Halt();
 

@@ -44,4 +44,3 @@ int TypeLength (VarType type) {
     }
     return length;
 }
-

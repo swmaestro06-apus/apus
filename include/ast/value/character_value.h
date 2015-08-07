@@ -21,11 +21,19 @@ namespace apus {
             return std::make_shared<CharacterValue>(value_, size_);
         }
 
+        virtual std::shared_ptr<Value> Promote(
+                const Value& another) const override;
+
+        virtual std::shared_ptr<Value> Operate(
+                const Expression::Type expression_type,
+                const std::shared_ptr<Value>& right) const override;
+
         int32_t getValue() {
             return value_;
         }
 
-    private:
+    protected:
+
         int32_t value_;
     };
 

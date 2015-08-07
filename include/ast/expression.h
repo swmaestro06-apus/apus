@@ -6,6 +6,7 @@
 namespace apus {
 
     class Value;
+    class Context;
 
     class Expression {
     public:
@@ -34,7 +35,7 @@ namespace apus {
         virtual ~Expression();
 
         virtual Type getType() { return type_; }
-        virtual std::shared_ptr<Value> Evaluate() = 0;
+        virtual std::shared_ptr<Value> Evaluate(Context& context) = 0;
 
     protected:
         Type type_;
@@ -50,7 +51,7 @@ namespace apus {
                          Expression* rightExpression);
         virtual ~BinaryExpression();
 
-        virtual std::shared_ptr<Value> Evaluate() override;
+        virtual std::shared_ptr<Value> Evaluate(Context& context) override;
 
     private:
 
@@ -74,7 +75,7 @@ namespace apus {
 
         virtual ~UnaryExpression();
 
-        virtual std::shared_ptr<Value> Evaluate();
+        virtual std::shared_ptr<Value> Evaluate(Context& context);
 
     private:
 
