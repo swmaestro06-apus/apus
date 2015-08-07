@@ -12,26 +12,34 @@ namespace apus {
     class Value {
     public:
 
-        Value(TypeSpecifier type) : type_(type) {}
+        Value(TypeSpecifier type, std::shared_ptr<void> value)
+            : type_(type), value_(value) {}
         virtual ~Value(){}
 
-        // returns type of current object
         virtual TypeSpecifier getType() const { return type_; };
+
+        virtual std::shared_ptr<void> getValue() const { return value_; }
+
+        int getSize() const { return TypeLength(type_); }
 
         // Deep Copy function
         inline virtual std::shared_ptr<Value> Copy() const { return nullptr; }
 
-        int getSize() const { return TypeLength(type_); }
+        virtual std::shared_ptr<Value> Promote(
+                const std::shared_ptr<Value> another) const = 0;
 
-        virtual std::shared_ptr<Value> Promote(const Value& another) const = 0;
-
-        virtual std::shared_ptr<Value> Operate(
+        virtual std::shared_ptr<Value> OperateBinary(
                 const Expression::Type expression_type,
-                const std::shared_ptr<Value>& right) const { return nullptr; }
+                const std::shared_ptr<Value>& right) const = 0;
+
+        virtual std::shared_ptr<Value> OperateUnary(
+                const Expression::Type expression_type) const = 0;
 
     protected:
 
-        TypeSpecifier type_;
+        TypeSpecifier           type_;
+        std::shared_ptr<void>   value_;
+
     };
 
 }
