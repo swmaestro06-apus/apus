@@ -46,10 +46,10 @@ crashlytics.properties
 crashlytics-build.properties
 
 # CMake generated files
-CMakeFiles/
-Makefile
-CMakeCache.txt
-cmake_install.cmake
+**CMakeFiles/
+**Makefile
+**CMakeCache.txt
+**cmake_install.cmake
 
 # Lex and Yacc files
 /src/lex.yy.c
@@ -60,7 +60,7 @@ cmake_install.cmake
 /src/y.tab.cc
 /src/y.tab.hh
 
-/bin/
-/obj/
+**bin/
+**obj/
 
 
