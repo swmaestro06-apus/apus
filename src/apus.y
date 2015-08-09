@@ -40,25 +40,51 @@
 
 %%
 program :
-    declaration_list
+    data_declaration_opt action_declaration_opt
     ;
-declaration_list : 
-    declaration
-    | declaration declaration_list
+data_declaration_opt :
+    /* empty */
+    | data_declaration_list
     ;
-declaration : 
+action_declaration_opt :
+    /* empty */
+    | action_declaration_list
+    ;
+line_opt :
+    /* empty */
+    | line_list
+    ;
+line_list :
+    CR
+    | CR line_list
+    ;
+data_declaration_list :
     data_declaration
-    | action_declaration
+    | data_declaration data_declaration_list
+    | line_list data_declaration_list
+    ;
+action_declaration_list :
+    action_declaration
+    | action_declaration action_declaration_list
     ;
 data_declaration :
-    union_declaration
-    | struct_declaration
-    | CR
+    struct_union_type ID block_start member_definition_list R_BRACE line_list
     ;
-type_declaration :
+struct_union_type :
+    STRUCT
+    | UNION
+    ;
+member_definition_list :
+    member_definition line_opt
+    | member_definition line_list member_definition_list
+    ;
+member_definition :
     type_specifier ID
+    | struct_union_type ID ID
     | type_specifier ID ASSIGN expression
+    | struct_union_type ID ID ASSIGN expression
     | type_specifier array
+    | struct_union_type ID array
     ;
 array :
     L_CASE expression R_CASE ID
@@ -101,23 +127,8 @@ primary_expression :
     | STRING_LITERAL
     | ID
     ;
-union_declaration :
-    UNION ID block_start local_declaration_list R_BRACE
-    ;
-struct_declaration :
-    STRUCT ID block_start local_declaration_list R_BRACE
-    ;
 block_start :
-    L_BRACE
-    | CR L_BRACE
-    ;
-local_declaration_list :
-    local_declaration
-    | local_declaration local_declaration_list
-    ;
-local_declaration :
-    type_declaration
-    | CR
+    line_opt L_BRACE line_opt
     ;
 type_specifier :
     U8 | U16 | U32 | U64
