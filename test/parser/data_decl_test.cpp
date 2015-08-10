@@ -6,12 +6,12 @@ extern int yy_scan_string(const char *);
 static char data_decl_test[] = "\
 struct id {\n\
     u8 aa\n\
-    f32 bb = 8 + -1\n\
+    f32 bb = 8\n\
 }\n\
 \n\
 struct id2\n\
 {\n\
-    s8 aa = (4+1)-1 * 3 % 4 << 3 >> 29 * 0\n\
+    s8 aa = 0\n\
     str bb = \"string string\"\n\
 }\n\
 \n\
@@ -19,7 +19,7 @@ struct id3 { c8 aa = 'a' }\n\
 \n\
 union id4 {\n\
     u8 aa\n\
-    f32 bb = 3.8 * 9\n\
+    f32 bb = 3.8\n\
 }\n\
 \n\
 union id5\n\
