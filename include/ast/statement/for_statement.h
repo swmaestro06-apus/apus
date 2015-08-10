@@ -15,7 +15,8 @@ namespace apus {
 
         ForStatement (std::shared_ptr<Expression> initialization,
                       std::shared_ptr<Expression> termination,
-                      std::shared_ptr<Expression> increment);
+                      std::shared_ptr<Expression> increment,
+                      std::shared_ptr<Block> body);
 
         virtual ~ForStatement ();
 
