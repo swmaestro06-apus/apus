@@ -1,6 +1,10 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+
+extern int yylex();
+extern int yyerror(char const *str);
+
 %}
 %union {
     int64_t int_val;
