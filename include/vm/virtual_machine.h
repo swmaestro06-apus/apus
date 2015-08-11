@@ -15,10 +15,13 @@ namespace apus {
         VirtualMachine();
         virtual ~VirtualMachine();
 
-        void Run(std::vector<std::shared_ptr<apus::Statement>> instructions);
+        void Run(std::shared_ptr<DataTypeTable> data_type_table,
+                 std::vector<std::shared_ptr<apus::Statement>> instructions);
 
     private:
-        Context* context_;
+
+        std::shared_ptr<Context> context_;
+
     };
 
 }
