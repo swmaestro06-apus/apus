@@ -85,7 +85,7 @@ int yywrap(void) {
 ")"  { return CLOSE; }
 "\n" { return CR; }
 
-[1-9][0-9]* {
+([1-9][0-9]*|[0]) {
     int temp;
     sscanf(yytext, "%d", &temp);
     yylval.int_val = temp;
@@ -97,7 +97,7 @@ int yywrap(void) {
     yylval.double_val = temp;
     return DOUBLE_LITERAL;
 }
-[a-z]+[0-9a-z_]* {
+[a-zA-Z_][0-9a-zA-Z_]* {
     yylval.str_val = malloc(yyleng);
     sprintf(yylval.str_val, "%s", yytext);
     // Sting control : yytext[NUM] 
