@@ -27,7 +27,7 @@ extern int yyerror(char const *str);
 
 %token L_BRACE R_BRACE L_CASE R_CASE OPEN CLOSE
 %token COMMENT CR DOT VAR SEMI
-%token INCLUDE IF ELSE FOR EXIT TRUE FALSE RETURN
+%token INCLUDE IF ELSE FOR EXIT TRUE FALSE CONTINUE BREAK RETURN
 
 %right ASSIGN ADDASSIGN SUBASSIGN MULASSIGN DIVASSIGN MODASSIGN ORASSIGN ANDASSIGN XORASSIGN LSASSIGN RSASSIGN
 %left LOR
@@ -94,6 +94,10 @@ array :
     L_CASE expression R_CASE ID
     | L_CASE expression R_CASE ID ASSIGN expression
     ;
+expression_opt :
+    /* empty */
+    | expression
+    ;
 expression :
     expression assign_operator expression
     | expression LOR expression
@@ -134,6 +138,18 @@ primary_expression :
 block_start :
     line_opt L_BRACE line_opt
     ;
+block_end :
+    R_BRACE line_opt
+    ;
+paren_start :
+    line_opt OPEN line_opt
+    ;
+paren_end :
+    line_opt CLOSE
+    ;
+semi_start :
+    line_opt SEMI line_opt
+    ;
 type_specifier :
     U8 | U16 | U32 | U64
     | S8 | S16 | S32 | S64
@@ -148,7 +164,38 @@ assign_operator :
     | LSASSIGN | RSASSIGN
     ;
 action_declaration : 
-    DOUBLE_LITERAL
+    block_statement
+    | if_statement
+    | for_statement
+    | jump_statement
+    | expression_statement
+    | var_def_statement
+    ;
+block_statement :
+    block_start action_declaration_opt block_end
+    ;
+if_statement :
+    IF paren_start expression paren_end block_statement else_if
+    ;
+else_if :
+    /* empty */
+    | ELSE if_statement
+    | ELSE block_statement
+    ;
+for_statement :
+    FOR paren_start expression_opt semi_start expression_opt semi_start expression_opt paren_end block_statement
+    ;
+jump_statement :
+    BREAK line_list
+    | CONTINUE line_list
+    | RETURN expression_opt line_list
+    | EXIT expression_opt line_list
+    ;
+expression_statement :
+    expression line_list
+    ;
+var_def_statement :
+    VAR member_definition line_list
     ;
 %%
 int yyerror(char const *str) {
