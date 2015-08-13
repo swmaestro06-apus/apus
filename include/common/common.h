@@ -6,10 +6,11 @@
 
 typedef char byte;
 
-enum Endian {
-    LITTLE,
-    BIG,
-};
+typedef enum {
+    NOT_SET,
+    LITTLE = 0x04030201ul,
+    BIG = 0x01020304ul,
+} Endian;
 
 enum TypeSpecifier {
     U8, U16, U32, U64,  // Unsigned Integer
@@ -22,6 +23,16 @@ enum TypeSpecifier {
 typedef enum TypeSpecifier VarType;
 
 int TypeLength (VarType type);
+
+inline int HostEndian () {
+
+    union {
+        char bytes[4];
+        int value;
+    } HostOrder = {{1,2,3,4}};
+
+    return HostOrder.value;
+}
 
 #endif
 

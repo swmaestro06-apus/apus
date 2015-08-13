@@ -12,6 +12,9 @@ public:
     BinaryReader (string& file_name);
     ~BinaryReader ();
 
+    Endian GetFileEndian();
+    void SetFileEndian (Endian endian);
+
     int ReadInt (streampos offset, VarType type, uint64_t& out_int);
     int ReadInt (VarType type, uint64_t& out_int);
 
@@ -27,6 +30,9 @@ public:
 private:
     string file_name_;                  // file name
     ifstream file_stream_;              // file stream to read
+    Endian file_endian_;                // endian of file
+
+    int ConvertBytes (byte out_array[], int length);
 };
 
 #endif

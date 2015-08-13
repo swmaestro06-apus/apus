@@ -2,12 +2,30 @@
 #include "utils/BinaryReader.h"
 using namespace std;
 
+int BinaryReader::ConvertBytes (byte out_array[], int length) {
+
+    byte temp;
+    try {
+        for (int i = 0; i < (length/2); i++) {
+           temp = out_array[i];
+           out_array[i] = out_array[(length-1)-i];
+           out_array[(length-1)-i] = temp;
+        }
+    } catch (std::exception& e) {
+        cout << "Out of Range error: " << endl;
+        return -1;
+    }
+    return 0;
+}
+
 BinaryReader::BinaryReader() {
 
+    file_endian_ = NOT_SET;
 }
 
 BinaryReader::BinaryReader(string& file_name) {
 
+    file_endian_ = NOT_SET;
     file_name_.assign (file_name);
 
     // open the file in binary instream manner
@@ -23,6 +41,18 @@ BinaryReader::~BinaryReader () {
 
     // close file stream
     file_stream_.close();
+}
+
+Endian BinaryReader::GetFileEndian() {
+
+    return file_endian_;
+}
+
+void BinaryReader::SetFileEndian (Endian endian) {
+
+    if (endian != NOT_SET) {
+        file_endian_ = endian;
+    }
 }
 
 int BinaryReader::ReadInt (streampos pos, VarType type, uint64_t& out_int) {
@@ -42,6 +72,13 @@ int BinaryReader::ReadInt (streampos pos, VarType type, uint64_t& out_int) {
     // move to the offset POS and read bytes
     file_stream_.seekg (pos, ios::beg);
     file_stream_.read (Integer.bytes, length);
+
+     // If endian of this file is set and different from host endian,
+     // revert order of bytes in INTEGER union.
+     if ((file_endian_ != NOT_SET) &&
+         (file_endian_ != HostEndian())) {
+         ConvertBytes(Integer.bytes, length);
+     }
 
     out_int = Integer.value;
     return 0;
@@ -69,6 +106,13 @@ int BinaryReader::ReadReal (streampos pos, VarType type, double& out_real) {
     // move to the offset POS and read bytes
     file_stream_.seekg (pos, ios::beg);
     file_stream_.read (Real.bytes, length);
+
+    // If endian of this file is set and different from host endian,
+    // revert order of bytes in REAL union.
+    if ((file_endian_ != NOT_SET) &&
+        (file_endian_ != HostEndian())) {
+        ConvertBytes(Real.bytes, length);
+    }
 
     if (type == F32) {
         out_real = (double)Real.single_value;
