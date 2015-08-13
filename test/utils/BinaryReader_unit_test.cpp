@@ -112,3 +112,61 @@ TEST (BinaryReaderTest, ReadRealTest) {
     remove (filename.c_str());
     cout << endl;
 }
+
+TEST (BinaryReaderTest, ReadCharTest) {
+
+    string filename = "./test_char.bin";
+    union {
+        char bytes[4];
+        uint8_t c8;
+        uint16_t c16;
+        uint32_t c32;
+    } ExpectedChar = {{'a','b','c','d'}};
+
+    FILE *fp = fopen(filename.c_str(), "wb");
+    fwrite (&ExpectedChar, sizeof(ExpectedChar), 1, fp);
+    fclose(fp);
+
+    uint32_t temp;
+    BinaryReader br(filename);
+
+    // Read 8-bit Character
+    if (br.ReadChar (0, C8, temp) == 0) {
+        char read_char8 = (char) temp;
+        EXPECT_EQ (read_char8, ExpectedChar.c8);
+    }
+    // Read 16-bit Character
+    if (br.ReadChar (0, C16, temp) == 0) {
+        uint16_t read_char16 = (uint16_t) temp;
+        EXPECT_EQ (read_char16, ExpectedChar.c16);
+    }
+    // Read 32-bit Character
+    if (br.ReadChar (0, C32, temp) == 0) {
+        uint32_t read_char32 = (uint32_t) temp;
+        EXPECT_EQ (read_char32, ExpectedChar.c32);
+    }
+    remove(filename.c_str());
+    cout << endl;
+}
+
+TEST (BinaryReaderTest, ReadStringTest) {
+
+    string filename = "./test_string.bin";
+
+    char nul = 0x0;
+    char *str = "Test Code";
+    FILE *fp = fopen(filename.c_str(), "wb");
+    fwrite (str, strlen(str), 1, fp);
+    fwrite (&nul, sizeof(char), 1, fp);
+    fwrite (str, strlen(str), 1, fp);
+    fclose (fp);
+
+    string read_str;
+    BinaryReader br(filename);
+    if (br.ReadString (0, STR8, read_str) == 0) {
+        EXPECT_STREQ (str, read_str.c_str());
+    }
+
+    remove(filename.c_str());
+    cout << endl;
+}
