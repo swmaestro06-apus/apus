@@ -41,7 +41,6 @@ TEST (BinaryReaderTest, ReadIntUnsignedIntegerTest) {
     }
     
     remove (filename.c_str());
-    cout << endl;
 }
 
 TEST (BinaryReaderTest, ReadIntSignedIntegerTest) {
@@ -82,7 +81,6 @@ TEST (BinaryReaderTest, ReadIntSignedIntegerTest) {
         EXPECT_EQ (read_int64, expected_int64);
     }
     remove (filename.c_str());
-    cout << endl;
 }
 
 TEST (BinaryReaderTest, ReadRealTest) {
@@ -110,7 +108,6 @@ TEST (BinaryReaderTest, ReadRealTest) {
         EXPECT_EQ (read_double, expected_double);
     }
     remove (filename.c_str());
-    cout << endl;
 }
 
 TEST (BinaryReaderTest, ReadCharTest) {
@@ -146,7 +143,6 @@ TEST (BinaryReaderTest, ReadCharTest) {
         EXPECT_EQ (read_char32, ExpectedChar.c32);
     }
     remove(filename.c_str());
-    cout << endl;
 }
 
 TEST (BinaryReaderTest, ReadStringTest) {
@@ -168,5 +164,38 @@ TEST (BinaryReaderTest, ReadStringTest) {
     }
 
     remove(filename.c_str());
-    cout << endl;
 }
+
+TEST (BinaryReaderTest, EndianTest) {
+
+    string filename = "./test_endian.bin";
+    union {
+        char bytes[4];
+        int integer;
+    } Integer = {{1,2,3,4}};
+
+    FILE *fp = fopen(filename.c_str(), "wb");
+    fwrite (&Integer, sizeof(Integer), 1, fp);
+    fclose (fp);
+
+    int expected_big = 0x01020304ul;
+    int expected_little = 0x04030201ul;
+
+    BinaryReader br (filename);
+    uint64_t read = 0;
+    // Set the reverse endian of host system to the file endian
+    if (HostEndian() == LITTLE) {
+
+        br.SetFileEndian (BIG);
+        if (br.ReadInt(0, S32, read) == 0) {
+            EXPECT_EQ ((int)read, expected_big);
+        }
+    } else if (HostEndian() == BIG) {
+
+        br.SetFileEndian (LITTLE);
+        if (br.ReadInt (0, S32, read) == 0) {
+            EXPECT_EQ ((int)read, expected_little);
+        }
+    }
+}
+
