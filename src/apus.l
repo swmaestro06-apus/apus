@@ -27,17 +27,19 @@
 "str32" { return STR32; }
 "var"   { return VAR; }
 
-"include" { return INCLUDE; }
-"union"   { return UNION; }
-"struct"  { return STRUCT; }
-"const"   { return CONST; }
-"if"      { return IF; }
-"else"    { return ELSE; }
-"for"     { return FOR; }
-"return"  { return RETURN; }
-"exit"    { return EXIT; }
-"true"    { return TRUE; }
-"false"   { return FALSE; }
+"include"  { return INCLUDE; }
+"union"    { return UNION; }
+"struct"   { return STRUCT; }
+"const"    { return CONST; }
+"if"       { return IF; }
+"else"     { return ELSE; }
+"for"      { return FOR; }
+"continue" { return CONTINUE; }
+"break"    { return BREAK; }
+"return"   { return RETURN; }
+"exit"     { return EXIT; }
+"true"     { return TRUE; }
+"false"    { return FALSE; }
 
 "+="  { return ADDASSIGN; }
 "-="  { return SUBASSIGN; }
