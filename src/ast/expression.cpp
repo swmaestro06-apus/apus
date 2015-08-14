@@ -4,6 +4,8 @@
 
 namespace apus {
 
+    // Expression::
+
     Expression::Expression(Type type)
         : type_(type){
     }
@@ -11,6 +13,8 @@ namespace apus {
     Expression::~Expression() {
 
     }
+
+    // BinaryExpression::
 
     BinaryExpression::BinaryExpression(Type type,
                                        std::shared_ptr<Expression> leftExpression,
@@ -44,31 +48,18 @@ namespace apus {
         return result;
     }
 
-    UnaryExpression::UnaryExpression(Type type,
-                                     std::shared_ptr<Expression> expression)
-        : Expression(type), expression_(expression), value_(nullptr) {
+    // UnaryExpression::
+
+    UnaryExpression::UnaryExpression(std::shared_ptr<Expression> expression)
+        : Expression(EXP_UNARY), expression_(expression) {
 
     }
 
-    UnaryExpression::UnaryExpression(Type type,
-                                     Expression* expression)
-        : Expression(type), expression_(expression), value_(nullptr) {
+    UnaryExpression::UnaryExpression(Expression* expression)
+        : Expression(EXP_UNARY), expression_(expression) {
 
         std::shared_ptr<Expression> shared_expr(expression);
         expression_ = shared_expr;
-
-    }
-
-    UnaryExpression::UnaryExpression(std::shared_ptr<Value> value)
-        : Expression(EXP_NONE), expression_(nullptr), value_(value) {
-
-    }
-
-    UnaryExpression::UnaryExpression(Value* value)
-        : Expression(EXP_NONE), expression_(nullptr) {
-
-        std::shared_ptr<Value> shared_value(value);
-        value_ = shared_value;
 
     }
 
@@ -79,19 +70,75 @@ namespace apus {
     std::shared_ptr<Value> UnaryExpression::Evaluate(Context& context) {
 
         std::shared_ptr<Value> result = nullptr;
+        result = expression_->Evaluate(context);
 
-        switch (type_) {
-        case EXP_NOT:
-            break;
-        case EXP_SUB:
-            break;
-        case EXP_NONE:
-            result = value_;
-            break;
-        default:
-            result = expression_->Evaluate(context);
-            break;
-        }
+        return result;
+    }
+
+    // ValueExpression::
+
+    ValueExpression::ValueExpression(std::shared_ptr<Value> value)
+        : Expression(EXP_VALUE), value_(value) {
+
+    }
+
+    std::shared_ptr<Value> ValueExpression::Evaluate(Context &context) {
+        return value_;
+    }
+
+    // VariableExpression
+    VariableExpression::VariableExpression(std::string name)
+        : Expression(EXP_VARIABLE), name_(name) {
+    }
+
+    VariableExpression::~VariableExpression() {
+
+    }
+
+    std::shared_ptr<Value> VariableExpression::Evaluate(Context &context) {
+        std::shared_ptr<Value> result = nullptr;
+
+        // find variable
+
+        return result;
+    }
+
+    // AssignExpression::
+
+    AssignExpression::AssignExpression(std::string name,
+                                       std::shared_ptr<Expression> expression)
+        : Expression(EXP_ASSIGN), name_(name), expression_(expression) {
+
+    }
+
+    AssignExpression::~AssignExpression() {
+
+    }
+
+    std::shared_ptr<Value> AssignExpression::Evaluate(Context &context) {
+
+        std::shared_ptr<Value> result = nullptr;
+
+        return result;
+    }
+
+    // MemberExpression::
+
+    MemberExpression::MemberExpression(std::string parent_name,
+                                       std::string child_name)
+        : Expression(EXP_MEMBER), parent_name_(parent_name), child_name_(child_name) {
+
+    }
+
+    MemberExpression::~MemberExpression() {
+
+    }
+
+    std::shared_ptr<Value> MemberExpression::Evaluate(Context &context) {
+
+        std::shared_ptr<Value> result = nullptr;
+
+        // find variable member
 
         return result;
     }
