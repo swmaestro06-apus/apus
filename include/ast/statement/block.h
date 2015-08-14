@@ -14,12 +14,9 @@ namespace apus {
 
         virtual void Execute(Context& context) override;
 
-        void Halt();
-
     private:
 
         std::list<std::shared_ptr<Statement>> statements_;
-        bool halt_;
 
     };
 }

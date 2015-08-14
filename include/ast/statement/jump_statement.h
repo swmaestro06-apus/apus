@@ -2,6 +2,7 @@
 #define JUMP_STATEMENT_H_
 
 #include <memory>
+#include <vm/context.h>
 #include "ast/statement/statement.h"
 
 namespace apus {
@@ -12,32 +13,20 @@ namespace apus {
     class BreakStatement : public Statement {
     public:
 
-        BreakStatement(std::shared_ptr<ForStatement> loop_statement);
-        BreakStatement(ForStatement* loop_statement);
-
-        virtual ~BreakStatement();
+        BreakStatement() {}
+        virtual ~BreakStatement() {}
 
         virtual void Execute(Context& context) override;
-
-    private:
-
-        std::shared_ptr<ForStatement> loop_statement_;
 
     };
 
     class ContinueStatement : public Statement {
     public:
 
-        ContinueStatement(std::shared_ptr<ForStatement> loop_statement);
-        ContinueStatement(ForStatement* loop_statement);
-
-        virtual ~ContinueStatement();
+        ContinueStatement() {}
+        virtual ~ContinueStatement() {}
 
         virtual void Execute(Context& context) override;
-
-    private:
-
-        std::shared_ptr<ForStatement> loop_statement_;
 
     };
 
@@ -47,13 +36,24 @@ namespace apus {
         ReturnStatement(std::shared_ptr<Expression> expression);
         ReturnStatement(Expression* expression);
 
-        virtual ~ReturnStatement();
+        virtual ~ReturnStatement() {}
 
         virtual void Execute(Context& context) override;
 
     private:
 
         std::shared_ptr<Expression> expression_;
+
+    };
+
+    class ExitStatement : public Statement {
+    public:
+        ExitStatement() {}
+        virtual ~ExitStatement() {}
+
+        virtual void Execute(Context& context) override;
+
+    private:
 
     };
 

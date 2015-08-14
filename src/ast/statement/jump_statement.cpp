@@ -4,42 +4,13 @@
 
 namespace apus {
 
-    BreakStatement::BreakStatement(
-            std::shared_ptr<ForStatement> loop_statement)
-        : loop_statement_(loop_statement) {
-    }
-
-    BreakStatement::BreakStatement(ForStatement *loop_statement) {
-        BreakStatement( std::shared_ptr<ForStatement>(loop_statement) );
-    }
-
-    BreakStatement::~BreakStatement() {
-
-    }
-
     void BreakStatement::Execute(Context& context) {
-        loop_statement_->Break();
-    }
-
-
-    ContinueStatement::ContinueStatement(
-            std::shared_ptr<ForStatement> loop_statement)
-        : loop_statement_(loop_statement) {
-
-    }
-
-    ContinueStatement::ContinueStatement(ForStatement *loop_statement) {
-        ContinueStatement( std::shared_ptr<ForStatement>(loop_statement) );
-    }
-
-    ContinueStatement::~ContinueStatement() {
-
+        context.SetBreak(true);
     }
 
     void ContinueStatement::Execute(Context& context) {
-        loop_statement_->Continue();
+        context.SetContinue(true);
     }
-
 
     ReturnStatement::ReturnStatement() : expression_(nullptr) {
 
@@ -54,12 +25,12 @@ namespace apus {
         ReturnStatement( std::shared_ptr<Expression>(expression) );
     }
 
-    ReturnStatement::~ReturnStatement() {
-
+    void ReturnStatement::Execute(Context& context) {
+        context.SetReturn(true);
     }
 
-    void ReturnStatement::Execute(Context& context) {
-
+    void ExitStatement::Execute(Context &context) {
+        context.SetExit(true);
     }
 
 }

@@ -24,27 +24,17 @@ namespace apus {
         while (termination_->Evaluate(context)) {
             body_->Execute(context);
 
-            if (break_) {
-                break_ = true;
+            if (context.GetBreak()) {
+                context.SetBreak(false);
                 break;
             }
-            else if (continue_) {
-                continue_ = true;
-                continue;
+
+            if (context.GetContinue()) {
+                context.SetContinue(false);
             }
 
             increment_->Evaluate(context);
         }
-    }
-
-    void ForStatement::Break() {
-        body_->Halt();
-        break_ = true;
-    }
-
-    void ForStatement::Continue() {
-        body_->Halt();
-        continue_ = true;
     }
 
 }

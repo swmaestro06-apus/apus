@@ -13,18 +13,15 @@ namespace apus {
     }
 
     void Block::Execute(Context& context) {
+
         for (std::shared_ptr<Statement> stmt : statements_) {
             stmt->Execute(context);
 
-            if (halt_) {
-                halt_ = true;
+            if (context.GetBreak() || context.GetContinue()
+                || context.GetReturn() || context.GetExit()) {
                 break;
             }
         }
-    }
-
-    void Block::Halt() {
-        halt_ = true;
     }
 
 }
