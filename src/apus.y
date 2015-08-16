@@ -26,7 +26,7 @@ extern int yyerror(char const *str);
 %token STRUCT CONST UNION
 
 %token L_BRACE R_BRACE L_CASE R_CASE OPEN CLOSE
-%token COMMENT CR DOT VAR SEMI
+%token COMMENT CR DOT VAR SEMI COMMA
 %token INCLUDE IF ELSE FOR EXIT TRUE FALSE CONTINUE BREAK RETURN
 
 %right ASSIGN ADDASSIGN SUBASSIGN MULASSIGN DIVASSIGN MODASSIGN ORASSIGN ANDASSIGN XORASSIGN LSASSIGN RSASSIGN
@@ -85,14 +85,33 @@ member_definition_list :
 member_definition :
     type_specifier ID
     | struct_union_type ID ID
-    | type_specifier ID ASSIGN expression
-    | struct_union_type ID ID ASSIGN expression
+    | type_specifier ID ASSIGN const_expression
+    | struct_union_type ID ID ASSIGN const_expression
     | type_specifier array
     | struct_union_type ID array
     ;
+const_expression :
+    expression
+    | struct_init
+    ;
+struct_init_list :
+    struct_init
+    | struct_init comma_line_opt struct_init_list
+    ;
+struct_init :
+    block_start expression_list block_end
+    ;
 array :
-    L_CASE expression R_CASE ID
-    | L_CASE expression R_CASE ID ASSIGN expression
+    dimension_array ID
+    | dimension_array ID ASSIGN const_expression
+    ;
+dimension_array :
+    L_CASE expression R_CASE
+    | L_CASE expression R_CASE dimension_array
+    ;
+expression_list :
+    expression
+    | expression comma_line_opt expression_list
     ;
 expression_opt :
     /* empty */
@@ -118,7 +137,14 @@ expression :
     | expression MUL expression
     | expression DIV expression
     | expression MOD expression
+    | arrayinit_list
     | unary_expression
+    ;
+arrayinit_list :
+    L_CASE expression_list R_CASE
+    | L_CASE expression_list R_CASE comma_line_opt arrayinit_list
+    | L_CASE struct_init_list R_CASE
+    | L_CASE struct_init_list R_CASE comma_line_opt arrayinit_list
     ;
 unary_expression :
     primary_expression
@@ -133,7 +159,14 @@ primary_expression :
     | DOUBLE_LITERAL
     | CHAR_LITERAL
     | STRING_LITERAL
-    | ID
+    | variable_expression
+    ;
+variable_expression :
+    ID
+    | ID dimension_array
+    ;
+comma_line_opt :
+    COMMA line_opt
     ;
 block_start :
     line_opt L_BRACE line_opt
