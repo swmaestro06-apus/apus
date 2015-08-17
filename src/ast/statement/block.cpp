@@ -5,7 +5,10 @@ namespace apus {
 
     Block::Block(std::list<std::shared_ptr<Statement>> statements)
         : statements_(statements) {
+    }
 
+    Block::Block(std::shared_ptr<Statement> statement) {
+        statements_.push_back(statement);
     }
 
     Block::~Block() {

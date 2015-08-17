@@ -29,6 +29,15 @@ namespace apus {
         context.SetReturn(true);
     }
 
+    ExitStatement::ExitStatement(std::shared_ptr<Expression> expression)
+        : expression_(expression) {
+
+    }
+
+    ExitStatement::ExitStatement(Expression *expression) {
+        ExitStatement( std::shared_ptr<Expression>(expression) );
+    }
+
     void ExitStatement::Execute(Context &context) {
         context.SetExit(true);
     }

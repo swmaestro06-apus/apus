@@ -49,11 +49,15 @@ namespace apus {
     class ExitStatement : public Statement {
     public:
         ExitStatement() {}
+        ExitStatement(std::shared_ptr<Expression> expression);
+        ExitStatement(Expression* expression);
         virtual ~ExitStatement() {}
 
         virtual void Execute(Context& context) override;
 
     private:
+
+        std::shared_ptr<Expression> expression_;
 
     };
 
