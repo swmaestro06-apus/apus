@@ -6,34 +6,44 @@
 #include "common/common.h"
 using namespace std;
 
-class BinaryReader {
-public:
-    BinaryReader ();
-    BinaryReader (string& file_name);
-    ~BinaryReader ();
+namespace apus {
 
-    Endian GetFileEndian();
-    void SetFileEndian (Endian endian);
+    class BinaryReader {
+    public:
+        BinaryReader();
 
-    int ReadInt (streampos offset, VarType type, uint64_t& out_int);
-    int ReadInt (VarType type, uint64_t& out_int);
+        BinaryReader(string &file_name);
 
-    int ReadReal (streampos offset, VarType type, double& out_real);
-    int ReadReal (VarType type, double& out_real);
+        ~BinaryReader();
 
-    int ReadChar (streampos offset, VarType type, uint32_t& out_char);
-    int ReadChar (VarType type, uint32_t& out_char);
+        Endian GetFileEndian();
 
-    int ReadString (streampos offset, VarType type, string& out_str);
-    int ReadString (VarType type, string& out_str);
+        void SetFileEndian(Endian endian);
 
-private:
-    string file_name_;                  // file name
-    ifstream file_stream_;              // file stream to read
-    Endian file_endian_;                // endian of file
+        int ReadInt(streampos offset, VarType type, uint64_t &out_int);
 
-    int ConvertBytes (byte out_array[], int length);
-};
+        int ReadInt(VarType type, uint64_t &out_int);
+
+        int ReadReal(streampos offset, VarType type, double &out_real);
+
+        int ReadReal(VarType type, double &out_real);
+
+        int ReadChar(streampos offset, VarType type, uint32_t &out_char);
+
+        int ReadChar(VarType type, uint32_t &out_char);
+
+        int ReadString(streampos offset, VarType type, string &out_str);
+
+        int ReadString(VarType type, string &out_str);
+
+    private:
+        string file_name_;                  // file name
+        ifstream file_stream_;              // file stream to read
+        Endian file_endian_;                // endian of file
+
+        int ConvertBytes(byte out_array[], int length);
+    };
+}
 
 #endif
 

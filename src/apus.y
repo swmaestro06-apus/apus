@@ -6,6 +6,9 @@ extern int yylex();
 extern int yyerror(char const *str);
 
 %}
+%code requires {
+    #include "common/common.h"
+}
 %union {
     int64_t int_val;
     double double_val;
