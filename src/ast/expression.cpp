@@ -40,10 +40,18 @@ namespace apus {
 
         std::shared_ptr<Value> result = nullptr;
 
-        std::shared_ptr<Value> lValue = left_expression_->Evaluate(context);
-        std::shared_ptr<Value> rValue = right_expression_->Evaluate(context);
+        if (left_expression_ != nullptr && right_expression_ != nullptr) {
 
-        result = lValue->Operate(this->getType(), rValue);
+            std::shared_ptr<Value> left_value_ = left_expression_->Evaluate(context);
+            std::shared_ptr<Value> right_value_ = right_expression_->Evaluate(context);
+
+            if (left_value_ != nullptr && right_value_ != nullptr) {
+
+                result = left_value_->Operate(this->getType(), right_value_);
+
+            }
+
+        }
 
         return result;
     }
