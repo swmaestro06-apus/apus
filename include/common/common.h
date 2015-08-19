@@ -14,17 +14,19 @@ namespace apus {
         BIG = 0x01020304ul,
     } Endian;
 
-    enum TypeSpecifier {
+    typedef enum {
         U8, U16, U32, U64,  // Unsigned Integer
         S8, S16, S32, S64,  // Signed Integer
         F32, F64,           // Floating Point Real Number
         C8, C16, C32,       // Character Type
         STR8, STR16, STR32, // String Type
-    };
+        STRUCT, UNION,      // Struct and Union
+        ARRAY,              // Array
+        USER_DEFINED,       // User-defined type
+        NOT_DEFINED,        // Not-defined type
+    } TypeSpecifier;
 
-    typedef enum TypeSpecifier VarType;
-
-    int TypeLength(VarType type);
+    int TypeLength (TypeSpecifier type);
 
     inline int HostEndian() {
 
