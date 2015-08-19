@@ -13,7 +13,7 @@ namespace apus {
     public:
         IfStatement(std::shared_ptr<Expression> condition,
                     std::shared_ptr<Block> true_block,
-                    std::shared_ptr<Block> false_block);
+                    std::shared_ptr<Statement> false_block);
 
         IfStatement(Expression* condition,
                     Block* true_block,
@@ -27,7 +27,7 @@ namespace apus {
         std::shared_ptr<Expression> condition_;
 
         std::shared_ptr<Block> true_block_;
-        std::shared_ptr<Block> false_block_;
+        std::shared_ptr<Statement> false_block_;
     };
 
 }
