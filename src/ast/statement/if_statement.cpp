@@ -12,6 +12,14 @@ namespace apus {
           false_block_(false_block) {
     }
 
+    IfStatement::IfStatement(Expression *condition,
+                             Block *true_block,
+                             Block *false_block) {
+        condition_ = std::shared_ptr<Expression>(condition);
+        true_block_ = std::shared_ptr<Block>(true_block);
+        false_block_ = std::shared_ptr<Block>(false_block);
+    }
+
     IfStatement::~IfStatement() { 
 
     }

@@ -10,6 +10,7 @@ namespace apus {
     class Block : public Statement {
     public:
         Block(std::list<std::shared_ptr<Statement>> statements);
+        Block(std::shared_ptr<Statement> statement);
         virtual ~Block();
 
         virtual void Execute(Context& context) override;
@@ -19,6 +20,7 @@ namespace apus {
         std::list<std::shared_ptr<Statement>> statements_;
 
     };
+
 }
 
 #endif
