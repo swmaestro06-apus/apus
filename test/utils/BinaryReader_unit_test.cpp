@@ -2,6 +2,8 @@
 #include "utils/BinaryReader.h"
 #include <limits.h>
 
+using namespace apus;
+
 TEST (BinaryReaderTest, ReadIntUnsignedIntegerTest) {
 
     string filename = "./test_unsigned_integer.bin";
