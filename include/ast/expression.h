@@ -132,9 +132,9 @@ namespace apus {
 
     class AssignExpression : public Expression {
     public:
-        AssignExpression(std::string name,
+        AssignExpression(Type type, std::string name,
                          std::shared_ptr<Expression> expression);
-        AssignExpression(char* name, Expression* expression);
+        AssignExpression(Type type, char* name, Expression* expression);
         virtual ~AssignExpression();
 
         virtual std::shared_ptr<Value> Evaluate(Context& context);
