@@ -29,7 +29,7 @@ extern int yyerror(char const *str);
 %token STRUCT CONST UNION
 
 %token L_BRACE R_BRACE L_CASE R_CASE OPEN CLOSE
-%token COMMENT CR DOT VAR SEMI
+%token COMMENT CR DOT VAR SEMI COMMA
 %token INCLUDE IF ELSE FOR EXIT TRUE FALSE CONTINUE BREAK RETURN
 
 %right ASSIGN ADDASSIGN SUBASSIGN MULASSIGN DIVASSIGN MODASSIGN ORASSIGN ANDASSIGN XORASSIGN LSASSIGN RSASSIGN
@@ -88,14 +88,36 @@ member_definition_list :
 member_definition :
     type_specifier ID
     | struct_union_type ID ID
-    | type_specifier ID ASSIGN expression
-    | struct_union_type ID ID ASSIGN expression
+    | type_specifier ID ASSIGN const_expression
+    | struct_union_type ID ID ASSIGN const_expression
     | type_specifier array
     | struct_union_type ID array
     ;
+const_expression_list :
+    const_expression
+    | const_expression comma_line_opt const_expression_list
+    ;
+const_expression :
+    INT_LITERAL
+    | DOUBLE_LITERAL
+    | CHAR_LITERAL
+    | STRING_LITERAL
+    | const_struct_init
+    | const_array_init
+    ;
+const_struct_init :
+    block_start const_expression_list block_end
+    ;
+const_array_init : 
+    L_CASE const_expression_list R_CASE
+    ;
 array :
-    L_CASE expression R_CASE ID
-    | L_CASE expression R_CASE ID ASSIGN expression
+    dimension_array ID
+    | dimension_array ID ASSIGN const_expression_list
+    ;
+dimension_array :
+    L_CASE expression R_CASE
+    | L_CASE expression R_CASE dimension_array
     ;
 expression_opt :
     /* empty */
@@ -136,7 +158,14 @@ primary_expression :
     | DOUBLE_LITERAL
     | CHAR_LITERAL
     | STRING_LITERAL
-    | ID
+    | variable_expression
+    ;
+variable_expression :
+    ID
+    | ID dimension_array
+    ;
+comma_line_opt :
+    COMMA line_opt
     ;
 block_start :
     line_opt L_BRACE line_opt
@@ -198,7 +227,30 @@ expression_statement :
     expression line_list
     ;
 var_def_statement :
-    VAR member_definition line_list
+    VAR variable_definition line_list
+    ;
+variable_definition :
+    type_specifier ID
+    | struct_union_type ID ID
+    | type_specifier ID ASSIGN init_expression
+    | struct_union_type ID ID ASSIGN init_expression
+    | type_specifier array
+    | struct_union_type ID array
+    ;
+init_expression_list :
+    init_expression
+    | init_expression comma_line_opt init_expression_list
+    ;
+init_expression :
+    expression
+    | struct_init
+    | array_init
+    ;
+struct_init :
+    block_start init_expression_list block_end
+    ;
+array_init : 
+    L_CASE init_expression_list R_CASE
     ;
 %%
 int yyerror(char const *str) {
