@@ -82,13 +82,22 @@ namespace apus {
 
     }
 
+    ValueExpression::ValueExpression(Value *value) {
+        ValueExpression(std::shared_ptr<Value>(value));
+    }
+
     std::shared_ptr<Value> ValueExpression::Evaluate(Context &context) {
         return value_;
     }
 
     // VariableExpression
+
     VariableExpression::VariableExpression(std::string name)
         : Expression(EXP_VARIABLE), name_(name) {
+    }
+
+    VariableExpression::VariableExpression(char *name) {
+        VariableExpression(std::string(name));
     }
 
     VariableExpression::~VariableExpression() {
@@ -111,6 +120,10 @@ namespace apus {
 
     }
 
+    AssignExpression::AssignExpression(char* name, Expression* expression) {
+        AssignExpression(std::string(name), std::shared_ptr<Expression>(expression));
+    }
+
     AssignExpression::~AssignExpression() {
 
     }
@@ -128,6 +141,10 @@ namespace apus {
                                        std::string child_name)
         : Expression(EXP_MEMBER), parent_name_(parent_name), child_name_(child_name) {
 
+    }
+
+    MemberExpression::MemberExpression(char* parent_name, char* child_name) {
+        MemberExpression(std::string(parent_name), std::string(child_name));
     }
 
     MemberExpression::~MemberExpression() {

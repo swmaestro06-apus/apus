@@ -7,9 +7,17 @@ namespace apus {
 
     IfStatement::IfStatement(std::shared_ptr<Expression> condition,
                              std::shared_ptr<Block> true_block,
-                             std::shared_ptr<Block> false_block)
+                             std::shared_ptr<Statement> false_block)
         : condition_(condition), true_block_(true_block),
           false_block_(false_block) {
+    }
+
+    IfStatement::IfStatement(Expression *condition,
+                             Block *true_block,
+                             Block *false_block) {
+        condition_ = std::shared_ptr<Expression>(condition);
+        true_block_ = std::shared_ptr<Block>(true_block);
+        false_block_ = std::shared_ptr<Statement>(false_block);
     }
 
     IfStatement::~IfStatement() { 
