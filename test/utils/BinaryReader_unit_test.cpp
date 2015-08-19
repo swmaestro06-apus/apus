@@ -197,5 +197,7 @@ TEST (BinaryReaderTest, EndianTest) {
             EXPECT_EQ ((int)read, expected_little);
         }
     }
+
+    remove(filename.c_str());
 }
 
