@@ -128,7 +128,7 @@ apus::ParserContext pctx;
 
 TEST (ParserTest, ActionTest) {
     int result;
-    yy_scan_string(action_test);
+    yy_scan_string(action_test2);
 
     std::shared_ptr<apus::VirtualMachine> vm = std::make_shared<apus::VirtualMachine>();
     pctx.setVM(vm);
