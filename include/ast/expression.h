@@ -53,7 +53,6 @@ namespace apus {
             EXP_LOR,  // '||'
             EXP_LAND, // '&&'
 
-            EXP_UNARY,
             EXP_VALUE,
             EXP_VARIABLE,
             EXP_FUNCTION,

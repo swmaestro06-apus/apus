@@ -11,7 +11,6 @@ namespace apus {
         ~ParserContext();
 
         std::shared_ptr<VirtualMachine> getVM();
-
         void setVM(std::shared_ptr<VirtualMachine> vm);
 
     private:
@@ -19,5 +18,4 @@ namespace apus {
         std::shared_ptr<VirtualMachine> vm_;
 
     };
-
 }

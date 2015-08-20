@@ -5,7 +5,6 @@ namespace apus {
 
     ParserContext::ParserContext(std::shared_ptr<VirtualMachine> vm)
         : vm_(vm) {
-
     }
 
     ParserContext::~ParserContext() {
@@ -19,5 +18,4 @@ namespace apus {
     void ParserContext::setVM(std::shared_ptr<VirtualMachine> vm) {
         vm_ = vm;
     }
-
 }
