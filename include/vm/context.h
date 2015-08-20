@@ -17,7 +17,7 @@ namespace apus {
         inline void SetBreak(bool _break) { break_ = _break;}
         inline void SetContinue(bool _continue) { continue_ = _continue;}
         inline void SetReturn(bool _return) { return_ = _return; }
-        inline void SetExit(bool _exit) { exit_ = _exit; }
+        inline void SetExit(bool _exit) { exit_ = _exit;}
 
     private:
 
