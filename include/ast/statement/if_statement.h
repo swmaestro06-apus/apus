@@ -17,7 +17,7 @@ namespace apus {
 
         IfStatement(Expression* condition,
                     Block* true_block,
-                    Block* false_block);
+                    Statement* false_block);
 
         virtual ~IfStatement();
 

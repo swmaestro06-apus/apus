@@ -1,12 +1,16 @@
 #include "gtest/gtest.h"
+#include "parser_context.h"
+#include "vm/virtual_machine.h"
 
-extern int yyparse(void);
+extern int yyparse(apus::ParserContext* pctx);
 extern int yy_scan_string(const char *);
 
 // test_x x number is defined sub test
 // 1 : corrected test
 // 2 : uncorrected test
 // 3 : CR test
+
+/*
 
 static char var_def_test_1[] = "\
 var u8 a                \n\
@@ -108,5 +112,24 @@ TEST (ParserTest, StmtLineTest) {
     int result;
     yy_scan_string(if_stmt_test_3);
     result = yyparse();
+    EXPECT_EQ (result, 0);
+}
+*/
+
+static char action_test[] = "continue\nbreak\n continue\n break\n continue \n continue\n";
+static char action_test2[] = "{ continue\n break \n continue \n } \n";
+
+apus::ParserContext pctx;
+
+TEST (ParserTest, ActionTest) {
+    int result;
+    yy_scan_string(action_test);
+
+    std::shared_ptr<apus::VirtualMachine> vm = std::make_shared<apus::VirtualMachine>();
+    pctx.setVM(vm);
+    result = yyparse(&pctx);
+
+    vm->Run();
+
     EXPECT_EQ (result, 0);
 }

@@ -53,7 +53,6 @@ namespace apus {
             EXP_LOR,  // '||'
             EXP_LAND, // '&&'
 
-            EXP_UNARY,
             EXP_VALUE,
             EXP_VARIABLE,
             EXP_FUNCTION,
@@ -92,9 +91,9 @@ namespace apus {
 
     class UnaryExpression : public Expression {
     public:
-        UnaryExpression(std::shared_ptr<Expression> expression);
+        UnaryExpression(Type type, std::shared_ptr<Expression> expression);
 
-        UnaryExpression(Expression* expression);
+        UnaryExpression(Type type, Expression* expression);
 
         virtual ~UnaryExpression();
 

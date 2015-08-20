@@ -50,16 +50,15 @@ namespace apus {
 
     // UnaryExpression::
 
-    UnaryExpression::UnaryExpression(std::shared_ptr<Expression> expression)
-        : Expression(EXP_UNARY), expression_(expression) {
+    UnaryExpression::UnaryExpression(Type type, std::shared_ptr<Expression> expression)
+        : Expression(type), expression_(expression) {
 
     }
 
-    UnaryExpression::UnaryExpression(Expression* expression)
-        : Expression(EXP_UNARY), expression_(expression) {
+    UnaryExpression::UnaryExpression(Type type, Expression* expression) {
 
         std::shared_ptr<Expression> shared_expr(expression);
-        expression_ = shared_expr;
+        UnaryExpression(type, shared_expr);
 
     }
 
