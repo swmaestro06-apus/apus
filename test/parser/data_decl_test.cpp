@@ -32,7 +32,7 @@ union id5\n\
 \n\
 union id6 { u32 aa }\n\
 ";
-
+/*
 TEST (ParserTest, DataDeclTest) {
     int result;
     apus::ParserContext pctx;
@@ -42,3 +42,4 @@ TEST (ParserTest, DataDeclTest) {
 
     EXPECT_EQ (result, 0);
 }
+*/
