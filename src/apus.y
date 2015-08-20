@@ -100,7 +100,7 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 program :
     data_declaration_opt action_declaration_opt { 
         pctx->getVM()->setStmtList(*$2);
-        cout << "Program : action_decl_list size "<< $2->size()  << endl;
+        cout << "Program : action_decl_list size "<< $2->size() << endl;
     }
     ;
 data_declaration_opt :
@@ -126,20 +126,14 @@ data_declaration_list :
     ;
 action_declaration_list :
     action_declaration {
-        // access VM Directly
-        // E.G. pctx->getVM()->getStmtList()->push_back($1);
-        //ListStmtPtr list_stmt_ptr = make_shared<ListStmt>();
-        //list_stmt_ptr->push_back(*$1);
-
+        
         cout << "Action Decl List CREATED" << endl;
 
         $$ = new list<shared_ptr<Statement>>();
         $$->push_back(shared_ptr<Statement>($1));
     }
     | action_declaration action_declaration_list {
-        //$2->push_back($1);
-        //$$ = $2;
-
+  
         cout << "Action Decl PUSH_FRONT" << endl;
         
         $2->push_front(shared_ptr<Statement>($1));
