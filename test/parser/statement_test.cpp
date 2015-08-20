@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
+#include "parser_context.h"
 
-extern int yyparse(void);
+extern int yyparse(apus::ParserContext* pctx);
 extern int yy_scan_string(const char *);
 
 // test_x x number is defined sub test
@@ -79,34 +80,39 @@ else { }                \n\
 ";
 
 TEST (ParserTest, StmtCorrectTest) {
+    int result;
+    apus::ParserContext pctx;
+
     yy_scan_string(var_def_test_1);
-    int result = yyparse();
+    result = yyparse(&pctx);
     EXPECT_EQ (result, 0);
 
     yy_scan_string(jump_stmt_test_1);
-    result = yyparse();
+    result = yyparse(&pctx);
     EXPECT_EQ (result, 0);
 
     yy_scan_string(for_stmt_test_1);
-    result = yyparse();
+    result = yyparse(&pctx);
     EXPECT_EQ (result, 0);
 
     yy_scan_string(if_stmt_test_1);
-    result = yyparse();
+    result = yyparse(&pctx);
     EXPECT_EQ (result, 0);
 
     yy_scan_string(expr_stmt_test_1);
-    result = yyparse();
+    result = yyparse(&pctx);
     EXPECT_EQ (result, 0);
 
     yy_scan_string(block_stmt_test_1);
-    result = yyparse();
+    result = yyparse(&pctx);
     EXPECT_EQ (result, 0);
 }
 
 TEST (ParserTest, StmtLineTest) {
     int result;
+    apus::ParserContext pctx;
+
     yy_scan_string(if_stmt_test_3);
-    result = yyparse();
+    result = yyparse(&pctx);
     EXPECT_EQ (result, 0);
 }
