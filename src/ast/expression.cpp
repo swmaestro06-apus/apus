@@ -40,10 +40,28 @@ namespace apus {
 
         std::shared_ptr<Value> result = nullptr;
 
-        std::shared_ptr<Value> lValue = left_expression_->Evaluate(context);
-        std::shared_ptr<Value> rValue = right_expression_->Evaluate(context);
+        // 1. check expression
+        if (left_expression_ != nullptr && right_expression_ != nullptr) {
 
-        result = lValue->Operate(this->getType(), rValue);
+            std::shared_ptr<Value> left_value = left_expression_->Evaluate(context);
+            std::shared_ptr<Value> right_value = right_expression_->Evaluate(context);
+
+            // 2. check lvalue, rvalue
+            if (left_value != nullptr && right_value != nullptr) {
+
+                std::shared_ptr<Value> left_promoted = left_value->Promote(right_value);
+                std::shared_ptr<Value> right_promoted = right_value->Promote(left_value);
+
+                // 3. check promoted values
+                if (left_promoted != nullptr && right_promoted != nullptr) {
+
+                    result = left_promoted->OperateBinary(this->getType(),
+                                                          right_promoted);
+                }
+
+            }
+
+        }
 
         return result;
     }
@@ -70,6 +88,7 @@ namespace apus {
 
         std::shared_ptr<Value> result = nullptr;
         result = expression_->Evaluate(context);
+        result = result->OperateUnary(this->getType());
 
         return result;
     }
