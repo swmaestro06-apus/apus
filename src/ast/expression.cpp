@@ -133,14 +133,16 @@ namespace apus {
 
     // AssignExpression::
 
-    AssignExpression::AssignExpression(std::string name,
+    AssignExpression::AssignExpression(Type type,
+                                       std::string name,
                                        std::shared_ptr<Expression> expression)
-        : Expression(EXP_ASSIGN), name_(name), expression_(expression) {
+        : Expression(type), name_(name), expression_(expression) {
 
     }
 
-    AssignExpression::AssignExpression(char* name, Expression* expression) {
-        AssignExpression(std::string(name), std::shared_ptr<Expression>(expression));
+    AssignExpression::AssignExpression(Type type, char* name,
+                                       Expression* expression) {
+        AssignExpression(type, std::string(name), std::shared_ptr<Expression>(expression));
     }
 
     AssignExpression::~AssignExpression() {
@@ -149,9 +151,28 @@ namespace apus {
 
     std::shared_ptr<Value> AssignExpression::Evaluate(Context &context) {
 
-        std::shared_ptr<Value> result = nullptr;
+        if (expression_ != nullptr) {
 
-        return result;
+            // Find left value from the variable table
+            std::shared_ptr<Value> left = nullptr;
+            std::shared_ptr<Value> right = expression_->Evaluate(context);
+
+            if (left != nullptr && right != nullptr) {
+
+                std::shared_ptr<Value> right_promoted = right->Promote(left);
+
+                if (right_promoted != nullptr) {
+
+                    std::shared_ptr<Value> result =
+                            left->OperateBinary(this->getType(), right_promoted);
+
+                    // and, put 'result' value into the variable
+
+                }
+            }
+            return left;
+        }
+        return nullptr;
     }
 
     // MemberExpression::
