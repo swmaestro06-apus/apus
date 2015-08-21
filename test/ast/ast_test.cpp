@@ -9,6 +9,7 @@
 #include "ast/value/signed_int_value.h"
 #include "ast/value/float_value.h"
 #include "ast/value/character_value.h"
+#include "ast/value/string_value.h"
 
 #include "vm/context.h"
 
@@ -249,4 +250,46 @@ TEST (ASTTest, Expression_Promote) {
         EXPECT_EQ(F32 , result->getType());
     }
 
+}
+
+TEST(ASTTest, StringOperation){
+
+    // "hello" + " world" (STR16 + STR32)
+    {
+        std::shared_ptr<Expression> _hello = std::make_shared<ValueExpression>(StringValue::Create(STR16, "hello"));
+        std::shared_ptr<Expression> _world = std::make_shared<ValueExpression>(StringValue::Create(STR32, " world"));
+
+        std::shared_ptr<Expression> add_expr = std::make_shared<BinaryExpression>(Expression::EXP_ADD, _hello, _world);
+
+        std::shared_ptr<StringValue> result = std::dynamic_pointer_cast<StringValue>(add_expr->Evaluate(ctx));
+
+        EXPECT_STREQ("hello world" , result->getStringValue().c_str());
+        EXPECT_EQ(STR32 , result->getType());
+    }
+
+    // "hello " + 3.141592 (STR16 + F32)
+    {
+        std::shared_ptr<Expression> _hello = std::make_shared<ValueExpression>(StringValue::Create(STR16, "hello "));
+        std::shared_ptr<Expression> _pi = std::make_shared<ValueExpression>(FloatValue::Create(F32, 3.141592));
+
+        std::shared_ptr<Expression> add_expr = std::make_shared<BinaryExpression>(Expression::EXP_ADD, _hello, _pi);
+
+        std::shared_ptr<StringValue> result = std::dynamic_pointer_cast<StringValue>(add_expr->Evaluate(ctx));
+
+        EXPECT_STREQ("hello 3.141592" , result->getStringValue().c_str());
+        EXPECT_EQ(STR16 , result->getType());
+    }
+
+    // 123 + "hello" (S32 + STR32)
+    {
+        std::shared_ptr<Expression> _hello = std::make_shared<ValueExpression>(StringValue::Create(STR32, "hello"));
+        std::shared_ptr<Expression> _123 = std::make_shared<ValueExpression>(SignedIntValue::Create(S32, 123));
+
+        std::shared_ptr<Expression> add_expr = std::make_shared<BinaryExpression>(Expression::EXP_ADD, _123, _hello);
+
+        std::shared_ptr<StringValue> result = std::dynamic_pointer_cast<StringValue>(add_expr->Evaluate(ctx));
+
+        EXPECT_STREQ("123hello" , result->getStringValue().c_str());
+        EXPECT_EQ(STR32 , result->getType());
+    }
 }
