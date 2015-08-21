@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
+#include "parser_context.h"
 
-extern int yyparse(void);
+extern int yyparse(apus::ParserContext* pctx);
 extern int yy_scan_string(const char *);
 
 static char data_decl_test[] = "\
@@ -33,9 +34,11 @@ union id6 { u32 aa }\n\
 ";
 
 TEST (ParserTest, DataDeclTest) {
+    int result;
+    apus::ParserContext pctx;
 
     yy_scan_string(data_decl_test);
-    int result = yyparse();
+    result = yyparse(&pctx);
 
     EXPECT_EQ (result, 0);
 }

@@ -2,10 +2,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "parser_context.h"
+
 extern int yylex();
-extern int yyerror(char const *str);
+extern int yyerror(apus::ParserContext* pctx, char const *str);
 
 %}
+
+%parse-param {
+    apus::ParserContext* pctx
+}
+
 %code requires {
     #include "common/common.h"
 }
@@ -253,7 +260,7 @@ array_init :
     L_CASE init_expression_list R_CASE
     ;
 %%
-int yyerror(char const *str) {
+int yyerror(apus::ParserContext* pctx, char const *str) {
     extern char yylineno;
     extern char *yytext;
     fprintf(stderr, "parser error near %s, line is %d\n", yytext, yylineno);
