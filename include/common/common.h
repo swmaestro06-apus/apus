@@ -1,6 +1,8 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
+#include <string>
+#include <iostream>
 #include <stdint.h>
 #include <inttypes.h>
 
@@ -26,6 +28,13 @@ namespace apus {
         USER_DEFINED,       // User-defined type
         NOT_DEFINED,        // Not-defined type
     } TypeSpecifier;
+
+    const std::string ToString[C32+1] = {
+        "U8", "U16", "U32", "U64",
+        "S8", "S16", "S32", "S64",
+        "F32", "F64",
+        "C8", "C16", "C32",
+    };
 
     int TypeLength (TypeSpecifier type);
 
