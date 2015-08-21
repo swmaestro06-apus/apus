@@ -14,7 +14,7 @@ namespace apus {
                 out_array[(length - 1) - i] = temp;
             }
         } catch (std::exception &e) {
-            cout << "Out of Range error: " << endl;
+            DispErr("Out of Range error");
             return -1;
         }
         return 0;
@@ -33,8 +33,8 @@ namespace apus {
         // open the file in binary instream manner
         file_stream_.open(file_name_, ios::in | ios::binary);
         if (!file_stream_.is_open()) {
-            cout << "There's no file with name: " << file_name << endl;
-            cout << "Program will exit." << endl;
+            DispErr("There's no file with name: " + file_name);
+            DispErr("Program will exit.");
             exit(-1);
         }
     }
