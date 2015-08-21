@@ -57,7 +57,7 @@ namespace apus {
         }
     }
 
-    int BinaryReader::ReadInt(streampos pos, VarType type, uint64_t &out_int) {
+    int BinaryReader::ReadInt(streampos pos, TypeSpecifier type, uint64_t &out_int) {
 
         // If it's not proper type, return -1
         if (type != U8 && type != U16 && type != U32 && type != U64 &&
@@ -86,12 +86,12 @@ namespace apus {
         return 0;
     }
 
-    int BinaryReader::ReadInt(VarType type, uint64_t &out_int) {
+    int BinaryReader::ReadInt(TypeSpecifier type, uint64_t &out_int) {
 
         return ReadInt(file_stream_.tellg(), type, out_int);
     }
 
-    int BinaryReader::ReadReal(streampos pos, VarType type, double &out_real) {
+    int BinaryReader::ReadReal(streampos pos, TypeSpecifier type, double &out_real) {
 
         // If it's not proper type, return -1
         if (type != F32 && type != F64) {
@@ -124,12 +124,12 @@ namespace apus {
         return 0;
     }
 
-    int BinaryReader::ReadReal(VarType type, double &out_real) {
+    int BinaryReader::ReadReal(TypeSpecifier type, double &out_real) {
 
         return ReadReal(file_stream_.tellg(), type, out_real);
     }
 
-    int BinaryReader::ReadChar(streampos pos, VarType type,
+    int BinaryReader::ReadChar(streampos pos, TypeSpecifier type,
                                uint32_t &out_char) {
 
         // If it's not proper type, return -1
@@ -159,15 +159,15 @@ namespace apus {
         return 0;
     }
 
-    int BinaryReader::ReadChar(VarType type, uint32_t &out_char) {
+    int BinaryReader::ReadChar(TypeSpecifier type, uint32_t &out_char) {
 
         return ReadChar(file_stream_.tellg(), type, out_char);
     }
 
-    int BinaryReader::ReadString(streampos pos, VarType type, string &out_str) {
+    int BinaryReader::ReadString(streampos pos, TypeSpecifier type, string &out_str) {
 
         uint32_t read = 0;                  // read character
-        VarType char_type;                  // type of a character
+        TypeSpecifier char_type;                  // type of a character
 
         // assign type of a character
         if (type == STR8) {
@@ -201,7 +201,7 @@ namespace apus {
         return 0;
     }
 
-    int BinaryReader::ReadString(VarType type, string &out_char) {
+    int BinaryReader::ReadString(TypeSpecifier type, string &out_char) {
 
         return ReadString(file_stream_.tellg(), type, out_char);
     }
