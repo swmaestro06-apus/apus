@@ -12,12 +12,12 @@ namespace apus {
     class IfStatement : public Statement {
     public:
         IfStatement(std::shared_ptr<Expression> condition,
-                    std::shared_ptr<Block> true_block,
+                    std::shared_ptr<Statement> true_block,
                     std::shared_ptr<Statement> false_block);
 
         IfStatement(Expression* condition,
-                    Block* true_block,
-                    Block* false_block);
+                    Statement* true_block,
+                    Statement* false_block);
 
         virtual ~IfStatement();
 
@@ -27,7 +27,7 @@ namespace apus {
     private:
         std::shared_ptr<Expression> condition_;
 
-        std::shared_ptr<Block> true_block_;
+        std::shared_ptr<Statement> true_block_;
         std::shared_ptr<Statement> false_block_;
     };
 

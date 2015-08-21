@@ -92,9 +92,9 @@ namespace apus {
 
     class UnaryExpression : public Expression {
     public:
-        UnaryExpression(std::shared_ptr<Expression> expression);
+        UnaryExpression(Type type, std::shared_ptr<Expression> expression);
 
-        UnaryExpression(Expression* expression);
+        UnaryExpression(Type type, Expression* expression);
 
         virtual ~UnaryExpression();
 
