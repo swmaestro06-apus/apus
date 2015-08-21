@@ -8,6 +8,8 @@
 
 namespace apus {
 
+    #define ERROR_MSG   true
+
     typedef char byte;
 
     typedef enum {
@@ -52,6 +54,12 @@ namespace apus {
         } HostOrder = {{1, 2, 3, 4}};
 
         return HostOrder.value;
+    }
+
+    inline void DispErr(std::string err) {
+        if (ERROR_MSG) {
+            std::cout << err << std::endl;
+        }
     }
 }
 
