@@ -1,10 +1,13 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
+#include <iostream>
 #include <stdint.h>
 #include <inttypes.h>
 
 namespace apus {
+
+    #define ERROR_MSG   true
 
     typedef char byte;
 
@@ -36,6 +39,12 @@ namespace apus {
         } HostOrder = {{1, 2, 3, 4}};
 
         return HostOrder.value;
+    }
+
+    inline void DispErr(std::string err) {
+        if (ERROR_MSG) {
+            std::cout << err << std::endl;
+        }
     }
 }
 

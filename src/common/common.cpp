@@ -40,7 +40,7 @@ namespace apus {
                 
             // exception
             default:
-                cout << "There's no matched variable type." << endl;
+                DispErr("There's no matched variable type.");
                 length = -1;
                 break;
         }
