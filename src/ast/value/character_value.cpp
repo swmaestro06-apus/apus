@@ -1,31 +1,23 @@
+#include "ast/value/character_value.h"
 #include "ast/value/signed_int_value.h"
 #include "ast/value/float_value.h"
-#include "ast/value/character_value.h"
-
-#include "ast/expression.h"
-#include "common/common.h"
 
 namespace apus {
 
-    std::shared_ptr<SignedIntValue> SignedIntValue::Create(
-            TypeSpecifier type, int64_t value) {
+    std::shared_ptr<CharacterValue> CharacterValue::Create(TypeSpecifier type, int32_t value) {
 
-        // check 'type'
-        if (type == S8 || type == S16 || type == S32 || type == S64) {
-            return std::shared_ptr<SignedIntValue>(new SignedIntValue(type, value));
+        if (type == C8 || type == C16 || type == C32) {
+            return std::shared_ptr<CharacterValue>(new CharacterValue(type, value));
         }
 
         return nullptr;
     }
 
-    std::shared_ptr<Value> SignedIntValue::Promote(
+    std::shared_ptr<Value> CharacterValue::Promote(
             const std::shared_ptr<Value> another) const {
-
-        // PROMOTE THIS, NOT another
 
         const TypeSpecifier another_type = another->getType();
 
-        // case 1. Exactly same type
         if (type_ == another_type) {
             return this->Copy();
         }
@@ -40,45 +32,48 @@ namespace apus {
             case S32:
             case S64: {
 
-                TypeSpecifier return_type = getSize() > another->getSize() ? getType() : another_type;
+                TypeSpecifier return_type = getSize() > another->getSize()
+                                            ? getType()
+                                            : another_type;
 
                 if (S8 <= return_type && return_type <= S64) {
-                    return SignedIntValue::Create(return_type, this->getIntValue());
+                    return SignedIntValue::Create(return_type, this->getCharValue());
                 }
                 else if (C8 <= return_type && return_type <= C32) {
-                    return CharacterValue::Create(return_type, this->getIntValue());
+                    return CharacterValue::Create(return_type, this->getCharValue());
                 }
 
                 return nullptr;
+
             }
 
-            // case 3. Different class
             case F32:
             case F64: {
-                double double_value = static_cast<double>(this->getIntValue());
+                double double_value = static_cast<double>(this->getCharValue());
                 return FloatValue::Create(another_type, double_value);
             }
 
             default:
                 return nullptr;
+
         }
+
     }
 
-    std::shared_ptr<Value> SignedIntValue::OperateBinary(
+    std::shared_ptr<Value> CharacterValue::OperateBinary(
             const Expression::Type expression_type,
             const std::shared_ptr<Value> &right_promoted) const {
 
         std::shared_ptr<Value> result = nullptr;
 
-        // 'right' value MUST be same type with this's type;
         if (right_promoted->getType() == this->getType()) {
 
-            std::shared_ptr<SignedIntValue> right_dynamic = std::dynamic_pointer_cast<SignedIntValue>(right_promoted);
+            std::shared_ptr<CharacterValue> right_dynamic = std::dynamic_pointer_cast<CharacterValue>(right_promoted);
 
-            int64_t left_value = this->getIntValue();
-            int64_t right_value = right_dynamic->getIntValue();
+            int32_t left_value = this->getCharValue();
+            int32_t right_value = right_dynamic->getCharValue();
 
-            int64_t result_value = 0;
+            int32_t result_value = 0;
 
             switch (expression_type) {
 
@@ -153,37 +148,37 @@ namespace apus {
                     return nullptr;
             }
 
-            result = SignedIntValue::Create(this->getType(), result_value);
+            result = CharacterValue::Create(this->getType(), result_value);
         }
 
         return result;
     }
 
-    std::shared_ptr<Value> SignedIntValue::OperateUnary(
+    std::shared_ptr<Value> CharacterValue::OperateUnary(
             const Expression::Type expression_type) const {
 
         std::shared_ptr<Value> result = nullptr;
-        int64_t result_value = 0;
+        int32_t result_value = 0;
 
         switch (expression_type) {
             case Expression::Type::EXP_NOT :
-                result_value = !(this->getIntValue());
+                result_value = !(this->getCharValue());
                 break;
             case Expression::Type::EXP_REVERSE :
-                result_value = ~(this->getIntValue());
+                result_value = ~(this->getCharValue());
                 break;
             case Expression::Type::EXP_SUB :
-                result_value = -(this->getIntValue());
+                result_value = -(this->getCharValue());
                 break;
             case Expression::Type::EXP_ADD :
-                result_value = +(this->getIntValue());
+                result_value = +(this->getCharValue());
                 break;
 
-                default:
-                    return nullptr;
+            default:
+                return nullptr;
         }
 
-        result = SignedIntValue::Create(this->getType(), result_value);
+        result = CharacterValue::Create(this->getType(), result_value);
 
         return result;
     }

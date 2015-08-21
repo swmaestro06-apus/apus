@@ -28,10 +28,9 @@ namespace apus {
 
         switch (another_type) {
 
-            // case 2. Same class but size
             case F32:
             case F64: {
-                TypeSpecifier type = getType() > another_type
+                TypeSpecifier type = getSize() > another->getSize()
                                      ? getType()
                                      : another_type;
 
@@ -39,20 +38,21 @@ namespace apus {
             }
 
             // case 3. Different class
+            case C8:
+            case C16:
+            case C32:
             case S8:
             case S16:
             case S32:
             case S64: {
-                
-                // case 3.1 SignedIntValue
+
                 return this->Copy();
 
             }
             default:
                 return nullptr;
         }
-
-        return nullptr;
+        
     }
 
     std::shared_ptr<Value> FloatValue::OperateBinary(
