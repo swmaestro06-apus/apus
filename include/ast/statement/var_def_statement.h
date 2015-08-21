@@ -13,6 +13,7 @@ namespace apus {
         VarDefStatement();
         virtual ~VarDefStatement();
 
+        virtual Type getType() override { return STMT_VAR_DEF; }
         void Execute(Context& context) override;
 
     private:

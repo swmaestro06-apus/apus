@@ -16,6 +16,7 @@ namespace apus {
         BreakStatement() {}
         virtual ~BreakStatement() {}
 
+        virtual Type getType() override { return STMT_BREAK; }
         virtual void Execute(Context& context) override;
 
     };
@@ -26,6 +27,7 @@ namespace apus {
         ContinueStatement() {}
         virtual ~ContinueStatement() {}
 
+        virtual Type getType() override { return STMT_CONTINUE; }
         virtual void Execute(Context& context) override;
 
     };
@@ -38,6 +40,7 @@ namespace apus {
 
         virtual ~ReturnStatement() {}
 
+        virtual Type getType() override { return STMT_RETURN; }
         virtual void Execute(Context& context) override;
 
     private:
@@ -53,6 +56,7 @@ namespace apus {
         ExitStatement(Expression* expression);
         virtual ~ExitStatement() {}
 
+        virtual Type getType() override { return STMT_EXIT; }
         virtual void Execute(Context& context) override;
 
     private:

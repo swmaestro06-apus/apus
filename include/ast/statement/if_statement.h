@@ -21,6 +21,7 @@ namespace apus {
 
         virtual ~IfStatement();
 
+        virtual Type getType() override { return STMT_IF; }
         virtual void Execute(Context& context) override;
 
     private:
