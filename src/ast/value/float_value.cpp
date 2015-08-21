@@ -3,6 +3,7 @@
 
 #include "ast/value/float_value.h"
 #include "ast/value/signed_int_value.h"
+#include "ast/value/string_value.h"
 
 namespace apus {
 
@@ -49,6 +50,14 @@ namespace apus {
                 return this->Copy();
 
             }
+
+            case STR8:
+            case STR16:
+            case STR32: {
+                double double_value = this->getFloatValue();
+                return StringValue::Create(another_type, std::to_string(double_value));
+            }
+
             default:
                 return nullptr;
         }

@@ -1,6 +1,7 @@
 #include "ast/value/signed_int_value.h"
 #include "ast/value/float_value.h"
 #include "ast/value/character_value.h"
+#include "ast/value/string_value.h"
 
 #include "ast/expression.h"
 #include "common/common.h"
@@ -57,6 +58,13 @@ namespace apus {
             case F64: {
                 double double_value = static_cast<double>(this->getIntValue());
                 return FloatValue::Create(another_type, double_value);
+            }
+
+            case STR8:
+            case STR16:
+            case STR32: {
+                int64_t int_value = this->getIntValue();
+                return StringValue::Create(another_type, std::to_string(int_value));
             }
 
             default:
