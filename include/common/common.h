@@ -25,7 +25,7 @@ namespace apus {
         C8, C16, C32,       // Character Type
         STR8, STR16, STR32, // String Type
         STRUCT, UNION,      // Struct and Union
-        ARRAY,              // Struct
+        ARRAY,              // Array
         STRUCT_ARRAY,       // Struct Array
         USER_DEFINED,       // User-defined type
         NOT_DEFINED,        // Not-defined type
