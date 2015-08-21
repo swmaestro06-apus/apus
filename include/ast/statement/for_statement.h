@@ -25,6 +25,7 @@ namespace apus {
 
         virtual ~ForStatement ();
 
+        virtual Type getType() override { return STMT_FOR; }
         virtual void Execute(Context& context) override;
 
     private:

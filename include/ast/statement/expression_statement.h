@@ -15,6 +15,7 @@ namespace apus {
         ExpressionStatement(Expression* expression);
         virtual ~ExpressionStatement();
 
+        virtual Type getType() override { return STMT_EXPR; }
         virtual void Execute(Context& context) override;
 
     private:

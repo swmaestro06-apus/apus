@@ -13,6 +13,7 @@ namespace apus {
         Block(std::shared_ptr<Statement> statement);
         virtual ~Block();
 
+        virtual Type getType() override { return STMT_BLOCK; }
         virtual void Execute(Context& context) override;
 
     private:
