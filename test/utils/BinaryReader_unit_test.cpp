@@ -1,7 +1,6 @@
 #include "gtest/gtest.h"
 #include "utils/BinaryReader.h"
 #include <limits.h>
-
 using namespace apus;
 
 TEST (BinaryReaderTest, ReadIntUnsignedIntegerTest) {
