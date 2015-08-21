@@ -1,8 +1,9 @@
 #include "ast/value/signed_int_value.h"
+#include "ast/value/float_value.h"
+#include "ast/value/character_value.h"
+
 #include "ast/expression.h"
 #include "common/common.h"
-
-#include "ast/value/float_value.h"
 
 namespace apus {
 
@@ -30,12 +31,11 @@ namespace apus {
 
         switch (another_type) {
 
-            // case 2. Same class but size
             case S8:
             case S16:
             case S32:
             case S64: {
-                TypeSpecifier return_type = getType() > another_type ? getType() : another_type;
+                TypeSpecifier return_type = getSize() > another->getSize() ? getType() : another_type;
                 return SignedIntValue::Create(return_type, this->getIntValue());
             }
 
