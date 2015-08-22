@@ -124,13 +124,16 @@ TEST (ParserTest, StmtLineTest) {
 static char action_test[] = "continue\nbreak\n continue\n break\n continue \n continue\n";
 static char action_test2[] = "{ continue\n break \n continue \n } \n";
 static char action_test3[] = " if ( 3 > 2 ) { break\n } else { break\n } \n";
-static char action_test4[] = " for (3;3;3) { if ( 3+2 * 4 == 7 + 4 ) { break\n } else { break\n } } \n";
+static char action_test4[] = " for (3;3;3) { if ( 3+2 * 4 == 7 + 4 ) { 3+4-2*11.5 == 12\n break\n } else { break\n } } \n";
+static char for_test[] = " for (;2>3;) { break\n} \n";
+
+static char expr_stmt_test[] = "3+4-(2*11)\n 3.14 + 123.45\n 3.14 + 3\n3+4-2*11.1234\n 0.15 + 0.15 == 0.1 + 0.2 \n (3.141592 * 7 - (-34 -33) / 11.3 ) \n";
 
 apus::ParserContext pctx;
 
 TEST (ParserTest, ActionTest) {
     int result;
-    yy_scan_string(action_test4);
+    yy_scan_string(for_test);
 
     std::shared_ptr<apus::VirtualMachine> vm = std::make_shared<apus::VirtualMachine>();
     pctx.setVM(vm);

@@ -3,6 +3,9 @@
 
 #include "vm/context.h"
 
+#include <iostream>
+using namespace std;
+
 namespace apus {
 
     ExpressionStatement::ExpressionStatement(
@@ -20,8 +23,14 @@ namespace apus {
     }
 
     void ExpressionStatement::Execute(Context& context) {
+
+        cout << "[expr_stmt] executing..." << endl;
         if (expression_) {
-            expression_->Evaluate(context);
+            cout << "[expr_stmt] evaluating....." << endl;
+
+            auto ret = expression_->Evaluate(context);
+            if (ret == nullptr)
+                cout << "[expr_stmt] Evaluation was wroing" <<endl;
         }
     }
 }

@@ -4,12 +4,19 @@
 #include "ast/value/float_value.h"
 #include "ast/value/signed_int_value.h"
 
+#include <iostream>
+using namespace std;
+
 namespace apus {
 
     std::shared_ptr<FloatValue> FloatValue::Create(TypeSpecifier type,
                                                    double value) {
+        
+        cout << "[FloatVal] ctor" <<endl;
+
         // check 'type'
         if (type == F32 || type == F64) {
+            cout << "[FloatValue] val is : " << value << endl;
             return std::shared_ptr<FloatValue>(new FloatValue(type, value));
         }
 
