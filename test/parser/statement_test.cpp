@@ -123,12 +123,14 @@ TEST (ParserTest, StmtLineTest) {
 
 static char action_test[] = "continue\nbreak\n continue\n break\n continue \n continue\n";
 static char action_test2[] = "{ continue\n break \n continue \n } \n";
+static char action_test3[] = " if ( 3 > 2 ) { break\n } else { break\n } \n";
+static char action_test4[] = " for (3;3;3) { if ( 3+2 * 4 == 7 + 4 ) { break\n } else { break\n } } \n";
 
 apus::ParserContext pctx;
 
 TEST (ParserTest, ActionTest) {
     int result;
-    yy_scan_string(action_test2);
+    yy_scan_string(action_test4);
 
     std::shared_ptr<apus::VirtualMachine> vm = std::make_shared<apus::VirtualMachine>();
     pctx.setVM(vm);

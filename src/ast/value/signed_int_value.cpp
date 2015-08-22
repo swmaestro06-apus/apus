@@ -4,6 +4,9 @@
 
 #include "ast/value/float_value.h"
 
+#include <iostream>
+using namespace std;
+
 namespace apus {
 
     std::shared_ptr<SignedIntValue> SignedIntValue::Create(TypeSpecifier type,
@@ -11,6 +14,7 @@ namespace apus {
 
         // check 'type'
         if (type == S8 || type == S16 || type == S32 || type == S64) {
+            cout << "[SignedIntValue] Created : " << value << endl;
             return std::shared_ptr<SignedIntValue>(new SignedIntValue(type, value));
         }
 
