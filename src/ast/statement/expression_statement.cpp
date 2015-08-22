@@ -11,8 +11,8 @@ namespace apus {
 
     }
 
-    ExpressionStatement::ExpressionStatement(Expression* expression) {
-        ExpressionStatement(std::shared_ptr<Expression>(expression));
+    ExpressionStatement::ExpressionStatement(Expression* expression)
+        : ExpressionStatement(std::shared_ptr<Expression>(expression)) {
     }
 
     ExpressionStatement::~ExpressionStatement() {

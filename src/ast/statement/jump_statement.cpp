@@ -21,8 +21,8 @@ namespace apus {
 
     }
 
-    ReturnStatement::ReturnStatement(Expression *expression) {
-        ReturnStatement( std::shared_ptr<Expression>(expression) );
+    ReturnStatement::ReturnStatement(Expression *expression)
+        : ReturnStatement(std::shared_ptr<Expression>(expression)) {
     }
 
     void ReturnStatement::Execute(Context& context) {
@@ -31,11 +31,10 @@ namespace apus {
 
     ExitStatement::ExitStatement(std::shared_ptr<Expression> expression)
         : expression_(expression) {
-
     }
 
-    ExitStatement::ExitStatement(Expression *expression) {
-        ExitStatement( std::shared_ptr<Expression>(expression) );
+    ExitStatement::ExitStatement(Expression *expression)
+        : ExitStatement( std::shared_ptr<Expression>(expression) ) {
     }
 
     void ExitStatement::Execute(Context &context) {
