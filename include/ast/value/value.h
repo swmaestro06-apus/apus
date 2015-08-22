@@ -36,6 +36,8 @@ namespace apus {
         virtual ValuePtr OperateUnary(
                 const Expression::Type expression_type) const = 0;
 
+        static bool IsTrue(std::shared_ptr<Value> value);
+
     protected:
 
         Value(TypeSpecifier type, std::shared_ptr<void> value)
