@@ -1,5 +1,6 @@
 #include "ast/statement/for_statement.h"
 #include "ast/statement/block.h"
+#include "ast/value/value.h"
 #include "vm/context.h"
 
 namespace apus {
@@ -29,21 +30,39 @@ namespace apus {
     }
 
     void ForStatement::Execute(Context& context) {
-        initialization_->Evaluate(context);
 
-        while (termination_->Evaluate(context)) {
-            body_->Execute(context);
+        if (initialization_) {
+            initialization_->Evaluate(context);
+        }
 
-            if (context.GetBreak()) {
-                context.SetBreak(false);
-                break;
+        while (true) {
+
+            if (termination_) {
+
+                if (Value::IsTrue(termination_->Evaluate(context))) {
+
+                    if (body_) {
+                        body_->Execute(context);
+                    }
+
+                    if (context.GetBreak()) {
+                        context.SetBreak(false);
+                        break;
+                    }
+
+                    if (context.GetContinue()) {
+                        context.SetContinue(false);
+                    }
+
+                    if (increment_) {
+                        increment_->Evaluate(context);
+                    }
+                }
+                else {
+                    break;
+                }
             }
 
-            if (context.GetContinue()) {
-                context.SetContinue(false);
-            }
-
-            increment_->Evaluate(context);
         }
     }
 

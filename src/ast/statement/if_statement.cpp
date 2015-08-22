@@ -1,6 +1,9 @@
 #include "ast/statement/if_statement.h"
 #include "ast/statement/block.h"
 #include "ast/expression.h"
+
+#include "ast/value/value.h"
+
 #include "vm/context.h"
 
 namespace apus {
@@ -25,11 +28,23 @@ namespace apus {
     }
 
     void IfStatement::Execute(Context& context) {
-        if( condition_->Evaluate(context) ) {
-            true_block_->Execute(context);
-        }
-        else {
-            false_block_->Execute(context);
+
+        if (condition_) {
+
+            if (Value::IsTrue(condition_->Evaluate(context))) {
+
+                if (true_block_) {
+                    true_block_->Execute(context);
+                }
+            }
+
+            else {
+
+                if (false_block_) {
+                    false_block_->Execute(context);
+                }
+            }
+
         }
     }
 
