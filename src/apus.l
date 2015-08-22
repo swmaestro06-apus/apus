@@ -108,8 +108,20 @@
     return ID;
 }
 
-'([^'\n|\\'])'     { return CHAR_LITERAL; }
-\"([^"\n]|\\\")*\" { return STRING_LITERAL; }
+'([^'\n|\\'])' {
+    yylval.char_val = yytext[1];
+    return CHAR_LITERAL;
+}
+
+\"([^"\n]|\\\")*\" {
+    char* tmp = (char*)malloc(yyleng-2);
+    yylval.str_val = (char*)malloc(yyleng-2);
+    yytext[yyleng-1] = '\0';
+    sscanf(yytext, "\"%s", tmp);
+    sprintf(yylval.str_val, "%s", tmp);
+    free(tmp);
+    return STRING_LITERAL;
+}
 
 [#]+.*[\n] ;
 [\t ]+ ;

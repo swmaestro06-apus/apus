@@ -131,7 +131,17 @@ expression_opt :
     | expression
     ;
 expression :
-    expression assign_operator expression
+    expression ASSIGN expression
+    | expression ADDASSIGN expression
+    | expression SUBASSIGN expression
+    | expression MULASSIGN expression
+    | expression DIVASSIGN expression
+    | expression MODASSIGN expression
+    | expression ORASSIGN expression
+    | expression XORASSIGN expression
+    | expression ANDASSIGN expression
+    | expression LSASSIGN expression
+    | expression RSASSIGN expression
     | expression LOR expression
     | expression LAND expression
     | expression OR expression
@@ -195,12 +205,6 @@ type_specifier :
     | F32 | F64
     | C8 | C16 | C32
     | STR | STR8 | STR16 | STR32
-    ;
-assign_operator :
-    ASSIGN | ADDASSIGN | SUBASSIGN
-    | MULASSIGN | DIVASSIGN | MODASSIGN
-    | ORASSIGN | ANDASSIGN | XORASSIGN
-    | LSASSIGN | RSASSIGN
     ;
 action_declaration : 
     block_statement
