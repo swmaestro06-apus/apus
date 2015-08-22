@@ -20,6 +20,8 @@ namespace apus {
     }
 
     void ExpressionStatement::Execute(Context& context) {
-        expression_->Evaluate(context);
+        if (expression_) {
+            expression_->Evaluate(context);
+        }
     }
 }
