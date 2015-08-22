@@ -26,6 +26,11 @@ namespace apus {
     }
 
     void ReturnStatement::Execute(Context& context) {
+
+        if (expression_) {
+            expression_->Evaluate(context);
+        }
+
         context.SetReturn(true);
     }
 
@@ -39,6 +44,11 @@ namespace apus {
     }
 
     void ExitStatement::Execute(Context &context) {
+
+        if (expression_) {
+            expression_->Evaluate(context);
+        }
+
         context.SetExit(true);
     }
 
