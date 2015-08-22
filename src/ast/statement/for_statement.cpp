@@ -33,39 +33,55 @@ namespace apus {
 
     void ForStatement::Execute(Context& context) {
 
+        cout << "[FOR] begin " <<endl;
+
         if (initialization_) {
             initialization_->Evaluate(context);
         }
+
+        cout << "[FOR] initialised " << endl;
 
         while (true) {
 
             if (termination_) {
 
                 if (Value::IsTrue(termination_->Evaluate(context))) {
-
+                    
+                    cout << "[FOR] looping.. body begin" << endl;
+                    
                     if (body_) {
                         body_->Execute(context);
                     }
 
+                    cout << "[FOR] body end" << endl;
+
                     if (context.GetBreak()) {
                         context.SetBreak(false);
+                        cout << "[FOR] loop breaking" << endl;
                         break;
                     }
 
                     if (context.GetContinue()) {
                         context.SetContinue(false);
+                        cout << "[FOR] loop continueing" << endl;
                     }
 
+                    cout << "[FOR] increment evaluating" <<endl;
                     if (increment_) {
                         increment_->Evaluate(context);
                     }
+
+                    cout << "[FOR] end of loop " <<endl;
                 }
                 else {
+                    cout << "[FOR] TERMINATING loop" <<endl;
                     break;
                 }
             }
 
         }
+
+        cout << "[FOR] end " << endl;
     }
 
 }

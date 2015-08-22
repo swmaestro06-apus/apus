@@ -204,13 +204,7 @@ expression :
     | expression EQL expression { $$ = new BinaryExpression(Expression::EXP_EQL, $1, $3); }
     | expression NEQ expression { $$ = new BinaryExpression(Expression::EXP_NEQ, $1, $3); }
     | expression LSS expression { $$ = new BinaryExpression(Expression::EXP_LSS, $1, $3); }
-    | expression GTR expression {
-        Expression* expr = new BinaryExpression(Expression::EXP_GTR, $1, $3);
-        cout << "<expression> type of expr is : " << expr->getType() << endl;
-        $$ = expr;
-        cout << "<expression> type of expr is : " << $$->getType() << endl; 
-        
-    }
+    | expression GTR expression { $$ = new BinaryExpression(Expression::EXP_GTR, $1, $3); }
     | expression LEQ expression { $$ = new BinaryExpression(Expression::EXP_LEQ, $1, $3); }
     | expression GEQ expression { $$ = new BinaryExpression(Expression::EXP_GEQ, $1, $3); }
     | expression LSHIFT expression { $$ = new BinaryExpression(Expression::EXP_LSHIFT, $1, $3); }

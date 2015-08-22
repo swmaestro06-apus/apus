@@ -31,20 +31,26 @@ namespace apus {
     }
 
     void IfStatement::Execute(Context& context) {
+    
+        cout << "[IF] begin" << endl;       
 
         if (condition_) {
 
             if (Value::IsTrue(condition_->Evaluate(context))) {
 
                 if (true_block_) {
+                    cout << "[IF] true block begin" << endl;
                     true_block_->Execute(context);
+                    cout << "[IF] true block end" <<endl;
                 }
             }
 
             else {
 
                 if (false_block_) {
+                    cout << "[IF] false block begin" <<endl;
                     false_block_->Execute(context);
+                    cout << "[IF] false block end" <<endl;
                 }
             }
 
