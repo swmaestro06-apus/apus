@@ -30,7 +30,7 @@ namespace apus {
         DataTypePtr Find(const std::string& name);
 
         void SetByteSize(int byte_size);
-        int GetByteSize();
+        virtual int GetByteSize();
 
         void SetInitExpr(Expression* expr);
         ExprPtr GetInitExpr();
@@ -40,8 +40,22 @@ namespace apus {
 
         bool HasChild();
 
-        // For an array data type
+    protected:
+        TypeSpecifier type_;            // type of the data type
+        DataTypeMap map_;               // list of child data types
+        int byte_size_;                 // size of bytes to be assigned
+        int offset_;                    // offset in list of parent data type
+        ExprPtr init_expr_;             // expression to be initialized
+    };
+
+    class ArrayDataType : public DataType {
+    public:
+        ArrayDataType();
+        ArrayDataType(TypeSpecifier type);
+        ~ArrayDataType();
+
         bool IsArray();
+        int GetByteSize() override;
 
         void AddDimension(int dim);
         std::list<int> GetDimensionList();
@@ -49,17 +63,14 @@ namespace apus {
         void SetArraySize(int array_size);
         int GetArraySize();
 
-    private:
+        void SetElement(DataTypePtr elem);
+        void SetElement(DataType* elem);
+        DataTypePtr GetElement() const;
 
-        TypeSpecifier type_;            // type of the data type
-        DataTypeMap map_;               // list of child data types
-        int byte_size_;                 // size of bytes to be assigned
-        int offset_;                    // offset in list of parent data type
-        ExprPtr init_expr_;             // expression to be initialized
-
-        // For an array data type
+    private: 
         int array_size_;                // product of dimension sizes
-        std::list<int> dimension_list_; // containing size of each dimension 
+        std::list<int> dimension_list_; // size of each dimension
+        DataTypePtr elem_data_type_;    // element data type
     };
 
     class DataTypeTable {
@@ -68,10 +79,14 @@ namespace apus {
         DataTypeTable();
         ~DataTypeTable();
 
+        void SetPrimitiveTypes();
+
         void Insert(const std::string& name, DataType* elem);
         void Insert(const std::string& name, DataTypePtr elem);
+
         DataTypePtr Find(const std::string& name);
         DataTypePtr Find(TypeSpecifier type);
+
 
     private:
         DataTypeMap map_;
