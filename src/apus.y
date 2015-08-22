@@ -20,6 +20,8 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
     #include <memory>
     #include <list>
 
+    #include "common/common.h"
+
     #include "ast/statement/statement.h"
     #include "ast/statement/block.h"
     #include "ast/statement/for_statement.h"
@@ -33,6 +35,8 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
     #include "ast/expression.h"
 
     #include "ast/value/value.h"
+    #include "ast/value/signed_int_value.h"
+    #include "ast/value/float_value.h"
 
     using namespace std;
     using namespace apus;
@@ -40,6 +44,7 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
     typedef shared_ptr<Statement> StmtPtr;
     typedef list<StmtPtr> ListStmt;
     typedef shared_ptr<ListStmt> ListStmtPtr; 
+
 }
 
 %union {
@@ -65,11 +70,11 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 %token<str_val> STRING_LITERAL
 %token<str_val> ID
 
-%token<int_val> U8 U16 U32 U64
-%token<int_val> S8 S16 S32 S64
-%token<double_val> F32 F64
-%token<char_val> C8 C16 C32
-%token<str_val> STR STR8 STR16 STR32
+%token<int_val> UINT8 UINT16 UINT32 UINT64
+%token<int_val> SINT8 SINT16 SINT32 SINT64
+%token<double_val> FLOAT32 FLOAT64
+%token<char_val> CHAR8 CHAR16 CHAR32
+%token<str_val> STRING8 STRING16 STRING32
 %token STRUCT CONST UNION
 
 %token L_BRACE R_BRACE L_CASE R_CASE OPEN CLOSE
@@ -108,7 +113,7 @@ data_declaration_opt :
     | data_declaration_list
     ;
 action_declaration_opt :
-    /* empty */ {$$ = nullptr; }
+    /* empty */ { $$ = new list<shared_ptr<Statement>>(); }
     | action_declaration_list
     ;
 line_opt :
@@ -199,7 +204,13 @@ expression :
     | expression EQL expression { $$ = new BinaryExpression(Expression::EXP_EQL, $1, $3); }
     | expression NEQ expression { $$ = new BinaryExpression(Expression::EXP_NEQ, $1, $3); }
     | expression LSS expression { $$ = new BinaryExpression(Expression::EXP_LSS, $1, $3); }
-    | expression GTR expression { $$ = new BinaryExpression(Expression::EXP_GTR, $1, $3); }
+    | expression GTR expression {
+        Expression* expr = new BinaryExpression(Expression::EXP_GTR, $1, $3);
+        cout << "<expression> type of expr is : " << expr->getType() << endl;
+        $$ = expr;
+        cout << "<expression> type of expr is : " << $$->getType() << endl; 
+        
+    }
     | expression LEQ expression { $$ = new BinaryExpression(Expression::EXP_LEQ, $1, $3); }
     | expression GEQ expression { $$ = new BinaryExpression(Expression::EXP_GEQ, $1, $3); }
     | expression LSHIFT expression { $$ = new BinaryExpression(Expression::EXP_LSHIFT, $1, $3); }
@@ -220,8 +231,8 @@ unary_expression :
     ;
 primary_expression :
     OPEN expression CLOSE { $$ = $2; }
-    | INT_LITERAL
-    | DOUBLE_LITERAL
+    | INT_LITERAL { $$ = new ValueExpression(SignedIntValue::Create(TypeSpecifier::S64, $1)); }
+    | DOUBLE_LITERAL { $$ = new ValueExpression(FloatValue::Create(TypeSpecifier::F64, $1)); }
     | CHAR_LITERAL
     | STRING_LITERAL
     | variable_expression
@@ -249,11 +260,11 @@ semi_start :
     line_opt SEMI line_opt
     ;
 type_specifier :
-    U8 | U16 | U32 | U64
-    | S8 | S16 | S32 | S64
-    | F32 | F64
-    | C8 | C16 | C32
-    | STR | STR8 | STR16 | STR32
+    UINT8 | UINT16 | UINT32 | UINT64
+    | SINT8 | SINT16 | SINT32 | SINT64
+    | FLOAT32 | FLOAT64
+    | CHAR8 | CHAR16 | CHAR32
+    | STRING8 | STRING16 | STRING32
     ;
 assign_operator :
     ASSIGN { $$ = Expression::EXP_ASSIGN; }
@@ -280,7 +291,7 @@ block_statement :
     block_start action_declaration_opt block_end { cout << "Block CREATED #statement is " << $2->size() <<endl; $$ = new Block(*$2); }
     ;
 if_statement :
-    IF paren_start expression paren_end block_statement else_if { $$ = new IfStatement($3, $5, $6); }
+    IF paren_start expression paren_end block_statement else_if { cout<<"type of if's cond expr type " << $3->getType() << endl; $$ = new IfStatement($3, $5, $6); }
     ;
 else_if :
     /* empty */ { $$ = nullptr; }

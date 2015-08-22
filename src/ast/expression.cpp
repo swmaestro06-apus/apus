@@ -2,6 +2,9 @@
 #include "ast/value/value.h"
 #include "vm/context.h"
 
+#include <iostream>
+using namespace std;
+
 namespace apus {
 
     // Expression::
@@ -22,16 +25,17 @@ namespace apus {
         : Expression(type),
           left_expression_(leftExpression),
           right_expression_(rightExpression) {
+
+        cout << "[Expression] created type : " << type <<endl; 
+
     }
 
 
     BinaryExpression::BinaryExpression(Type type, Expression* leftExpression,
             Expression* rightExpression)
-    
         : BinaryExpression(type,
                            std::shared_ptr<Expression>(leftExpression),
                            std::shared_ptr<Expression>(rightExpression)) {
-
     }
 
     BinaryExpression::~BinaryExpression() {

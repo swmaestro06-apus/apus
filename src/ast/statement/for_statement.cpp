@@ -3,6 +3,9 @@
 #include "ast/value/value.h"
 #include "vm/context.h"
 
+#include <iostream>
+using namespace std;
+
 namespace apus {
 
     ForStatement::ForStatement(std::shared_ptr<Expression> initialization,

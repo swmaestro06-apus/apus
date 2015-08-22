@@ -6,6 +6,9 @@
 
 #include "vm/context.h"
 
+#include <iostream>
+using namespace std;
+
 namespace apus {
 
     IfStatement::IfStatement(std::shared_ptr<Expression> condition,
@@ -46,6 +49,8 @@ namespace apus {
             }
 
         }
+
+        cout << "[IF] end " <<endl;
     }
 
 }
