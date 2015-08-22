@@ -7,6 +7,7 @@
 #include "ast/statement/statement.h"
 
 #include "ast/value/signed_int_value.h"
+#include "ast/value/unsigned_int_value.h"
 #include "ast/value/float_value.h"
 #include "ast/value/character_value.h"
 #include "ast/value/string_value.h"
@@ -292,4 +293,34 @@ TEST(ASTTest, StringOperation){
         EXPECT_STREQ("123hello" , result->getStringValue().c_str());
         EXPECT_EQ(STR32 , result->getType());
     }
+}
+
+TEST(ASTTest, UnsignedIntOperation) {
+
+    // 2 * -1(18446744073709551615) (S16 * U32)
+    {
+        std::shared_ptr<Expression> _2 = std::make_shared<ValueExpression>(SignedIntValue::Create(S16, 2));
+        std::shared_ptr<Expression> _1 = std::make_shared<ValueExpression>(UnsignedIntValue::Create(U32, -1));
+
+        std::shared_ptr<Expression> mul_expr = std::make_shared<BinaryExpression>(Expression::EXP_MUL, _2, _1);
+
+        std::shared_ptr<UnsignedIntValue> result = std::dynamic_pointer_cast<UnsignedIntValue>(mul_expr->Evaluate(ctx));
+
+        EXPECT_EQ( (2 * 18446744073709551615) , result->getUIntValue());
+        EXPECT_EQ(U32 , result->getType());
+    }
+
+    // 2.5 * -1(18446744073709551615) (F32 * U32)
+    {
+        std::shared_ptr<Expression> _2 = std::make_shared<ValueExpression>(FloatValue::Create(F32, 2.5));
+        std::shared_ptr<Expression> _1 = std::make_shared<ValueExpression>(UnsignedIntValue::Create(U32, -1));
+
+        std::shared_ptr<Expression> mul_expr = std::make_shared<BinaryExpression>(Expression::EXP_MUL, _2, _1);
+
+        std::shared_ptr<FloatValue> result = std::dynamic_pointer_cast<FloatValue>(mul_expr->Evaluate(ctx));
+
+        EXPECT_EQ( (2.5 * 18446744073709551615) , result->getFloatValue());
+        EXPECT_EQ(F32 , result->getType());
+    }
+
 }
