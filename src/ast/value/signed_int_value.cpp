@@ -1,10 +1,8 @@
 #include "ast/value/signed_int_value.h"
+#include "ast/value/unsigned_int_value.h"
 #include "ast/value/float_value.h"
 #include "ast/value/character_value.h"
 #include "ast/value/string_value.h"
-
-#include "ast/expression.h"
-#include "common/common.h"
 
 namespace apus {
 
@@ -39,7 +37,11 @@ namespace apus {
             case S8:
             case S16:
             case S32:
-            case S64: {
+            case S64:
+            case U8:
+            case U16:
+            case U32:
+            case U64: {
 
                 TypeSpecifier return_type = getSize() > another->getSize() ? getType() : another_type;
 
@@ -48,6 +50,9 @@ namespace apus {
                 }
                 else if (C8 <= return_type && return_type <= C32) {
                     return CharacterValue::Create(return_type, this->getIntValue());
+                }
+                else if (U8 <= return_type && return_type <= U32) {
+                    return UnsignedIntValue::Create(return_type, this->getIntValue());
                 }
 
                 return nullptr;

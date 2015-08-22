@@ -45,7 +45,11 @@ namespace apus {
             case S8:
             case S16:
             case S32:
-            case S64: {
+            case S64:
+            case U8:
+            case U16:
+            case U32:
+            case U64:  {
 
                 return this->Copy();
 
