@@ -8,7 +8,6 @@ namespace apus {
     DataType::DataType() {
         byte_size_ = 0;
         offset_ = 0;
-        array_size_ = 0;
     }
 
     DataType::DataType(TypeSpecifier type): DataType() {
@@ -56,13 +55,8 @@ namespace apus {
                 }
                 byte_size_ = byte_size;
             }
-            // case array
-            if (array_size_ > 1) {
-                byte_size_ = byte_size_ * array_size_;
-            } else if (dimension_list_.size() >= 1) {
-                byte_size_ = byte_size_ * GetArraySize();
-            }
         }
+        // If byte_size_ is set, just return it
         return byte_size_;
     }
     
@@ -91,7 +85,22 @@ namespace apus {
         }
     }
 
-    bool DataType::IsArray() {
+    // ArrayDataType class
+
+    ArrayDataType::ArrayDataType() : DataType() {
+        array_size_ = 0;
+    }
+
+    ArrayDataType::ArrayDataType(TypeSpecifier type) 
+        : DataType(type) {
+        array_size_ = 0;
+    }
+
+    ArrayDataType::~ArrayDataType() {
+    }
+
+
+    bool ArrayDataType::IsArray() {
         if (dimension_list_.size() > 0) {
             if (array_size_ <= 1) {
                 GetArraySize();
@@ -102,19 +111,35 @@ namespace apus {
         }
     }
 
-    void DataType::AddDimension(int dim) {
+    int ArrayDataType::GetByteSize() {
+        int byte_size = elem_data_type_->GetByteSize();
+        // If byte_size is not set
+        if (byte_size > 0) {
+            // If array_size_ is set
+            if (array_size_ > 1) {
+                byte_size_ = byte_size * array_size_;
+            // If array_size_ is not set
+            } else if (dimension_list_.size() > 0) {
+                byte_size_ = byte_size * GetArraySize();
+            }
+        }
+        // If byte_size is set, just return it
+        return byte_size_;
+    }
+
+    void ArrayDataType::AddDimension(int dim) {
         dimension_list_.push_front (dim);
     }
 
-    std::list<int> DataType::GetDimensionList() {
+    std::list<int> ArrayDataType::GetDimensionList() {
         return dimension_list_;
     }
 
-    void DataType::SetArraySize(int array_size) {
+    void ArrayDataType::SetArraySize(int array_size) {
         array_size_ = array_size;
     }
 
-    int DataType::GetArraySize() {
+    int ArrayDataType::GetArraySize() {
         // If array_size_ is not set
         if (array_size_ <= 1 && dimension_list_.size() > 0) {
             int array_size = 1;
@@ -133,23 +158,37 @@ namespace apus {
         return array_size_;
     }
 
+    void ArrayDataType::SetElement(DataTypePtr elem) {
+        elem_data_type_ = elem;
+    }
+
+    void ArrayDataType::SetElement(DataType* elem) {
+        // pointer to shared_ptr
+        elem_data_type_ = std::make_shared<DataType>(*elem);
+    }
+
+    DataTypePtr ArrayDataType::GetElement() const {
+        return elem_data_type_;
+    }
+
     // DataTypeTable class
 
     DataTypeTable::DataTypeTable() {
-        int cur = U8;
-        // Add primitive types into data type table's map
-        for (cur = U8; cur <= C32; cur++) {
-            TypeSpecifier type = (TypeSpecifier)cur;
-            map_[apus::ToString[type]] = 
-                std::make_shared<DataType>(type);
-        }
     }
 
     DataTypeTable::~DataTypeTable() {
     }
 
+    void DataTypeTable::SetPrimitiveTypes() {
+        // Add primitive types into data type table's map
+        for (int i = U8; i <= STR32; i++) {
+            TypeSpecifier type = (TypeSpecifier) i;
+            map_[apus::type_to_string[type]] = std::make_shared<DataType>(type);
+        }
+    }
+
     void DataTypeTable::Insert(const std::string& name, DataType* elem) {
-        DataTypePtr elem_ptr(elem);
+        DataTypePtr elem_ptr = std::make_shared<DataType>(*elem);
         map_[name] = elem_ptr;
     }
 
@@ -166,7 +205,7 @@ namespace apus {
     }
 
     DataTypePtr DataTypeTable::Find(TypeSpecifier type) {
-        DataTypeMap::iterator it = map_.find(apus::ToString[type]);
+        DataTypeMap::iterator it = map_.find(apus::type_to_string[type]);
         if (it != map_.end()) {
             return it->second;
         }
