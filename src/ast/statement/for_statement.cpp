@@ -4,10 +4,10 @@
 
 namespace apus {
 
-    ForStatement::ForStatement(std::shared_ptr<Expression> initialization,
-                               std::shared_ptr<Expression> termination,
-                               std::shared_ptr<Expression> increment,
-                               std::shared_ptr<Statement> body)
+    ForStatement::ForStatement(ExprPtr initialization,
+                               ExprPtr termination,
+                               ExprPtr increment,
+                               StmtPtr body)
 
         : initialization_(initialization), termination_(termination),
           increment_(increment), body_(body) {
@@ -18,10 +18,10 @@ namespace apus {
                                Expression* increment,
                                Statement* body) {
 
-        initialization_ = std::shared_ptr<Expression>(initialization);
-        termination_ = std::shared_ptr<Expression>(termination);
-        increment_ = std::shared_ptr<Expression>(increment);
-        body_ = std::shared_ptr<Statement>(body);
+        initialization_ = ExprPtr(initialization);
+        termination_ = ExprPtr(termination);
+        increment_ = ExprPtr(increment);
+        body_ = StmtPtr(body);
     }
 
     ForStatement::~ForStatement() {

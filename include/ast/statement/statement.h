@@ -1,6 +1,8 @@
 #ifndef STATEMENT_H_
 #define STATEMENT_H_
 
+#include <memory>
+
 namespace apus {
 
     class Context;
@@ -28,6 +30,8 @@ namespace apus {
 
     private:
     };
+
+    typedef std::shared_ptr<Statement> StmtPtr;
 
 }
 

@@ -14,18 +14,17 @@ namespace apus {
 
         virtual ~SignedIntValue() {}
 
-        virtual std::shared_ptr<Value> Copy() const override {
+        virtual ValuePtr Copy() const override {
             return SignedIntValue::Create(type_, getIntValue());
         }
 
-        virtual std::shared_ptr<Value> Promote(
-                const std::shared_ptr<Value> another) const override;
+        virtual ValuePtr Promote(const ValuePtr another) const override;
 
-        virtual std::shared_ptr<Value> OperateBinary(
+        virtual ValuePtr OperateBinary(
                 const Expression::Type expression_type,
-                const std::shared_ptr<Value>& right) const override;
+                const ValuePtr& right) const override;
 
-        virtual std::shared_ptr<Value> OperateUnary(
+        virtual ValuePtr OperateUnary(
                 const Expression::Type expression_type) const override;
 
         inline int64_t getIntValue() const {

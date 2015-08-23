@@ -16,8 +16,7 @@ namespace apus {
         return nullptr;
     }
 
-    std::shared_ptr<Value> FloatValue::Promote(
-            const std::shared_ptr<Value> another) const {
+    ValuePtr FloatValue::Promote(const ValuePtr another) const {
 
         const TypeSpecifier another_type = another->getType();
 
@@ -55,11 +54,11 @@ namespace apus {
         return nullptr;
     }
 
-    std::shared_ptr<Value> FloatValue::OperateBinary(
+    ValuePtr FloatValue::OperateBinary(
             const Expression::Type expression_type,
-            const std::shared_ptr<Value> &right_promoted) const {
+            const ValuePtr &right_promoted) const {
 
-        std::shared_ptr<Value> result = nullptr;
+        ValuePtr result = nullptr;
 
         // 'right' value MUST be same type with this's type;
         if (right_promoted->getType() == this->getType()) {
@@ -148,10 +147,10 @@ namespace apus {
         return result;
     }
 
-    std::shared_ptr<Value> FloatValue::OperateUnary(
+    ValuePtr FloatValue::OperateUnary(
             const Expression::Type expression_type) const {
 
-        std::shared_ptr<Value> result = nullptr;
+        ValuePtr result = nullptr;
         double result_value = 0;
 
         switch (expression_type) {

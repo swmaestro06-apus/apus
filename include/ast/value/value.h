@@ -9,6 +9,9 @@
 
 namespace apus {
 
+    class Value;
+    typedef std::shared_ptr<Value> ValuePtr;
+
     class Value {
     public:
 
@@ -21,16 +24,16 @@ namespace apus {
         int getSize() const { return TypeLength(type_); }
 
         // Deep Copy function
-        inline virtual std::shared_ptr<Value> Copy() const { return nullptr; }
+        inline virtual ValuePtr Copy() const { return nullptr; }
 
-        virtual std::shared_ptr<Value> Promote(
-                const std::shared_ptr<Value> another) const = 0;
+        virtual ValuePtr Promote(
+                const ValuePtr another) const = 0;
 
-        virtual std::shared_ptr<Value> OperateBinary(
+        virtual ValuePtr OperateBinary(
                 const Expression::Type expression_type,
-                const std::shared_ptr<Value>& right) const = 0;
+                const ValuePtr& right) const = 0;
 
-        virtual std::shared_ptr<Value> OperateUnary(
+        virtual ValuePtr OperateUnary(
                 const Expression::Type expression_type) const = 0;
 
     protected:

@@ -9,8 +9,8 @@ namespace apus {
 
     class Block : public Statement {
     public:
-        Block(std::list<std::shared_ptr<Statement>> statements);
-        Block(std::shared_ptr<Statement> statement);
+        Block(std::list<StmtPtr> statements);
+        Block(StmtPtr statement);
         virtual ~Block();
 
         virtual Type getType() override { return STMT_BLOCK; }
@@ -18,7 +18,7 @@ namespace apus {
 
     private:
 
-        std::list<std::shared_ptr<Statement>> statements_;
+        std::list<StmtPtr> statements_;
 
     };
 

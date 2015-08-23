@@ -10,13 +10,15 @@ namespace apus {
     class Expression;
     class Block;
 
+    typedef std::shared_ptr<Expression> ExprPtr;
+
     class ForStatement : public Statement {
     public:
 
-        ForStatement (std::shared_ptr<Expression> initialization,
-                      std::shared_ptr<Expression> termination,
-                      std::shared_ptr<Expression> increment,
-                      std::shared_ptr<Statement> body_statement);
+        ForStatement (ExprPtr initialization,
+                      ExprPtr termination,
+                      ExprPtr increment,
+                      StmtPtr body_statement);
 
         ForStatement (Expression* initialization,
                       Expression* termination,
@@ -30,11 +32,11 @@ namespace apus {
 
     private:
 
-        std::shared_ptr<Expression> initialization_;
-        std::shared_ptr<Expression> termination_;
-        std::shared_ptr<Expression> increment_;
+        ExprPtr initialization_;
+        ExprPtr termination_;
+        ExprPtr increment_;
 
-        std::shared_ptr<Statement>  body_;
+        StmtPtr  body_;
     };
 }
 

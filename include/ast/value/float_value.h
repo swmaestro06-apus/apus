@@ -14,17 +14,16 @@ namespace apus {
 
         virtual ~FloatValue() {}
 
-        virtual std::shared_ptr<Value> Copy() const {
+        virtual ValuePtr Copy() const {
             return FloatValue::Create(type_, getFloatValue());
         }
-        virtual std::shared_ptr<Value> Promote(
-                const std::shared_ptr<Value> another) const override;
+        virtual ValuePtr Promote(const ValuePtr another) const override;
 
-        virtual std::shared_ptr<Value> OperateBinary(
+        virtual ValuePtr OperateBinary(
                 const Expression::Type expression_type,
-                const std::shared_ptr<Value>& right) const override;
+                const ValuePtr& right) const override;
 
-        virtual std::shared_ptr<Value> OperateUnary(
+        virtual ValuePtr OperateUnary(
                 const Expression::Type expression_type) const override;
 
         double getFloatValue() const {

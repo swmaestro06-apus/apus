@@ -6,8 +6,8 @@
 
 namespace apus {
 
-    std::shared_ptr<SignedIntValue> SignedIntValue::Create(
-            TypeSpecifier type, int64_t value) {
+    std::shared_ptr<SignedIntValue> SignedIntValue::Create(TypeSpecifier type,
+                                                           int64_t value) {
 
         // check 'type'
         if (type == S8 || type == S16 || type == S32 || type == S64) {
@@ -17,8 +17,7 @@ namespace apus {
         return nullptr;
     }
 
-    std::shared_ptr<Value> SignedIntValue::Promote(
-            const std::shared_ptr<Value> another) const {
+    ValuePtr SignedIntValue::Promote(const ValuePtr another) const {
 
         // PROMOTE THIS, NOT another
 
@@ -52,11 +51,11 @@ namespace apus {
         }
     }
 
-    std::shared_ptr<Value> SignedIntValue::OperateBinary(
+    ValuePtr SignedIntValue::OperateBinary(
             const Expression::Type expression_type,
-            const std::shared_ptr<Value> &right_promoted) const {
+            const ValuePtr &right_promoted) const {
 
-        std::shared_ptr<Value> result = nullptr;
+        ValuePtr result = nullptr;
 
         // 'right' value MUST be same type with this's type;
         if (right_promoted->getType() == this->getType()) {
@@ -147,10 +146,10 @@ namespace apus {
         return result;
     }
 
-    std::shared_ptr<Value> SignedIntValue::OperateUnary(
+    ValuePtr SignedIntValue::OperateUnary(
             const Expression::Type expression_type) const {
 
-        std::shared_ptr<Value> result = nullptr;
+        ValuePtr result = nullptr;
         int64_t result_value = 0;
 
         switch (expression_type) {

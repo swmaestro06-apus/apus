@@ -9,9 +9,11 @@ namespace apus {
     class Expression;
     class Context;
 
+    typedef std::shared_ptr<Expression> ExprPtr;
+
     class ExpressionStatement : public Statement {
     public:
-        ExpressionStatement(std::shared_ptr<Expression> expression);
+        ExpressionStatement(ExprPtr expression);
         ExpressionStatement(Expression* expression);
         virtual ~ExpressionStatement();
 
@@ -20,7 +22,7 @@ namespace apus {
 
     private:
 
-        std::shared_ptr<Expression> expression_;
+        ExprPtr expression_;
 
     };
 
