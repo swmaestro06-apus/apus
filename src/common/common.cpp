@@ -4,7 +4,7 @@ using namespace std;
 
 namespace apus {
 
-    int TypeLength(VarType type) {
+    int TypeLength(TypeSpecifier type) {
         int length = 0;
         switch (type) {
             case U8:
@@ -38,9 +38,9 @@ namespace apus {
                 length = 0; // not fixed. variable-length
                 break;
 
-                // exception
+            // exception
             default:
-                cout << "There's no matched variable type." << endl;
+                DispErr("There's no matched variable type.");
                 length = -1;
                 break;
         }
