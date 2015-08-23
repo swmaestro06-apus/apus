@@ -37,6 +37,7 @@ namespace apus {
                 const Expression::Type expression_type) const = 0;
 
         static bool IsTrue(std::shared_ptr<Value> value);
+        static std::shared_ptr<Value> CreateInitial(TypeSpecifier type);
 
     protected:
 
