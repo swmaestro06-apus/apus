@@ -26,10 +26,12 @@ namespace apus {
 
 
     BinaryExpression::BinaryExpression(Type type, Expression* leftExpression,
-            Expression* rightExpression) {
-        std::shared_ptr<Expression> left(leftExpression);
-        std::shared_ptr<Expression> right(rightExpression);
-        BinaryExpression(type, left, right);
+            Expression* rightExpression)
+    
+        : BinaryExpression(type,
+                           std::shared_ptr<Expression>(leftExpression),
+                           std::shared_ptr<Expression>(rightExpression)) {
+
     }
 
     BinaryExpression::~BinaryExpression() {
@@ -73,11 +75,9 @@ namespace apus {
 
     }
 
-    UnaryExpression::UnaryExpression(Type type, Expression* expression) {
+    UnaryExpression::UnaryExpression(Type type, Expression* expression)
 
-        std::shared_ptr<Expression> shared_expr(expression);
-        UnaryExpression(type, shared_expr);
-
+        : UnaryExpression(type, std::shared_ptr<Expression>(expression)) {
     }
 
     UnaryExpression::~UnaryExpression() {
@@ -100,8 +100,8 @@ namespace apus {
 
     }
 
-    ValueExpression::ValueExpression(Value *value) {
-        ValueExpression(std::shared_ptr<Value>(value));
+    ValueExpression::ValueExpression(Value *value)
+        : ValueExpression(std::shared_ptr<Value>(value)) {
     }
 
     std::shared_ptr<Value> ValueExpression::Evaluate(Context &context) {
@@ -114,8 +114,8 @@ namespace apus {
         : Expression(EXP_VARIABLE), name_(name) {
     }
 
-    VariableExpression::VariableExpression(char *name) {
-        VariableExpression(std::string(name));
+    VariableExpression::VariableExpression(char *name)
+        : VariableExpression(std::string(name)) {
     }
 
     VariableExpression::~VariableExpression() {
@@ -140,8 +140,8 @@ namespace apus {
     }
 
     AssignExpression::AssignExpression(Type type, char* name,
-                                       Expression* expression) {
-        AssignExpression(type, std::string(name), std::shared_ptr<Expression>(expression));
+                                       Expression* expression)
+        : AssignExpression(type, std::string(name), std::shared_ptr<Expression>(expression)) {
     }
 
     AssignExpression::~AssignExpression() {
@@ -182,8 +182,8 @@ namespace apus {
 
     }
 
-    MemberExpression::MemberExpression(char* parent_name, char* child_name) {
-        MemberExpression(std::string(parent_name), std::string(child_name));
+    MemberExpression::MemberExpression(char* parent_name, char* child_name)
+        : MemberExpression(std::string(parent_name), std::string(child_name)) {
     }
 
     MemberExpression::~MemberExpression() {
