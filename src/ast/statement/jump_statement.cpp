@@ -16,26 +16,26 @@ namespace apus {
 
     }
 
-    ReturnStatement::ReturnStatement(std::shared_ptr<Expression> expression)
+    ReturnStatement::ReturnStatement(ExprPtr expression)
         : expression_(expression) {
 
     }
 
     ReturnStatement::ReturnStatement(Expression *expression) {
-        ReturnStatement( std::shared_ptr<Expression>(expression) );
+        ReturnStatement( ExprPtr(expression) );
     }
 
     void ReturnStatement::Execute(Context& context) {
         context.SetReturn(true);
     }
 
-    ExitStatement::ExitStatement(std::shared_ptr<Expression> expression)
+    ExitStatement::ExitStatement(ExprPtr expression)
         : expression_(expression) {
 
     }
 
     ExitStatement::ExitStatement(Expression *expression) {
-        ExitStatement( std::shared_ptr<Expression>(expression) );
+        ExitStatement( ExprPtr(expression) );
     }
 
     void ExitStatement::Execute(Context &context) {

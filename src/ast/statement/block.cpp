@@ -3,11 +3,11 @@
 
 namespace apus {
 
-    Block::Block(std::list<std::shared_ptr<Statement>> statements)
+    Block::Block(std::list<StmtPtr> statements)
         : statements_(statements) {
     }
 
-    Block::Block(std::shared_ptr<Statement> statement) {
+    Block::Block(StmtPtr statement) {
         statements_.push_back(statement);
     }
 
@@ -17,7 +17,7 @@ namespace apus {
 
     void Block::Execute(Context& context) {
 
-        for (std::shared_ptr<Statement> stmt : statements_) {
+        for (StmtPtr stmt : statements_) {
             stmt->Execute(context);
 
             if (context.GetBreak() || context.GetContinue()

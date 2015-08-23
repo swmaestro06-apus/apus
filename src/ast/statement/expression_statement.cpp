@@ -6,13 +6,13 @@
 namespace apus {
 
     ExpressionStatement::ExpressionStatement(
-            std::shared_ptr<Expression> expression)
+            ExprPtr expression)
             : expression_(expression) {
 
     }
 
     ExpressionStatement::ExpressionStatement(Expression* expression) {
-        ExpressionStatement(std::shared_ptr<Expression>(expression));
+        ExpressionStatement(ExprPtr(expression));
     }
 
     ExpressionStatement::~ExpressionStatement() {

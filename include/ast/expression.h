@@ -70,6 +70,8 @@ namespace apus {
         Type type_;
     };
 
+    typedef std::shared_ptr<Expression> ExprPtr;
+
     class BinaryExpression : public Expression {
     public:
         BinaryExpression(Type type,

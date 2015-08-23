@@ -9,11 +9,13 @@ namespace apus {
     class Expression;
     class Block;
 
+    typedef std::shared_ptr<Expression> ExprPtr;
+
     class IfStatement : public Statement {
     public:
-        IfStatement(std::shared_ptr<Expression> condition,
-                    std::shared_ptr<Statement> true_block,
-                    std::shared_ptr<Statement> false_block);
+        IfStatement(ExprPtr condition,
+                    StmtPtr true_block,
+                    StmtPtr false_block);
 
         IfStatement(Expression* condition,
                     Statement* true_block,
@@ -25,10 +27,10 @@ namespace apus {
         virtual void Execute(Context& context) override;
 
     private:
-        std::shared_ptr<Expression> condition_;
+        ExprPtr condition_;
 
-        std::shared_ptr<Statement> true_block_;
-        std::shared_ptr<Statement> false_block_;
+        StmtPtr true_block_;
+        StmtPtr false_block_;
     };
 
 }

@@ -10,6 +10,8 @@ namespace apus {
     class ForStatement;
     class Expression;
 
+    typedef std::shared_ptr<Expression> ExprPtr;
+
     class BreakStatement : public Statement {
     public:
 
@@ -45,7 +47,7 @@ namespace apus {
 
     private:
 
-        std::shared_ptr<Expression> expression_;
+        ExprPtr expression_;
 
     };
 
@@ -61,7 +63,7 @@ namespace apus {
 
     private:
 
-        std::shared_ptr<Expression> expression_;
+        ExprPtr expression_;
 
     };
 
