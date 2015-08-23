@@ -41,7 +41,7 @@ namespace apus {
             var->SetValue(nullptr);
         }
 
-        context.InsertVariable(name_, var);
+        context.InsertVariable(var);
 
     }
 
