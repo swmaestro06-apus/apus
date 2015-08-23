@@ -166,10 +166,22 @@ primary_expression :
     | CHAR_LITERAL
     | STRING_LITERAL
     | variable_expression
+    | function_expression
     ;
 variable_expression :
     ID
     | ID dimension_array
+    ;
+function_expression :
+    ID OPEN arg_expression_opt CLOSE
+    ;
+arg_expression_opt :
+    /* empty */
+    | arg_expression_list
+    ;
+arg_expression_list :
+    expression
+    | expression comma_line_opt arg_expression_list
     ;
 comma_line_opt :
     COMMA line_opt
