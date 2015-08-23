@@ -55,6 +55,12 @@ static char expr_stmt_test_1[] = "\
 3 ^ 4   \n\
 !4      \n\
 ~4      \n\
+0xff02ff\n\
+0b1011  \n\
+076041  \n\
+a.b.c   \n\
+a = a.b + 0xff   \n\
+b = 'a' + \"ss\" \n\
 ";
 static char block_stmt_test_1[] = "\
 {   var u8 a = 7        \n\
