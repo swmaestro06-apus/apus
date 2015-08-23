@@ -10,23 +10,23 @@
 %option yylineno
 
 %%
-"u8"    { return U8; }
-"u16"   { return U16; }
-"u32"   { return U32; }
-"u64"   { return U64; }
-"s8"    { return S8; }
-"s16"   { return S16; }
-"s32"   { return S32; }
-"s64"   { return S64; }
-"f32"   { return F32; }
-"f64"   { return F64; }
-"c8"    { return C8; }
-"c16"   { return C16; }
-"c32"   { return C32; }
-"str"   { return STR; }
-"str8"  { return STR8; }
-"str16" { return STR16; }
-"str32" { return STR32; }
+"u8"    { return UINT8; }
+"u16"   { return UINT16; }
+"u32"   { return UINT32; }
+"u64"   { return UINT64; }
+"s8"    { return SINT8; }
+"s16"   { return SINT16; }
+"s32"   { return SINT32; }
+"s64"   { return SINT64; }
+"f32"   { return FLOAT32; }
+"f64"   { return FLOAT64; }
+"c8"    { return CHAR8; }
+"c16"   { return CHAR16; }
+"c32"   { return CHAR32; }
+"str"   { return STRING; }
+"str8"  { return STRING8; }
+"str16" { return STRING16; }
+"str32" { return STRING32; }
 "var"   { return VAR; }
 
 "include"  { return INCLUDE; }
