@@ -29,7 +29,7 @@ namespace apus {
 
     void VirtualMachine::Run() {
         static int count = 0;
-        Context context;
+        Context context(data_type_table_);
         std::cout << "vm is Running..." << std::endl;
         
         for(std::shared_ptr<Statement> stmt : stmt_list_) {

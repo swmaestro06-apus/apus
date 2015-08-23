@@ -3,15 +3,39 @@
 
 #include <memory>
 #include <list>
+#include <string>
 #include "ast/value/value.h"
 
+using namespace std;
+
 namespace apus {
+
+    class Value;
+
+    class DataType;
+    class DataTypeTable;
+
+    class Variable;
+    class VariableTable;
 
     class Context {
     public:
 
-        Context();
+        Context(shared_ptr<DataTypeTable> data_type_table = nullptr);
+        Context(Context* context);
         virtual ~Context();
+
+        Context            BlockBegin();
+        shared_ptr<Value>  BlockEnd();
+
+        // Find
+        shared_ptr<DataType> FindDataType(string name);
+        shared_ptr<Variable> FindVariable(string name);
+        // TODO : FindFunction();
+
+        // Insert
+        void InsertVariable(shared_ptr<Variable> variable);
+        // TODO : InsertFunction();
 
         inline bool GetBreak() { return break_; }
         inline bool GetContinue() { return continue_; }
@@ -28,6 +52,14 @@ namespace apus {
         void SetArgList(std::list<std::shared_ptr<Value>> _arg_list) { arg_list_ = _arg_list; }
 
     private:
+
+        Context* parent_; // I'm not having it
+
+        shared_ptr<DataTypeTable> data_type_table_;
+        shared_ptr<VariableTable> variable_table_;
+
+        list<shared_ptr<DataType>> param_list_;
+        shared_ptr<Value> return_value_;
 
         bool break_;
         bool continue_;
