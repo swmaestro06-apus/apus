@@ -11,11 +11,10 @@ namespace apus {
     ExpressionStatement::ExpressionStatement(
             ExprPtr expression)
             : expression_(expression) {
-
     }
 
-    ExpressionStatement::ExpressionStatement(Expression* expression) {
-        ExpressionStatement(ExprPtr(expression));
+    ExpressionStatement::ExpressionStatement(Expression* expression)
+        : ExpressionStatement(ExprPtr(expression)) {
     }
 
     ExpressionStatement::~ExpressionStatement() {
