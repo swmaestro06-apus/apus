@@ -53,6 +53,8 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
     int char_val;
     char* str_val;
 
+    TypeSpecifier type_specifier;
+
     list<shared_ptr<Statement>>* list_stmt;
 
     Statement* stmt;
@@ -95,11 +97,12 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 %right NOT REVERSE
 
 %type<list_stmt> action_declaration_list action_declaration_opt
-%type<stmt> action_declaration for_statement if_statement else_if jump_statement expression_statement var_def_statement
+%type<stmt> action_declaration for_statement if_statement else_if jump_statement expression_statement var_def_statement variable_definition
 %type<block_stmt> block_statement
 
-%type<expr> expression expression_opt unary_expression primary_expression 
+%type<expr> expression expression_opt unary_expression primary_expression variable_expression init_expression
 %type<expr_type> assign_operator
+%type<type_specifier> type_specifier
 
 %%
 program :
@@ -195,7 +198,7 @@ expression_opt :
     | expression
     ;
 expression :
-    expression assign_operator expression { /* $$ = new AssignExpression($2, $1, $3); */ }
+    variable_expression assign_operator expression { $$ = new AssignExpression($2, $1, $3); cout << "asdf" <<endl;}
     | expression LOR expression { $$ = new BinaryExpression(Expression::EXP_LOR, $1, $3); }
     | expression LAND expression { $$ = new BinaryExpression(Expression::EXP_LAND, $1, $3); }
     | expression OR expression { $$ = new BinaryExpression(Expression::EXP_OR, $1, $3); }
@@ -209,7 +212,7 @@ expression :
     | expression GEQ expression { $$ = new BinaryExpression(Expression::EXP_GEQ, $1, $3); }
     | expression LSHIFT expression { $$ = new BinaryExpression(Expression::EXP_LSHIFT, $1, $3); }
     | expression RSHIFT expression { $$ = new BinaryExpression(Expression::EXP_RSHIFT, $1, $3); }
-    | expression ADD expression { $$ = new BinaryExpression(Expression::EXP_ADD, $1, $3); }
+    | expression ADD expression { $$ = new BinaryExpression(Expression::EXP_ADD, $1, $3); cout << "add" <<endl;}
     | expression SUB expression { $$ = new BinaryExpression(Expression::EXP_SUB, $1, $3); }
     | expression MUL expression { $$ = new BinaryExpression(Expression::EXP_MUL, $1, $3); }
     | expression DIV expression { $$ = new BinaryExpression(Expression::EXP_DIV, $1, $3); }
@@ -232,7 +235,7 @@ primary_expression :
     | variable_expression
     ;
 variable_expression :
-    ID
+    ID { $$ = new VariableExpression(std::string($1)); }
     | ID dimension_array
     ;
 comma_line_opt :
@@ -254,11 +257,22 @@ semi_start :
     line_opt SEMI line_opt
     ;
 type_specifier :
-    UINT8 | UINT16 | UINT32 | UINT64
-    | SINT8 | SINT16 | SINT32 | SINT64
-    | FLOAT32 | FLOAT64
-    | CHAR8 | CHAR16 | CHAR32
-    | STRING8 | STRING16 | STRING32
+    UINT8 { $$ = TypeSpecifier::U8; }
+    | UINT16 { $$ = TypeSpecifier::U16; }
+    | UINT32 { $$ = TypeSpecifier::U32; }
+    | UINT64 { $$ = TypeSpecifier::U64; }
+    | SINT8 { $$ = TypeSpecifier::S8; }
+    | SINT16 { $$ = TypeSpecifier::S16; }
+    | SINT32 { $$ = TypeSpecifier::S32; }
+    | SINT64 { $$ = TypeSpecifier::S64; }
+    | FLOAT32 { $$ = TypeSpecifier::F32; }
+    | FLOAT64 { $$ = TypeSpecifier::F64; }
+    | CHAR8 { $$ = TypeSpecifier::C8; }
+    | CHAR16 { $$ = TypeSpecifier::C16; }
+    | CHAR32 { $$ = TypeSpecifier::C32; }
+    | STRING8 { $$ = TypeSpecifier::STR8; }
+    | STRING16 { $$ = TypeSpecifier::STR16; }
+    | STRING32 { $$ = TypeSpecifier::STR32; }
     ;
 assign_operator :
     ASSIGN { $$ = Expression::EXP_ASSIGN; }
@@ -305,12 +319,12 @@ expression_statement :
     expression line_list { $$ = new ExpressionStatement($1); }
     ;
 var_def_statement :
-    VAR variable_definition line_list { $$ = new VarDefStatement(); }
+    VAR variable_definition line_list { $$ = $2;}
     ;
 variable_definition :
     type_specifier ID
     | struct_union_type ID ID
-    | type_specifier ID ASSIGN init_expression
+    | type_specifier ID ASSIGN init_expression { $$ = new VarDefStatement($1, $2, $4); }
     | struct_union_type ID ID ASSIGN init_expression
     | type_specifier array
     | struct_union_type ID array
