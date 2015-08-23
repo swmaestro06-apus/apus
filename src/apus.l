@@ -10,23 +10,23 @@
 %option yylineno
 
 %%
-"u8"    { return U8; }
-"u16"   { return U16; }
-"u32"   { return U32; }
-"u64"   { return U64; }
-"s8"    { return S8; }
-"s16"   { return S16; }
-"s32"   { return S32; }
-"s64"   { return S64; }
-"f32"   { return F32; }
-"f64"   { return F64; }
-"c8"    { return C8; }
-"c16"   { return C16; }
-"c32"   { return C32; }
-"str"   { return STR; }
-"str8"  { return STR8; }
-"str16" { return STR16; }
-"str32" { return STR32; }
+"u8"    { return UINT8; }
+"u16"   { return UINT16; }
+"u32"   { return UINT32; }
+"u64"   { return UINT64; }
+"s8"    { return SINT8; }
+"s16"   { return SINT16; }
+"s32"   { return SINT32; }
+"s64"   { return SINT64; }
+"f32"   { return FLOAT32; }
+"f64"   { return FLOAT64; }
+"c8"    { return CHAR8; }
+"c16"   { return CHAR16; }
+"c32"   { return CHAR32; }
+"str"   { return STRING; }
+"str8"  { return STRING8; }
+"str16" { return STRING16; }
+"str32" { return STRING32; }
 "var"   { return VAR; }
 
 "include"  { return INCLUDE; }
@@ -108,8 +108,50 @@
     return ID;
 }
 
-'([^'\n|\\'])'     { return CHAR_LITERAL; }
-\"([^"\n]|\\\")*\" { return STRING_LITERAL; }
+'([^'\n|\\'])' {
+    yylval.char_val = yytext[1];
+    return CHAR_LITERAL;
+}
+
+\"([^"\n]|\\\")*\" {
+    char* tmp = (char*)malloc(yyleng-2);
+    yylval.str_val = (char*)malloc(yyleng-2);
+    yytext[yyleng-1] = '\0';
+    sscanf(yytext, "\"%s", tmp);
+    sprintf(yylval.str_val, "%s", tmp);
+    free(tmp);
+    return STRING_LITERAL;
+}
+
+[0][b][0-1]* {
+    int num_tmp;
+    char* tmp = (char*)malloc(yyleng);
+    sscanf(yytext, "0b%s", tmp);
+    num_tmp = strtol(tmp, NULL, 2);
+    yylval.int_val = num_tmp;
+    free(tmp);
+    return BINARY_LITERAL;
+}
+
+[0][0-8]* {
+    int num_tmp;
+    char* tmp = (char*)malloc(yyleng);
+    sscanf(yytext, "0%s", tmp);
+    num_tmp = strtol(tmp, NULL, 8);
+    yylval.int_val = num_tmp;
+    free(tmp);
+    return OCTA_LITERAL;
+}
+
+[0][x][0-9a-fA-F] {
+    int num_tmp;
+    char* tmp = (char*)malloc(yyleng);
+    sscanf(yytext, "0x%s", tmp);
+    num_tmp = strtol(tmp, NULL, 16);
+    yylval.int_val = num_tmp;
+    free(tmp);
+    return HEXA_LITERAL;
+}
 
 [#]+.*[\n] ;
 [\t ]+ ;
