@@ -26,7 +26,7 @@ namespace apus {
     Variable::~Variable() {
     }
 
-    inline std::string Variable::GetName() {
+    std::string Variable::GetName() {
         return name_;
     }
 
@@ -34,7 +34,7 @@ namespace apus {
         name_ = name;
     }
 
-    inline DataTypePtr Variable::GetType() {
+    DataTypePtr Variable::GetType() {
         return type_;
     }
 
@@ -47,7 +47,7 @@ namespace apus {
         type_ = type_ptr;
     }
 
-    inline ValuePtr Variable::GetValue() {
+    ValuePtr Variable::GetValue() {
         return value_;
     }
 
@@ -122,8 +122,7 @@ namespace apus {
 
     // VariableTable class
 
-    VariableTable::VariableTable(std::shared_ptr<VariableTable> parent)
-        : parent_(parent) {
+    VariableTable::VariableTable() {
 
     }
 
