@@ -1,5 +1,7 @@
 #include "ast/expression.h"
 #include "ast/value/value.h"
+
+#include "vm/variable_table.h"
 #include "vm/context.h"
 
 #include <iostream>
@@ -116,6 +118,7 @@ namespace apus {
 
     VariableExpression::VariableExpression(std::string name)
         : Expression(EXP_VARIABLE), name_(name) {
+        cout << "[Variable Expression] var name " << name << endl;
     }
 
     VariableExpression::VariableExpression(char *name)
@@ -127,25 +130,29 @@ namespace apus {
     }
 
     std::shared_ptr<Value> VariableExpression::Evaluate(Context &context) {
-        std::shared_ptr<Value> result = nullptr;
+        cout << "[Variable Expression] EVALUATE " << name_ << endl;
+        return context.FindVariable(name_)->GetValue();
+    }
 
-        // find variable
 
-        return result;
+    std::shared_ptr<Variable> VariableExpression::getVariable(Context& context) {
+        return context.FindVariable(name_);
     }
 
     // AssignExpression::
 
     AssignExpression::AssignExpression(Type type,
-                                       std::string name,
+                                       std::shared_ptr<Expression> var_expr,
                                        std::shared_ptr<Expression> expression)
-        : Expression(type), name_(name), expression_(expression) {
+        : Expression(type), var_expr_(var_expr), expression_(expression) {
 
     }
 
-    AssignExpression::AssignExpression(Type type, char* name,
+    AssignExpression::AssignExpression(Type type,
+                                       Expression* var_expr,
                                        Expression* expression)
-        : AssignExpression(type, std::string(name), std::shared_ptr<Expression>(expression)) {
+        : AssignExpression(type, std::shared_ptr<Expression>(var_expr),
+                           std::shared_ptr<Expression>(expression)) {
     }
 
     AssignExpression::~AssignExpression() {
@@ -157,7 +164,7 @@ namespace apus {
         if (expression_ != nullptr) {
 
             // Find left value from the variable table
-            std::shared_ptr<Value> left = nullptr;
+            std::shared_ptr<Value> left = var_expr_->Evaluate(context);
             std::shared_ptr<Value> right = expression_->Evaluate(context);
 
             if (left != nullptr && right != nullptr) {
@@ -169,11 +176,13 @@ namespace apus {
                     std::shared_ptr<Value> result =
                             left->OperateBinary(this->getType(), right_promoted);
 
-                    // and, put 'result' value into the variable
+                    // TODO : and, put 'result' value into the variable
+                    std::shared_ptr<Variable> var = std::dynamic_pointer_cast<VariableExpression>(var_expr_)->getVariable(context);
+                    var->SetValue(result);
 
+                    return result;
                 }
             }
-            return left;
         }
         return nullptr;
     }
