@@ -7,6 +7,8 @@
 #include <string>
 #include <list>
 #include <map>
+#include <cstdarg>
+
 using namespace std;
 
 namespace apus {
