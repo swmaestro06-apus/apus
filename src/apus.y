@@ -29,11 +29,11 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 %token<str_val> ID
 %token<int_val> BINARY_LITERAL OCTA_LITERAL HEXA_LITERAL
 
-%token<int_val> U8 U16 U32 U64
-%token<int_val> S8 S16 S32 S64
-%token<double_val> F32 F64
-%token<char_val> C8 C16 C32
-%token<str_val> STR STR8 STR16 STR32
+%token<int_val> UINT8 UINT16 UINT32 UINT64
+%token<int_val> SINT8 SINT16 SINT32 SINT64
+%token<double_val> FLOAT32 FLOAT64
+%token<char_val> CHAR8 CHAR16 CHAR32
+%token<str_val> STRING STRING8 STRING16 STRING32
 %token STRUCT CONST UNION
 
 %token L_BRACE R_BRACE L_CASE R_CASE OPEN CLOSE
@@ -205,11 +205,11 @@ semi_start :
     line_opt SEMI line_opt
     ;
 type_specifier :
-    U8 | U16 | U32 | U64
-    | S8 | S16 | S32 | S64
-    | F32 | F64
-    | C8 | C16 | C32
-    | STR | STR8 | STR16 | STR32
+    UINT8 | UINT16 | UINT32 | UINT64
+    | SINT8 | SINT16 | SINT32 | SINT64
+    | FLOAT32 | FLOAT64
+    | CHAR8 | CHAR16 | CHAR32
+    | STRING | STRING8 | STRING16 | STRING32
     ;
 action_declaration : 
     block_statement
