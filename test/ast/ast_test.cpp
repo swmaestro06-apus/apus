@@ -8,6 +8,7 @@
 
 #include "ast/value/signed_int_value.h"
 #include "ast/value/float_value.h"
+#include "ast/value/character_value.h"
 
 #include "vm/context.h"
 
@@ -90,30 +91,6 @@ TEST (ASTTest, Expression_ASMD) {
         std::shared_ptr<FloatValue> result = std::dynamic_pointer_cast<FloatValue>(div_expr->Evaluate(ctx));
 
         EXPECT_EQ( (2 * 3.5 / 3) , result->getFloatValue());
-    }
-
-    // 2 * 3.5 (S16 * F32)
-    {
-        std::shared_ptr<Expression> _2 = std::make_shared<ValueExpression>(SignedIntValue::Create(S16, 2));
-        std::shared_ptr<Expression> _3_5 = std::make_shared<ValueExpression>(FloatValue::Create(F32, 3.5));
-
-        std::shared_ptr<Expression> mul_expr = std::make_shared<BinaryExpression>(Expression::EXP_MUL, _2, _3_5);
-
-        std::shared_ptr<FloatValue> result = std::dynamic_pointer_cast<FloatValue>(mul_expr->Evaluate(ctx));
-
-        EXPECT_EQ( (2 * 3.5) , result->getFloatValue());
-    }
-
-    // 2 * 3.5 (S64 * F32)
-    {
-        std::shared_ptr<Expression> _2 = std::make_shared<ValueExpression>(SignedIntValue::Create(S64, 2));
-        std::shared_ptr<Expression> _3_5 = std::make_shared<ValueExpression>(FloatValue::Create(F32, 3.5));
-
-        std::shared_ptr<Expression> mul_expr = std::make_shared<BinaryExpression>(Expression::EXP_MUL, _2, _3_5);
-
-        std::shared_ptr<FloatValue> result = std::dynamic_pointer_cast<FloatValue>(mul_expr->Evaluate(ctx));
-
-        EXPECT_EQ( (2 * 3.5) , result->getFloatValue());
     }
 
 }
@@ -202,5 +179,48 @@ TEST (ASTTest, Expression_Float_EQL_Compare) {
     // a <= b
     result = std::dynamic_pointer_cast<FloatValue>(leq_expr->Evaluate(ctx));
     EXPECT_TRUE(result->getFloatValue());
+
+}
+
+TEST (ASTTest, Expression_Promote) {
+
+    // 2 * 3.5 (S16 * F32)
+    {
+        std::shared_ptr<Expression> _2 = std::make_shared<ValueExpression>(SignedIntValue::Create(S16, 2));
+        std::shared_ptr<Expression> _3_5 = std::make_shared<ValueExpression>(FloatValue::Create(F32, 3.5));
+
+        std::shared_ptr<Expression> mul_expr = std::make_shared<BinaryExpression>(Expression::EXP_MUL, _2, _3_5);
+
+        std::shared_ptr<FloatValue> result = std::dynamic_pointer_cast<FloatValue>(mul_expr->Evaluate(ctx));
+
+        EXPECT_EQ( (2 * 3.5) , result->getFloatValue());
+        EXPECT_EQ(F32 , result->getType());
+    }
+
+    // 2 * 3.5 (S64 * F32)
+    {
+        std::shared_ptr<Expression> _2 = std::make_shared<ValueExpression>(SignedIntValue::Create(S64, 2));
+        std::shared_ptr<Expression> _3_5 = std::make_shared<ValueExpression>(FloatValue::Create(F32, 3.5));
+
+        std::shared_ptr<Expression> mul_expr = std::make_shared<BinaryExpression>(Expression::EXP_MUL, _2, _3_5);
+
+        std::shared_ptr<FloatValue> result = std::dynamic_pointer_cast<FloatValue>(mul_expr->Evaluate(ctx));
+
+        EXPECT_EQ( (2 * 3.5) , result->getFloatValue());
+        EXPECT_EQ(F32 , result->getType());
+    }
+
+    // 'A' < 'B' (C8 + C16)
+    {
+        std::shared_ptr<Expression> _a = std::make_shared<ValueExpression>(CharacterValue::Create(C8, 'A'));
+        std::shared_ptr<Expression> _b = std::make_shared<ValueExpression>(CharacterValue::Create(C16, 'B'));
+
+        std::shared_ptr<Expression> lss_expr = std::make_shared<BinaryExpression>(Expression::EXP_LSS, _a, _b);
+
+        std::shared_ptr<CharacterValue> result = std::dynamic_pointer_cast<CharacterValue>(lss_expr->Evaluate(ctx));
+
+        EXPECT_TRUE(result->getCharValue());
+        EXPECT_EQ(C16 , result->getType());
+    }
 
 }
