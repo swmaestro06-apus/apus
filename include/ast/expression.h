@@ -7,6 +7,7 @@
 namespace apus {
 
     class Value;
+    class Variable;
     class Context;
 
     class Expression {
@@ -127,6 +128,7 @@ namespace apus {
         virtual ~VariableExpression();
 
         virtual std::shared_ptr<Value> Evaluate(Context& context);
+        std::shared_ptr<Variable> getVariable(Context& context);
 
     private:
         std::string name_;
@@ -134,15 +136,15 @@ namespace apus {
 
     class AssignExpression : public Expression {
     public:
-        AssignExpression(Type type, std::string name,
+        AssignExpression(Type type, std::shared_ptr<Expression> var_expr,
                          std::shared_ptr<Expression> expression);
-        AssignExpression(Type type, char* name, Expression* expression);
+        AssignExpression(Type type, Expression* var_expr, Expression* expression);
         virtual ~AssignExpression();
 
         virtual std::shared_ptr<Value> Evaluate(Context& context);
 
     private:
-        std::string name_;
+        std::shared_ptr<Expression> var_expr_;
         std::shared_ptr<Expression> expression_;
     };
 
