@@ -21,6 +21,8 @@ namespace apus {
 
     void Block::Execute(Context& context) {
 
+        Context child = context.BlockBegin();
+
         int count = 0;
 
         cout << "[Block] is Running.... #stmt is "<< statements_.size() << endl;
@@ -39,7 +41,9 @@ namespace apus {
             }
         }
 
-        cout <<"[Block] Exiting......" <<endl;    
+        cout <<"[Block] Exiting......" <<endl;
+
+        child.BlockEnd();
     }
 
 }
