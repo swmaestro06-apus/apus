@@ -27,31 +27,27 @@ namespace apus {
 
         switch (another_type) {
 
-            // case 2. Same class but size
             case F32:
             case F64: {
-                TypeSpecifier type = getType() > another_type
+                TypeSpecifier type = getSize() > another->getSize()
                                      ? getType()
                                      : another_type;
 
                 return FloatValue::Create(type, this->getFloatValue());
             }
 
-            // case 3. Different class
             case S8:
             case S16:
             case S32:
             case S64: {
-                
-                // case 3.1 SignedIntValue
+
                 return this->Copy();
 
             }
             default:
                 return nullptr;
         }
-
-        return nullptr;
+        
     }
 
     ValuePtr FloatValue::OperateBinary(
