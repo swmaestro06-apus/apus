@@ -27,6 +27,7 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 %token<char_val> CHAR_LITERAL
 %token<str_val> STRING_LITERAL
 %token<str_val> ID
+%token<int_val> BINARY_LITERAL OCTA_LITERAL HEXA_LITERAL
 
 %token<int_val> U8 U16 U32 U64
 %token<int_val> S8 S16 S32 S64
@@ -175,6 +176,9 @@ primary_expression :
     | DOUBLE_LITERAL
     | CHAR_LITERAL
     | STRING_LITERAL
+    | BINARY_LITERAL
+    | OCTA_LITERAL
+    | HEXA_LITERAL
     | variable_expression
     ;
 variable_expression :
