@@ -180,6 +180,7 @@ primary_expression :
 variable_expression :
     ID
     | ID dimension_array
+    | variable_expression DOT variable_expression
     ;
 comma_line_opt :
     COMMA line_opt
