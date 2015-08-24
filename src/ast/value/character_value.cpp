@@ -1,12 +1,15 @@
 #include "ast/value/character_value.h"
 #include "ast/value/float_value.h"
+#include "vm/data_type_table.h"
 
 namespace apus {
 
-    std::shared_ptr<CharacterValue> CharacterValue::Create(TypeSpecifier type, int32_t value) {
+    std::shared_ptr<CharacterValue> CharacterValue::Create(DataTypePtr data_type, int32_t value) {
+
+        TypeSpecifier type = data_type->GetType();
 
         if (type == C8 || type == C16 || type == C32) {
-            return std::shared_ptr<CharacterValue>(new CharacterValue(type, value));
+            return std::shared_ptr<CharacterValue>(new CharacterValue(data_type, value));
         }
 
         return nullptr;
@@ -17,7 +20,7 @@ namespace apus {
 
         const TypeSpecifier another_type = another->getType();
 
-        if (type_ == another_type) {
+        if (getType() == another_type) {
             return this->Copy();
         }
 
@@ -26,9 +29,9 @@ namespace apus {
             case C8:
             case C16:
             case C32: {
-                TypeSpecifier return_type = getSize() > another->getSize()
-                                            ? getType()
-                                            : another_type;
+                DataTypePtr return_type = getSize() > another->getSize()
+                                            ? data_type_
+                                            : another->getDataType() ;
 
                 return CharacterValue::Create(return_type, this->getCharValue());
             }
@@ -84,7 +87,7 @@ namespace apus {
                     return nullptr;
             }
 
-            result = CharacterValue::Create(this->getType(), result_value);
+            result = CharacterValue::Create(data_type_, result_value);
         }
 
         return result;
