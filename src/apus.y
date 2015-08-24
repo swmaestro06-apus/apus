@@ -18,6 +18,15 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
     #include <list>
 
     #include "common/common.h"
+
+    #include "ast/statement/statement.h"
+    #include "ast/statement/block.h"
+    #include "ast/statement/for_statement.h"
+    #include "ast/statement/if_statement.h"
+    #include "ast/statement/jump_statement.h"
+    #include "ast/statement/expression_statement.h"
+    #include "ast/statement/var_def_statement.h"
+
     #include "vm/virtual_machine.h"
 
     #include "ast/expression.h"
@@ -33,6 +42,7 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
     using namespace apus;
 
 }
+
 %union {
     int64_t int_val;
     double double_val;
@@ -41,12 +51,17 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 
     TypeSpecifier type_spec;
 
+    list<shared_ptr<Statement>>* list_stmt;
+
+    Statement* stmt;
+
     Expression* expr;
     Expression::Type expr_type;
 
     Value* value;
 
 }
+
 %token<int_val> INT_LITERAL
 %token<double_val> DOUBLE_LITERAL
 %token<char_val> CHAR_LITERAL
@@ -78,6 +93,11 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 %left MUL DIV MOD
 %right NOT REVERSE
 
+%type<list_stmt> action_declaration_list action_declaration_opt
+
+%type<stmt> action_declaration for_statement if_statement else_if jump_statement
+%type<stmt> expression_statement var_def_statement block_statement
+
 %type<expr> expression expression_opt unary_expression primary_expression variable_expression
 %type<expr> init_expression
 
@@ -92,7 +112,7 @@ data_declaration_opt :
     | data_declaration_list
     ;
 action_declaration_opt :
-    /* empty */
+    /* empty */ { $$ = new list<shared_ptr<Statement>>(); }
     | action_declaration_list
     ;
 line_opt :
@@ -109,8 +129,14 @@ data_declaration_list :
     | line_list data_declaration_list
     ;
 action_declaration_list :
-    action_declaration
-    | action_declaration action_declaration_list
+    action_declaration {
+        $$ = new list<shared_ptr<Statement>>();
+        $$->push_back(shared_ptr<Statement>($1));
+    }
+    | action_declaration action_declaration_list {
+        $2->push_front(shared_ptr<Statement>($1));
+        $$ = $2;
+    }
     ;
 data_declaration :
     struct_union_type ID block_start member_definition_list R_BRACE line_list
@@ -158,8 +184,8 @@ dimension_array :
     | L_CASE expression R_CASE dimension_array
     ;
 expression_opt :
-    /* empty */
-    | expression
+    /* empty */ { $$ = nullptr; }
+    | expression { $$ = $1; }
     ;
 expression :
     variable_expression ASSIGN expression
@@ -274,30 +300,30 @@ action_declaration :
     | var_def_statement
     ;
 block_statement :
-    block_start action_declaration_opt block_end
+    block_start action_declaration_opt block_end { $$ = new Block(*$2); }
     ;
 if_statement :
-    IF paren_start expression paren_end block_statement else_if
+    IF paren_start expression paren_end block_statement else_if { $$ = new IfStatement($3, $5, $6); }
     ;
 else_if :
-    /* empty */
-    | ELSE if_statement
-    | ELSE block_statement
+    /* empty */ { $$ = nullptr; }
+    | ELSE if_statement { $$ = $2; }
+    | ELSE block_statement { $$ = $2; }
     ;
 for_statement :
-    FOR paren_start expression_opt semi_start expression_opt semi_start expression_opt paren_end block_statement
+    FOR paren_start expression_opt semi_start expression_opt semi_start expression_opt paren_end block_statement { $$ = new ForStatement($3, $5, $7, $9); }
     ;
 jump_statement :
-    BREAK line_list
-    | CONTINUE line_list
-    | RETURN expression_opt line_list
-    | EXIT expression_opt line_list
+    BREAK line_list { $$ = new BreakStatement(); }
+    | CONTINUE line_list { $$ = new ContinueStatement(); }
+    | RETURN expression_opt line_list { $$ = new ReturnStatement($2); }
+    | EXIT expression_opt line_list { $$ = new ExitStatement($2); }
     ;
 expression_statement :
-    expression line_list
+    expression line_list { $$ = new ExpressionStatement($1); }
     ;
 var_def_statement :
-    VAR variable_definition line_list
+    VAR variable_definition line_list { $$ = new VarDefStatement(); }
     ;
 variable_definition :
     type_specifier ID
