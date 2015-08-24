@@ -132,17 +132,17 @@ expression_opt :
     | expression
     ;
 expression :
-    expression ASSIGN expression
-    | expression ADDASSIGN expression
-    | expression SUBASSIGN expression
-    | expression MULASSIGN expression
-    | expression DIVASSIGN expression
-    | expression MODASSIGN expression
-    | expression ORASSIGN expression
-    | expression XORASSIGN expression
-    | expression ANDASSIGN expression
-    | expression LSASSIGN expression
-    | expression RSASSIGN expression
+    variable_expression ASSIGN expression
+    | variable_expression ADDASSIGN expression
+    | variable_expression SUBASSIGN expression
+    | variable_expression MULASSIGN expression
+    | variable_expression DIVASSIGN expression
+    | variable_expression MODASSIGN expression
+    | variable_expression ORASSIGN expression
+    | variable_expression XORASSIGN expression
+    | variable_expression ANDASSIGN expression
+    | variable_expression LSASSIGN expression
+    | variable_expression RSASSIGN expression
     | expression LOR expression
     | expression LAND expression
     | expression OR expression
