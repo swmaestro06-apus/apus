@@ -17,7 +17,7 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
     #include <memory>
     #include <list>
 
-    #include "common/common.h
+    #include "common/common.h"
     #include "ast/statement/statement.h"
     #include "ast/statement/block.h"
     #include "ast/statement/for_statement.h"
@@ -36,12 +36,23 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
     using namespace apus;
 
 }
+
 %union {
     int64_t int_val;
     double double_val;
     int char_val;
     char* str_val;
+
+    list<shared_ptr<Statement>>* list_stmt;
+
+    Statement* stmt;
+
+    Expression* expr;
+    Expression::Type expr_type;
+
+    Value* value;
 }
+
 %token<int_val> INT_LITERAL
 %token<double_val> DOUBLE_LITERAL
 %token<char_val> CHAR_LITERAL
@@ -81,14 +92,16 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 
 %%
 program :
-    data_declaration_opt action_declaration_opt
+    data_declaration_opt action_declaration_opt {
+        pctx->getVM()->setStmtList(*$2);
+    }
     ;
 data_declaration_opt :
     /* empty */
     | data_declaration_list
     ;
 action_declaration_opt :
-    /* empty */
+    /* empty */ { $$ = new list<shared_ptr<Statement>>(); }
     | action_declaration_list
     ;
 line_opt :
@@ -105,8 +118,14 @@ data_declaration_list :
     | line_list data_declaration_list
     ;
 action_declaration_list :
-    action_declaration
-    | action_declaration action_declaration_list
+    action_declaration {
+        $$ = new list<shared_ptr<Statement>>();
+        $$->push_back(shared_ptr<Statement>($1));
+    }
+    | action_declaration action_declaration_list {
+        $2->push_front(shared_ptr<Statement>($1));
+        $$ = $2;
+    }
     ;
 data_declaration :
     struct_union_type ID block_start member_definition_list R_BRACE line_list
@@ -269,30 +288,30 @@ action_declaration :
     | var_def_statement
     ;
 block_statement :
-    block_start action_declaration_opt block_end
+    block_start action_declaration_opt block_end { $$ = new Block(*$2); }
     ;
 if_statement :
-    IF paren_start expression paren_end block_statement else_if
+    IF paren_start expression paren_end block_statement else_if { $$ = new IfStatement($3, $5, $6); }
     ;
 else_if :
-    /* empty */
-    | ELSE if_statement
-    | ELSE block_statement
+    /* empty */ { $$ = nullptr; }
+    | ELSE if_statement { $$ = $2; }
+    | ELSE block_statement { $$ = $2; }
     ;
 for_statement :
-    FOR paren_start expression_opt semi_start expression_opt semi_start expression_opt paren_end block_statement
+    FOR paren_start expression_opt semi_start expression_opt semi_start expression_opt paren_end block_statement { $$ = new ForStatement($3, $5, $7, $9); }
     ;
 jump_statement :
-    BREAK line_list
-    | CONTINUE line_list
-    | RETURN expression_opt line_list
-    | EXIT expression_opt line_list
+    BREAK line_list { $$ = new BreakStatement(); }
+    | CONTINUE line_list { $$ = new ContinueStatement(); }
+    | RETURN expression_opt line_list { $$ = new ReturnStatement($2); }
+    | EXIT expression_opt line_list { $$ = new ExitStatement($2); }
     ;
 expression_statement :
-    expression line_list
+    expression line_list { $$ = new ExpressionStatement($1); }
     ;
 var_def_statement :
-    VAR variable_definition line_list
+    VAR variable_definition line_list { $$ = new VarDefStatement(); }
     ;
 variable_definition :
     type_specifier ID
