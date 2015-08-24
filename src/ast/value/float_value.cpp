@@ -113,6 +113,9 @@ namespace apus {
                 case Expression::Type::EXP_RSASSIGN :
                     return nullptr;
 
+                case Expression::Type::EXP_ASSIGN :
+                    result_value = right_value;
+                    break;
                 case Expression::Type::EXP_ADD :
                 case Expression::Type::EXP_ADDASSIGN :
                     result_value = left_value + right_value;

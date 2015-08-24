@@ -108,6 +108,9 @@ namespace apus {
                     result_value = left_value >> right_value;
                     break;
 
+                case Expression::Type::EXP_ASSIGN :
+                    result_value = right_value;
+                    break;
                 case Expression::Type::EXP_ADD :
                 case Expression::Type::EXP_ADDASSIGN :
                     result_value = left_value + right_value;
