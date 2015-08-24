@@ -1,22 +1,25 @@
-#include <cmath>
-#include <limits>
-
-#include "ast/value/float_value.h"
+#include "ast/value/unsigned_int_value.h"
 #include "ast/value/signed_int_value.h"
+#include "ast/value/character_value.h"
+#include "ast/value/float_value.h"
+
+#include "common/common.h"
 
 namespace apus {
 
-    std::shared_ptr<FloatValue> FloatValue::Create(DataTypePtr data_type,
-                                                   double value) {
+    std::shared_ptr<UnsignedIntValue> UnsignedIntValue::Create(DataTypePtr data_type, uint64_t value) {
+
         TypeSpecifier type = data_type->GetType();
-        if (type == F32 || type == F64) {
-            return std::shared_ptr<FloatValue>(new FloatValue(data_type, value));
+        if (type == U8 || type == U16 || type == U32 || type == U64) {
+            return std::shared_ptr<UnsignedIntValue>(new UnsignedIntValue(data_type, value));
         }
 
         return nullptr;
+
     }
 
-    ValuePtr FloatValue::Promote(const ValuePtr another) const {
+    std::shared_ptr<Value> UnsignedIntValue::Promote(
+            const std::shared_ptr<Value> another) const {
 
         const TypeSpecifier another_type = another->getType();
 
@@ -27,15 +30,6 @@ namespace apus {
 
         switch (another_type) {
 
-            case F32:
-            case F64: {
-                DataTypePtr return_type = getSize() > another->getSize()
-                                     ? data_type_
-                                     : another->getDataType();
-
-                return FloatValue::Create(return_type, this->getFloatValue());
-            }
-
             case S8:
             case S16:
             case S32:
@@ -43,47 +37,62 @@ namespace apus {
             case U8:
             case U16:
             case U32:
-            case U64:  {
+            case U64: {
 
-                return this->Copy();
+                DataTypePtr return_type = getSize() > another->getSize() ? data_type_ : another->getDataType();
 
+                if (S8 <= return_type->GetType() && return_type->GetType() <= S64) {
+                    return SignedIntValue::Create(return_type, this->getUIntValue());
+                }
+                else if (U8 <= return_type->GetType() && return_type->GetType() <= U32) {
+                    return UnsignedIntValue::Create(return_type, this->getUIntValue());
+                }
+
+                return nullptr;
             }
+
+            case F32:
+            case F64: {
+                double double_value = static_cast<double>(this->getUIntValue());
+                return FloatValue::Create(another->getDataType(), double_value);
+            }
+
             default:
                 return nullptr;
         }
-        
+
     }
 
-    ValuePtr FloatValue::OperateBinary(
+    std::shared_ptr<Value> UnsignedIntValue::OperateBinary(
             const Expression::Type expression_type,
-            const ValuePtr &right_promoted) const {
+            const std::shared_ptr<Value> &right_promoted) const {
 
-        ValuePtr result = nullptr;
+        std::shared_ptr<Value> result = nullptr;
 
         // 'right' value MUST be same type with this's type;
         if (right_promoted->getType() == this->getType()) {
 
-            double epsilon = std::numeric_limits<double>::epsilon();
+            std::shared_ptr<UnsignedIntValue> right_dynamic = std::dynamic_pointer_cast<UnsignedIntValue>(right_promoted);
 
-            std::shared_ptr<FloatValue> right_dynamic = std::dynamic_pointer_cast<FloatValue>(right_promoted);
+            uint64_t left_value = this->getUIntValue();
+            uint64_t right_value = right_dynamic->getUIntValue();
 
-            double left_value = this->getFloatValue();
-            double right_value = right_dynamic->getFloatValue();
-
-            double result_value = 0;
+            uint64_t result_value = 0;
 
             switch (expression_type) {
 
                 case Expression::Type::EXP_OR :
-                    return nullptr;
+                    result_value = left_value | right_value;
+                    break;
                 case Expression::Type::EXP_AND :
-                    return nullptr;
+                    result_value = left_value & right_value;
+                    break;
 
                 case Expression::Type::EXP_EQL :
-                    result_value = this->NearlyEqual(right_value);
+                    result_value = left_value == right_value;
                     break;
                 case Expression::Type::EXP_NEQ :
-                    result_value = !this->NearlyEqual(right_value);
+                    result_value = left_value != right_value;
                     break;
                 case Expression::Type::EXP_LSS :
                     result_value = left_value < right_value;
@@ -92,22 +101,20 @@ namespace apus {
                     result_value = left_value > right_value;
                     break;
                 case Expression::Type::EXP_LEQ :
-                    result_value = (left_value < right_value) || this->NearlyEqual(right_value);
+                    result_value = left_value <= right_value;
                     break;
                 case Expression::Type::EXP_GEQ :
-                    result_value = (left_value > right_value) || this->NearlyEqual(right_value);
-                    break;
-
-                case Expression::Type::EXP_ASSIGN :
-                    result_value = right_value;
+                    result_value = left_value >= right_value;
                     break;
 
                 case Expression::Type::EXP_LSHIFT :
                 case Expression::Type::EXP_LSASSIGN :
-                    return nullptr;
+                    result_value = left_value << right_value;
+                    break;
                 case Expression::Type::EXP_RSHIFT :
                 case Expression::Type::EXP_RSASSIGN :
-                    return nullptr;
+                    result_value = left_value >> right_value;
+                    break;
 
                 case Expression::Type::EXP_ADD :
                 case Expression::Type::EXP_ADDASSIGN :
@@ -127,11 +134,12 @@ namespace apus {
                     break;
                 case Expression::Type::EXP_MOD :
                 case Expression::Type::EXP_MODASSIGN :
-                    result_value = fmod(left_value, right_value);
+                    result_value = left_value % right_value;
                     break;
                 case Expression::Type::EXP_XOR :
                 case Expression::Type::EXP_XORASSIGN :
-                    return nullptr;
+                    result_value = left_value ^ right_value;
+                    break;
 
                 case Expression::Type::EXP_LOR :
                     result_value = left_value || right_value;
@@ -144,64 +152,39 @@ namespace apus {
                     return nullptr;
             }
 
-            result = FloatValue::Create(data_type_, result_value);
+            result = UnsignedIntValue::Create(data_type_, result_value);
         }
 
         return result;
     }
 
-    ValuePtr FloatValue::OperateUnary(
+    std::shared_ptr<Value> UnsignedIntValue::OperateUnary(
             const Expression::Type expression_type) const {
 
-        ValuePtr result = nullptr;
-        double result_value = 0;
+        std::shared_ptr<Value> result = nullptr;
+        uint64_t result_value = 0;
 
         switch (expression_type) {
             case Expression::Type::EXP_NOT :
-                result_value = !(this->getFloatValue());
+                result_value = !(this->getUIntValue());
                 break;
             case Expression::Type::EXP_REVERSE :
-                // reverse operation not supported
-                return nullptr;
+                result_value = ~(this->getUIntValue());
+                break;
             case Expression::Type::EXP_SUB :
-                result_value = -(this->getFloatValue());
+                result_value = -(this->getUIntValue());
                 break;
             case Expression::Type::EXP_ADD :
-                result_value = +(this->getFloatValue());
+                result_value = +(this->getUIntValue());
                 break;
 
             default:
                 return nullptr;
         }
 
-        result = FloatValue::Create(data_type_, result_value);
+        result = UnsignedIntValue::Create(data_type_, result_value);
 
         return result;
-    }
-
-    double FloatValue::NearlyEqual(double another) const {
-
-        const double a = getFloatValue();
-        const double b = another;
-
-        const double absA = std::abs(a);
-        const double absB = std::abs(b);
-        const double diff = std::abs(a - b);
-
-        const double epsilon = std::numeric_limits<double>::epsilon();
-
-        if (a == b) {
-            // shortcut, handles infinities
-            return true;
-        }
-        else if (a == 0 || b == 0 || diff < std::numeric_limits<double>::min()) {
-            // a or b is zero or both are extremely close to it
-            // relative error is less meaningful here
-            return diff < (epsilon * std::numeric_limits<double>::min());
-        }
-        else { // use relative error
-            return diff / std::min((absA + absB), std::numeric_limits<double>::max()) < epsilon;
-        }
     }
 
 }

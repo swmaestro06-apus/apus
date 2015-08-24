@@ -1,4 +1,5 @@
 #include "ast/value/signed_int_value.h"
+#include "ast/value/unsigned_int_value.h"
 #include "ast/value/float_value.h"
 #include "ast/value/character_value.h"
 
@@ -33,7 +34,6 @@ namespace apus {
             case S8:
             case S16:
             case S32:
-
             case S64:
             case U8:
             case U16:
@@ -46,7 +46,7 @@ namespace apus {
                     return SignedIntValue::Create(return_type, this->getIntValue());
                 }
                 else if (U8 <= type && type <= U32) {
-                    // return UnsignedIntValue::Create(return_type, this->getIntValue());
+                    return UnsignedIntValue::Create(return_type, this->getIntValue());
                 }
 
                 return nullptr;
