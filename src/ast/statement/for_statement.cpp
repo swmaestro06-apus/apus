@@ -34,6 +34,8 @@ namespace apus {
 
     void ForStatement::Execute(Context& context) {
 
+        int count = 0;
+
         cout << "[FOR] begin " <<endl;
 
         if (initialization_) {
@@ -48,7 +50,7 @@ namespace apus {
 
                 if (Value::IsTrue(termination_->Evaluate(context))) {
                     
-                    cout << "[FOR] looping.. body begin" << endl;
+                    cout << "[FOR] looping.. body begin, count : " << ++count << endl;
                     
                     if (body_) {
                         body_->Execute(context);
