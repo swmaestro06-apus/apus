@@ -57,6 +57,10 @@ namespace apus {
 
             switch (expression_type) {
 
+                case Expression::Type::EXP_ASSIGN :
+                    result_value = right_value;
+                    break;
+
                 case Expression::Type::EXP_EQL :
                     result_value = left_value == right_value;
                     break;
