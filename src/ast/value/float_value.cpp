@@ -95,6 +95,10 @@ namespace apus {
                     result_value = (left_value > right_value) || this->NearlyEqual(right_value);
                     break;
 
+                case Expression::Type::EXP_ASSIGN :
+                    result_value = right_value;
+                    break;
+
                 case Expression::Type::EXP_LSHIFT :
                 case Expression::Type::EXP_LSASSIGN :
                     return nullptr;
