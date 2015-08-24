@@ -14,7 +14,27 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 }
 
 %code requires {
-    #include "common/common.h"
+    #include <memory>
+    #include <list>
+
+    #include "common/common.h
+    #include "ast/statement/statement.h"
+    #include "ast/statement/block.h"
+    #include "ast/statement/for_statement.h"
+    #include "ast/statement/if_statement.h"
+    #include "ast/statement/jump_statement.h"
+    #include "ast/statement/expression_statement.h"
+    #include "ast/statement/var_def_statement.h"
+
+    #include "vm/virtual_machine.h"
+
+    #include "ast/expression.h"
+
+    #include "ast/value/value.h"
+
+    using namespace std;
+    using namespace apus;
+
 }
 %union {
     int64_t int_val;
@@ -33,7 +53,7 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 %token<int_val> SINT8 SINT16 SINT32 SINT64
 %token<double_val> FLOAT32 FLOAT64
 %token<char_val> CHAR8 CHAR16 CHAR32
-%token<str_val> STRING STRING8 STRING16 STRING32
+%token<str_val> STRING8 STRING16 STRING32
 %token STRUCT CONST UNION
 
 %token L_BRACE R_BRACE L_CASE R_CASE OPEN CLOSE
@@ -52,6 +72,12 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 %left ADD SUB
 %left MUL DIV MOD
 %right NOT REVERSE
+
+%type<list_stmt> action_declaration_list action_declaration_opt
+%type<stmt> action_declaration for_statement if_statement else_if jump_statement expression_statement var_def_statement block_statement
+
+%type<expr> expression expression_opt unary_expression primary_expression variable_expression init_expression
+%type<expr_type> assign_operator
 
 %%
 program :
@@ -143,42 +169,42 @@ expression :
     | variable_expression ANDASSIGN expression
     | variable_expression LSASSIGN expression
     | variable_expression RSASSIGN expression
-    | expression LOR expression
-    | expression LAND expression
-    | expression OR expression
-    | expression XOR expression
-    | expression AND expression
-    | expression EQL expression
-    | expression NEQ expression
-    | expression LSS expression
-    | expression GTR expression
-    | expression LEQ expression
-    | expression GEQ expression
-    | expression LSHIFT expression
-    | expression RSHIFT expression
-    | expression ADD expression
-    | expression SUB expression
-    | expression MUL expression
-    | expression DIV expression
-    | expression MOD expression
+    | expression LOR expression { $$ = new BinaryExpression(Expression::EXP_LOR, $1, $3); }
+    | expression LAND expression { $$ = new BinaryExpression(Expression::EXP_LAND, $1, $3); }
+    | expression OR expression { $$ = new BinaryExpression(Expression::EXP_OR, $1, $3); }
+    | expression XOR expression { $$ = new BinaryExpression(Expression::EXP_XOR, $1, $3); }
+    | expression AND expression { $$ = new BinaryExpression(Expression::EXP_AND, $1, $3); }
+    | expression EQL expression { $$ = new BinaryExpression(Expression::EXP_EQL, $1, $3); }
+    | expression NEQ expression { $$ = new BinaryExpression(Expression::EXP_NEQ, $1, $3); }
+    | expression LSS expression { $$ = new BinaryExpression(Expression::EXP_LSS, $1, $3); }
+    | expression GTR expression { $$ = new BinaryExpression(Expression::EXP_GTR, $1, $3); }
+    | expression LEQ expression { $$ = new BinaryExpression(Expression::EXP_LEQ, $1, $3); }
+    | expression GEQ expression { $$ = new BinaryExpression(Expression::EXP_GEQ, $1, $3); }
+    | expression LSHIFT expression { $$ = new BinaryExpression(Expression::EXP_LSHIFT, $1, $3); }
+    | expression RSHIFT expression { $$ = new BinaryExpression(Expression::EXP_RSHIFT, $1, $3); }
+    | expression ADD expression { $$ = new BinaryExpression(Expression::EXP_ADD, $1, $3); }
+    | expression SUB expression { $$ = new BinaryExpression(Expression::EXP_SUB, $1, $3); }
+    | expression MUL expression { $$ = new BinaryExpression(Expression::EXP_MUL, $1, $3); }
+    | expression DIV expression { $$ = new BinaryExpression(Expression::EXP_DIV, $1, $3); }
+    | expression MOD expression { $$ = new BinaryExpression(Expression::EXP_MOD, $1, $3); }
     | unary_expression
     ;
 unary_expression :
-    primary_expression
-    | NOT unary_expression
-    | REVERSE unary_expression
-    | SUB primary_expression
-    | ADD primary_expression
+    primary_expressioni
+    | NOT unary_expression { $$ = new UnaryExpression(Expression::EXP_NOT, $2); }
+    | REVERSE unary_expression { $$ = new UnaryExpression(Expression::EXP_REVERSE, $2); }
+    | SUB primary_expression { $$ = new UnaryExpression(Expression::EXP_SUB, $2); }
+    | ADD primary_expression { $$ = new UnaryExpression(Expression::EXP_ADD, $2); }
     ;
 primary_expression :
-    OPEN expression CLOSE
-    | INT_LITERAL
-    | DOUBLE_LITERAL
-    | CHAR_LITERAL
+    OPEN expression CLOSE { $$ = $2; }
+    | INT_LITERAL { $$ = new ValueExpression(SignedIntValue::Create(TypeSpecifier::S64, $1)); }
+    | DOUBLE_LITERAL { $$ = new ValueExpression(FloatIntValue::Create(TypeSpecifier::F64, $1)); }
+    | CHAR_LITERAL { $$ = new ValueExpression(CharacterValue::Create(TypeSpecifier::C8, $1)); }
     | STRING_LITERAL
-    | BINARY_LITERAL
-    | OCTA_LITERAL
-    | HEXA_LITERAL
+    | BINARY_LITERAL { $$ = new ValueExpression(SignedIntValue::Create(TypeSpecifier::S64, $1)); }
+    | OCTA_LITERAL { $$ = new ValueExpression(SignedIntValue::Create(TypeSpecifier::S64, $1)); }
+    | HEXA_LITERAL { $$ = new ValueExpression(SignedIntValue::Create(TypeSpecifier::S64, $1)); }
     | variable_expression
     | function_expression
     ;
@@ -217,11 +243,22 @@ semi_start :
     line_opt SEMI line_opt
     ;
 type_specifier :
-    UINT8 | UINT16 | UINT32 | UINT64
-    | SINT8 | SINT16 | SINT32 | SINT64
-    | FLOAT32 | FLOAT64
-    | CHAR8 | CHAR16 | CHAR32
-    | STRING | STRING8 | STRING16 | STRING32
+    UINT8 { $$ = TypeSpecifier::U8; }
+    | UINT16 { $$ = TypeSpecifier::U16; }
+    | UINT32 { $$ = TypeSpecifier::U32; }
+    | UINT64 { $$ = TypeSpecifier::U64; }
+    | SINT8 { $$ = TypeSpecifier::S8; }
+    | SINT16 { $$ = TypeSpecifier::S16; }
+    | SINT32 { $$ = TypeSpecifier::S32; }
+    | SINT64 { $$ = TypeSpecifier::S64; }
+    | FLOAT32 { $$ = TypeSpecifier::F32; }
+    | FLOAT64 { $$ = TypeSpecifier::F64; }
+    | CHAR8 { $$ = TypeSpecifier::C8; }
+    | CHAR16 { $$ = TypeSpecifier::C16; }
+    | CHAR32 { $$ = TypeSpecifier::C32; }
+    | STRING8 { $$ = TypeSpecifier::STR8; }
+    | STRING16 { $$ = TypeSpecifier::STR16; }
+    | STRING32 { $$ = TypeSpecifier::STR32; }
     ;
 action_declaration : 
     block_statement
