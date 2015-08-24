@@ -125,7 +125,13 @@ static char action_test[] = "continue\nbreak\n continue\n break\n continue \n co
 static char action_test2[] = "{ continue\n break \n continue \n } \n";
 static char action_test3[] = " if ( 3 > 2 ) { break\n } else { break\n } \n";
 static char action_test4[] = " for (3;3;3) { if ( 3+2 * 4 == 7 + 4 ) { 3+4-2*11.5 == 12\n break\n } else { break\n } } \n";
-static char for_test[] = " for (;2>3;) { break\n} \n";
+static char for_test[] =
+        "var s64 i = 0 \n\
+        for (i = 0;i < 3; i += 1) { \
+        var s64 a= 7 \n\
+        a+3 \n\
+        var s64 b = 3 \n\
+        b = a +2 + i\n } \n ";
 
 static char expr_stmt_test[] = "3+4-(2*11)\n 3.14 + 123.45\n 3.14 + 3\n3+4-2*11.1234\n 0.15 + 0.15 == 0.1 + 0.2 \n (3.141592 * 7 - (-34 -33) / 11.3 ) \n";
 
