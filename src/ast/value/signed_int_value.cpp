@@ -1,4 +1,5 @@
 #include "ast/value/signed_int_value.h"
+#include "ast/value/unsigned_int_value.h"
 #include "ast/value/float_value.h"
 #include "ast/value/character_value.h"
 
@@ -7,12 +8,11 @@
 
 namespace apus {
 
-    std::shared_ptr<SignedIntValue> SignedIntValue::Create(TypeSpecifier type,
+    std::shared_ptr<SignedIntValue> SignedIntValue::Create(DataTypePtr data_type,
                                                            int64_t value) {
-
-        // check 'type'
+        TypeSpecifier type = data_type->GetType();
         if (type == S8 || type == S16 || type == S32 || type == S64) {
-            return std::shared_ptr<SignedIntValue>(new SignedIntValue(type, value));
+            return std::shared_ptr<SignedIntValue>(new SignedIntValue(data_type, value));
         }
 
         return nullptr;
@@ -25,7 +25,7 @@ namespace apus {
         const TypeSpecifier another_type = another->getType();
 
         // case 1. Exactly same type
-        if (type_ == another_type) {
+        if (getType() == another_type) {
             return this->Copy();
         }
 
@@ -34,16 +34,29 @@ namespace apus {
             case S8:
             case S16:
             case S32:
-            case S64: {
-                TypeSpecifier return_type = getSize() > another->getSize() ? getType() : another_type;
-                return SignedIntValue::Create(return_type, this->getIntValue());
+            case S64:
+            case U8:
+            case U16:
+            case U32:
+            case U64: {
+                DataTypePtr return_type = getSize() > another->getSize() ? data_type_ : another->getDataType();
+                TypeSpecifier type = return_type->GetType();
+
+                if (S8 <= type && type <= S64) {
+                    return SignedIntValue::Create(return_type, this->getIntValue());
+                }
+                else if (U8 <= type && type <= U32) {
+                    return UnsignedIntValue::Create(return_type, this->getIntValue());
+                }
+
+                return nullptr;
             }
 
             // case 3. Different class
             case F32:
             case F64: {
                 double double_value = static_cast<double>(this->getIntValue());
-                return FloatValue::Create(another_type, double_value);
+                return FloatValue::Create(another->getDataType(), double_value);
             }
 
             default:
@@ -144,7 +157,7 @@ namespace apus {
                     return nullptr;
             }
 
-            result = SignedIntValue::Create(this->getType(), result_value);
+            result = SignedIntValue::Create(data_type_, result_value);
         }
 
         return result;
@@ -174,7 +187,7 @@ namespace apus {
                     return nullptr;
         }
 
-        result = SignedIntValue::Create(this->getType(), result_value);
+        result = SignedIntValue::Create(data_type_, result_value);
 
         return result;
     }

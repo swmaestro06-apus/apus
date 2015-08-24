@@ -10,12 +10,12 @@ namespace apus {
     class CharacterValue : public Value {
     public:
 
-        static std::shared_ptr<CharacterValue> Create(TypeSpecifier type , int32_t value);
+        static std::shared_ptr<CharacterValue> Create(DataTypePtr data_type , int32_t value);
 
         virtual ~CharacterValue() {}
 
         virtual std::shared_ptr<Value> Copy() const {
-            return CharacterValue::Create(this->getType(), getCharValue());
+            return CharacterValue::Create(data_type_, getCharValue());
         }
 
         virtual std::shared_ptr<Value> Promote(
@@ -34,12 +34,12 @@ namespace apus {
 
     protected:
 
-        CharacterValue(TypeSpecifier type, int32_t value)
-                : Value(type, std::make_shared<int32_t>(value)) {
+        CharacterValue(DataTypePtr data_type, int32_t value)
+                : Value(data_type, std::make_shared<int32_t>(value)) {
         }
 
-        CharacterValue(TypeSpecifier type, std::shared_ptr<void> value_ptr)
-                : Value(type, value_ptr) {
+        CharacterValue(DataTypePtr data_type, std::shared_ptr<void> value_ptr)
+                : Value(data_type, value_ptr) {
         }
 
     };

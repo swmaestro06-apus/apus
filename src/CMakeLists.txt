@@ -1,6 +1,6 @@
 
 # Append compile option
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 # Add include directory
 set(INCLUDE_DIR ../include)
