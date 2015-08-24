@@ -7,21 +7,27 @@
 #include "ast/expression.h"
 #include "common/common.h"
 
+#include "vm/data_type_table.h"
+
 namespace apus {
 
     class Value;
     typedef std::shared_ptr<Value> ValuePtr;
+    class DataType;
+    typedef std::shared_ptr<DataType> DataTypePtr;
 
     class Value {
     public:
 
         virtual ~Value(){}
 
-        virtual TypeSpecifier getType() const { return type_; };
+        virtual TypeSpecifier getType() const { return data_type_->GetType(); }
 
         virtual std::shared_ptr<void> getValue() const { return value_; }
 
-        int getSize() const { return TypeLength(type_); }
+        int getSize() const { return TypeLength(getType()); }
+
+        DataTypePtr getDataType() { return data_type_; }
 
         // Deep Copy function
         inline virtual ValuePtr Copy() const { return nullptr; }
@@ -38,10 +44,10 @@ namespace apus {
 
     protected:
 
-        Value(TypeSpecifier type, std::shared_ptr<void> value)
-                : type_(type), value_(value) {}
+        Value(DataTypePtr data_type, std::shared_ptr<void> value)
+                : data_type_(data_type), value_(value) {}
 
-        TypeSpecifier           type_;
+        DataTypePtr             data_type_;
         std::shared_ptr<void>   value_;
 
     };
