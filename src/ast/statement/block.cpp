@@ -29,7 +29,7 @@ namespace apus {
 
         for (StmtPtr stmt : statements_) {
 
-            stmt->Execute(context);
+            stmt->Execute(child);
 
             cout << "[Block] run count : " << ++count << endl;
 
