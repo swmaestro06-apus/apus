@@ -3,7 +3,7 @@
 set(GTEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/gtest)
 
 set(TEST_EXE unit_test)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -g -std=c++0x")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -g -std=c++11")
 
 # build libgtest_main.a
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
