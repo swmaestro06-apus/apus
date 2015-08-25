@@ -298,6 +298,23 @@ TEST (ASTTest, IsTrue) {
 
     result = Value::IsTrue(FloatValue::Create(dtt->Find("F32"), 0));
     EXPECT_FALSE(result);
+
+    {
+        std::shared_ptr<Expression> _hello = std::make_shared<ValueExpression>(StringValue::Create(dtt->Find("STR8"), std::string("Hello ") ) );
+        std::shared_ptr<Expression> _world = std::make_shared<ValueExpression>(StringValue::CreateU16(dtt->Find("STR16"), std::u16string(u"world") ) );
+
+        std::shared_ptr<Expression> neq_expr = std::make_shared<BinaryExpression>(Expression::EXP_NEQ, _hello, _world);
+        std::shared_ptr<StringValue> result = std::dynamic_pointer_cast<StringValue>(neq_expr->Evaluate(ctx));
+
+        EXPECT_TRUE(Value::IsTrue(result));
+        //EXPECT_EQ(u16string(u"what"),result->getU16StringValue());
+
+        std::shared_ptr<Expression> eql_expr = std::make_shared<BinaryExpression>(Expression::EXP_EQL, _hello, _world);
+        result = std::dynamic_pointer_cast<StringValue>(eql_expr->Evaluate(ctx));
+
+        EXPECT_FALSE(Value::IsTrue(result));
+        EXPECT_EQ(STR16 , result->getType());
+    }
 }
 
 TEST (ASTTest, Expression_String_Add) {
@@ -316,5 +333,6 @@ TEST (ASTTest, Expression_String_Add) {
         EXPECT_EQ(STR16 , result->getType());
 
     }
+
 }
 
