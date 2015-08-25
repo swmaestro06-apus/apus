@@ -12,7 +12,8 @@ namespace apus {
         context.SetContinue(true);
     }
 
-    ReturnStatement::ReturnStatement() : expression_(nullptr) {
+    ReturnStatement::ReturnStatement()
+        : expression_(nullptr) {
 
     }
 
@@ -21,11 +22,16 @@ namespace apus {
 
     }
 
-    ReturnStatement::ReturnStatement(Expression *expression) {
-        ReturnStatement( ExprPtr(expression) );
+    ReturnStatement::ReturnStatement(Expression *expression)
+        : ReturnStatement( ExprPtr(expression) ) {
     }
 
     void ReturnStatement::Execute(Context& context) {
+
+        if (expression_) {
+            expression_->Evaluate(context);
+        }
+
         context.SetReturn(true);
     }
 
@@ -34,11 +40,16 @@ namespace apus {
 
     }
 
-    ExitStatement::ExitStatement(Expression *expression) {
-        ExitStatement( ExprPtr(expression) );
+    ExitStatement::ExitStatement(Expression *expression)
+        : ExitStatement( ExprPtr(expression) ) {
     }
 
     void ExitStatement::Execute(Context &context) {
+
+        if (expression_) {
+            expression_->Evaluate(context);
+        }
+
         context.SetExit(true);
     }
 

@@ -222,5 +222,21 @@ TEST (ASTTest, Expression_Promote) {
         EXPECT_TRUE(result->getCharValue());
         EXPECT_EQ(C16 , result->getType());
     }
+}
+TEST (ASTTest, IsTrue) {
+
+    bool result = false;
+
+    result = Value::IsTrue(SignedIntValue::Create(S32, 123));
+    EXPECT_TRUE(result);
+
+    result = Value::IsTrue(SignedIntValue::Create(S32, 0));
+    EXPECT_FALSE(result);
+
+    result = Value::IsTrue(FloatValue::Create(F32, 123.4));
+    EXPECT_TRUE(result);
+
+    result = Value::IsTrue(FloatValue::Create(F32, 0));
+    EXPECT_FALSE(result);
 
 }
