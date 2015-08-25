@@ -6,12 +6,13 @@
 #include <map>
 #include <list>
 #include "vm/data_type_table.h"
+#include "vm/context.h"
 
 namespace apus {
 
     class DataType;
-    class Function;
     class Variable;
+    class Function;
 
     typedef std::shared_ptr<Function> FunctionPtr;
     typedef std::shared_ptr<DataType> DataTypePtr;
@@ -26,7 +27,7 @@ namespace apus {
         Function(const std::string& name, DataTypePtr return_type, list<VariablePtr> arg_list);
         virtual ~Function();
 
-        virtual std::shared_ptr<Value> Execute() = 0;
+        virtual std::shared_ptr<Value> Execute(Context& context) = 0;
 
         std::string getName() { return name_; }
         DataTypePtr getReturnType() { return return_type_; }
@@ -47,6 +48,22 @@ namespace apus {
 
     private:
         FunctionMap map_;
+    };
+
+    class PrintS64 : public Function {
+    public:
+        PrintS64(Context& context);
+        virtual ~PrintS64();
+
+        virtual std::shared_ptr<Value> Execute(Context& context) override;
+    };
+
+    class PrintSTR8 : public Function {
+    public:
+        PrintSTR8(Context& context);
+        virtual ~PrintSTR8();
+
+        virtual std::shared_ptr<Value> Execute(Context& context) override;
     };
 
 }
