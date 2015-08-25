@@ -26,7 +26,7 @@ namespace apus {
         Function(const std::string& name, DataTypePtr return_type, list<DataTypePtr> arg_list);
         virtual ~Function();
 
-        virtual std::shared_ptr<Value> Execute() = 0;
+        virtual std::shared_ptr<Value> Execute(Context& context) = 0;
 
     protected:
         std::string name_;
@@ -36,16 +36,13 @@ namespace apus {
 
     class FunctionTable {
     public:
-        FunctionTable(std::shared_ptr<FunctionTable> parent);
+        FunctionTable();
 
         void Insert(std::string name, FunctionPtr function);
         FunctionPtr Find(std::string& name);
 
-        inline std::shared_ptr<FunctionTable> GetParent() { return parent_; }
-
     private:
         FunctionMap map_;
-        std::shared_ptr<FunctionTable> parent_;
     };
 
 }

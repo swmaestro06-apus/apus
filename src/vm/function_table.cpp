@@ -30,8 +30,7 @@ namespace apus {
 
     // FunctionTable class
 
-    FunctionTable::FunctionTable(std::shared_ptr<FunctionTable> parent)
-        : parent_(parent) {
+    FunctionTable::FunctionTable() {
 
     }
 
