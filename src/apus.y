@@ -16,6 +16,7 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 %code requires {
     #include <memory>
     #include <list>
+    #include <string>
 
     #include "common/common.h"
     #include "ast/statement/statement.h"
@@ -43,6 +44,10 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
     int char_val;
     char* str_val;
 
+    TypeSpecifier type_spec;
+    DataType* data_type;
+
+    list<shared_ptr<Expression>>* list_expr;
     list<shared_ptr<Statement>>* list_stmt;
 
     Statement* stmt;
@@ -60,12 +65,12 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 %token<str_val> ID
 %token<int_val> BINARY_LITERAL OCTA_LITERAL HEXA_LITERAL
 
-%token<int_val> UINT8 UINT16 UINT32 UINT64
-%token<int_val> SINT8 SINT16 SINT32 SINT64
-%token<double_val> FLOAT32 FLOAT64
-%token<char_val> CHAR8 CHAR16 CHAR32
-%token<str_val> STRING8 STRING16 STRING32
-%token STRUCT CONST UNION
+%token<type_spec> UINT8 UINT16 UINT32 UINT64
+%token<type_spec> SINT8 SINT16 SINT32 SINT64
+%token<type_spec> FLOAT32 FLOAT64
+%token<type_spec> CHAR8 CHAR16 CHAR32
+%token<type_spec> STRING8 STRING16 STRING32
+%token<type_spec> STRUCT CONST UNION
 
 %token L_BRACE R_BRACE L_CASE R_CASE OPEN CLOSE
 %token COMMENT CR DOT VAR SEMI COMMA
@@ -85,10 +90,15 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 %right NOT REVERSE
 
 %type<list_stmt> action_declaration_list action_declaration_opt
+%type<list_expr> const_expression_list
+
 %type<stmt> action_declaration for_statement if_statement else_if jump_statement expression_statement var_def_statement block_statement
 
-%type<expr> expression expression_opt unary_expression primary_expression variable_expression init_expression
-%type<expr_type> assign_operator
+%type<expr> expression expression_opt unary_expression primary_expression variable_expression init_expression const_expression
+
+%type<type_spec> type_specifier struct_union_type
+
+%type<data_type> dimension_array
 
 %%
 program :
@@ -114,7 +124,7 @@ line_list :
     ;
 data_declaration_list :
     data_declaration
-    | data_declaration data_declaration_list
+    | data_declaration_list data_declaration
     | line_list data_declaration_list
     ;
 action_declaration_list :
@@ -128,32 +138,67 @@ action_declaration_list :
     }
     ;
 data_declaration :
-    struct_union_type ID block_start member_definition_list R_BRACE line_list
+    struct_union_type ID {
+        pctx->setCurrentDataType(std::make_shared<DataType>($1));
+        pctx->setCurrentName(new string($2));
+        
+    } block_start member_definition_list R_BRACE line_list {
+        pctx->ChangeCurrentDataType();
+    } 
     ;
 struct_union_type :
-    STRUCT
-    | UNION
+    STRUCT { $$ = TypeSpecifier::STRUCT; }
+    | UNION { $$ = TypeSpecifier::UNION; }
     ;
 member_definition_list :
     member_definition line_opt
     | member_definition line_list member_definition_list
     ;
 member_definition :
-    type_specifier ID
-    | struct_union_type ID ID
-    | type_specifier ID ASSIGN const_expression
-    | struct_union_type ID ID ASSIGN const_expression
-    | type_specifier array
-    | struct_union_type ID array
+    type_specifier ID {
+        pctx->AddToCurrentDataType(new string($2), $1);
+    }
+    | struct_union_type ID ID {
+        pctx->AddToCurrentDataType(new string($3), new string($2));
+    }
+    | type_specifier ID ASSIGN const_expression {
+        std::shared_ptr<DataType> dt = std::make_shared<DataType>($1);
+        dt->SetInitExpr($4);
+        pctx->AddToCurrentDataType(new string($2), dt);
+    }
+    | struct_union_type ID ID ASSIGN const_expression {
+        std::shared_ptr<DataType> dt 
+            = pctx->getDataTypeTable()->Find(new string($2))->Copy();
+        dt->SetInitExpr($5);
+        pctx->AddToCurrentDataType(new string($3), dt);
+    }
+    | type_specifier dimension_array ID {
+        $2->setElement(pctx->getDataTypeTable()->Find($1));
+        pctx->AddToCurrentDataType(new string($3), $2);
+    }
+    | type_specifier dimension_array ID ASSIGN const_expression_list {
+        $2->setElement(pctx->getDataTypeTable()->Find($1));
+        $2->SetInitExpr($5);
+        pctx->AddToCurrentDataType(new string($3), $2);
+    }
+    | struct_union_type ID dimension_array ID {
+        $3->setElement(pctx->getDataTypeTable()->Find(new string($2));
+        pctx->AddToCurrentDataType(new string($4), $3);
+    }
+    | struct_union_type ID dimension_array ID ASSIGN const_expression_list {
+        $3->setElement(pctx->getDataTypeTable()->Find(new string($2));
+        $3->SetInitExpr($6);
+        pctx->AddToCurrentDataType(new string($4), $3);
+    }
     ;
 const_expression_list :
     const_expression
     | const_expression comma_line_opt const_expression_list
     ;
 const_expression :
-    INT_LITERAL
-    | DOUBLE_LITERAL
-    | CHAR_LITERAL
+    INT_LITERAL { $$ = new ValueExpression(SignedIntValue::Create(TypeSpecifier::S64, $1)); }
+    | DOUBLE_LITERAL { $$ = new ValueExpression(SignedIntValue::Create(TypeSpecifier::F64, $1)); }
+    | CHAR_LITERAL { $$ = new ValueExpression(SignedIntValue::Create(TypeSpecifier::C8, $1)); }
     | STRING_LITERAL
     | const_struct_init
     | const_array_init
@@ -164,13 +209,19 @@ const_struct_init :
 const_array_init : 
     L_CASE const_expression_list R_CASE
     ;
-array :
-    dimension_array ID
-    | dimension_array ID ASSIGN const_expression_list
-    ;
 dimension_array :
-    L_CASE expression R_CASE
-    | L_CASE expression R_CASE dimension_array
+    L_CASE expression R_CASE {
+        DataType* dt = new ArrayDataType();
+        ArrayDataType* adt = std::dynamic_cast<ArrayDataType*>(dt);
+        dt->AddDimension($2);
+        $$ = dt;
+    }
+    | L_CASE expression R_CASE dimension_array {
+        DataType* dt = $4;
+        ArrayDataType* adt = std::dynamic_cast<ArrayDataType*>(dt);
+        adt->AddDimension($2);
+        $$ = dt;
+    }
     ;
 expression_opt :
     /* empty */
@@ -209,7 +260,7 @@ expression :
     | unary_expression
     ;
 unary_expression :
-    primary_expressioni
+    primary_expression
     | NOT unary_expression { $$ = new UnaryExpression(Expression::EXP_NOT, $2); }
     | REVERSE unary_expression { $$ = new UnaryExpression(Expression::EXP_REVERSE, $2); }
     | SUB primary_expression { $$ = new UnaryExpression(Expression::EXP_SUB, $2); }
@@ -318,8 +369,10 @@ variable_definition :
     | struct_union_type ID ID
     | type_specifier ID ASSIGN init_expression
     | struct_union_type ID ID ASSIGN init_expression
-    | type_specifier array
-    | struct_union_type ID array
+    | type_specifier dimension_array ID
+    | type_specifier dimension_array ID ASSIGN init_expression
+    | struct_union_type ID dimension_array ID
+    | struct_union_type ID dimension_array ID ASSIGN init_expression
     ;
 init_expression_list :
     init_expression

@@ -16,7 +16,7 @@ namespace apus {
     class VirtualMachine;
 
     typedef std::shared_ptr<DataType> DataTypePtr;
-    typedef std::shared_ptr<DataTypeTable> DataTypeTablePtr;
+    typedef std::shared_ptr<DataTypeTablePtr> DataTypeTablePtr;
     typedef std::shared_ptr<Statement> StmtPtr;
 
     class ParserContext {
