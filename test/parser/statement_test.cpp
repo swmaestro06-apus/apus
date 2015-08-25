@@ -85,6 +85,14 @@ if                      \n\
 else { }                \n\
 ";
 
+static char for_test[] =
+        "var s64 i = 0 \n\
+        for (i = 0;i < 3; i += 1) { \
+        var s64 a= 7 \n\
+        a+3 \n\
+        var s64 b = 3 \n\
+        b = a +2 + i\n if(b>=10){break\n}else{continue\n} } \n ";
+
 TEST (ParserTest, StmtCorrectTest) {
     int result;
     apus::ParserContext pctx(std::make_shared<apus::VirtualMachine>());
@@ -121,4 +129,14 @@ TEST (ParserTest, StmtLineTest) {
     yy_scan_string(if_stmt_test_3);
     result = yyparse(&pctx);
     EXPECT_EQ (result, 0);
+}
+
+TEST (ParserTest, StmtForTest) {
+    int result;
+    apus::ParserContext pctx(std::make_shared<apus::VirtualMachine>());
+
+    yy_scan_string(for_test);
+    result = yyparse(&pctx);
+    EXPECT_EQ (result, 0);
+    pctx.getVM()->Run();
 }
