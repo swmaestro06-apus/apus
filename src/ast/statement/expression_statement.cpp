@@ -11,8 +11,8 @@ namespace apus {
 
     }
 
-    ExpressionStatement::ExpressionStatement(Expression* expression) {
-        ExpressionStatement(ExprPtr(expression));
+    ExpressionStatement::ExpressionStatement(Expression* expression)
+      : ExpressionStatement(ExprPtr(expression)) {
     }
 
     ExpressionStatement::~ExpressionStatement() {
