@@ -4,6 +4,8 @@
 #include "vm/variable_table.h"
 #include "vm/context.h"
 
+#include "vm/function_table.h"
+
 namespace apus {
 
     // Expression::
@@ -204,6 +206,34 @@ namespace apus {
         std::shared_ptr<Value> result = nullptr;
 
         // find variable member
+
+        return result;
+    }
+
+    // FunctionExpression::
+
+    FunctionExpression::FunctionExpression(std::string func_name)
+            : Expression(EXP_FUNCTION), func_name_(func_name) {
+
+    }
+
+    FunctionExpression::FunctionExpression(char* func_name)
+            : FunctionExpression(std::string(func_name)) {
+    }
+
+    FunctionExpression::~FunctionExpression() {
+
+    }
+
+    std::shared_ptr<Value> FunctionExpression::Evaluate(Context &context) {
+
+        std::shared_ptr<Function> function = context.FindFunction(func_name_);
+        std::shared_ptr<Value> result = nullptr;
+
+        if (function != nullptr) {
+            function->Execute(context);
+            result = context.GetReturnValue();
+        }
 
         return result;
     }

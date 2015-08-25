@@ -162,6 +162,20 @@ namespace apus {
         std::string child_name_;
     };
 
+    class FunctionExpression : public Expression {
+    public:
+        FunctionExpression(std::string func_name);
+        FunctionExpression(char* func_name);
+        virtual ~FunctionExpression();
+
+        virtual std::shared_ptr<Value> Evaluate(Context& context);
+
+    private:
+
+        std::string func_name_;
+
+    };
+
 }
 
 #endif
