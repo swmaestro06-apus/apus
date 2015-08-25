@@ -91,7 +91,8 @@ static char for_test[] =
         var s64 a= 7 \n\
         a+3 \n\
         var s64 b = 3 \n\
-        b = a +2 + i\n } \n ";
+        b = a +2 + i\n \
+        printS64(b) \n } \n ";
 
 TEST (ParserTest, StmtCorrectTest) {
     int result;
