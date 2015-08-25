@@ -3,6 +3,7 @@
 #include "ast/value/value.h"
 #include "vm/data_type_table.h"
 #include "vm/variable_table.h"
+#include "vm/function_table.h"
 
 namespace apus {
 
@@ -11,7 +12,7 @@ namespace apus {
           break_(false), continue_(false), return_(false), exit_(false) {
 
         variable_table_ = make_shared<VariableTable>();
-        // TODO : create function table
+        function_table_ = make_shared<FunctionTable>();
     }
 
     Context::Context(Context* context)
@@ -20,21 +21,26 @@ namespace apus {
         data_type_table_ = context->data_type_table_;
 
         variable_table_ = make_shared<VariableTable>();
-        // TODO : create function table
+        function_table_ = make_shared<FunctionTable>();
     }
 
     Context::~Context() {
     }
 
     Context Context::BlockBegin() {
-
+        
         Context child(*this);
-        // TODO : Insert params into child.variable_table_
+
+        for (VariablePtr varPtr : param_list_) {
+            child.InsertVariable(varPtr);
+        }
 
         return child;
     }
 
     std::shared_ptr<Value> Context::BlockEnd() {
+
+        param_list_.clear();
 
         if (return_value_) {
             parent_->return_value_ = return_value_;
@@ -50,7 +56,6 @@ namespace apus {
 
     shared_ptr<Variable> Context::FindVariable(string name) {
 
-        shared_ptr<VariableTable> var_tab = variable_table_;
         shared_ptr<Variable> var = nullptr;
 
         Context* ctx_ptr = this;
@@ -67,8 +72,29 @@ namespace apus {
         return nullptr;
     }
 
+    shared_ptr<Function> Context::FindFunction(string name) {
+
+        shared_ptr<Function> func = nullptr;
+
+        Context* ctx_ptr = this;
+
+        while (ctx_ptr) {
+
+            if ( (func = ctx_ptr->function_table_->Find(name)) ) {
+                return func;
+            }
+
+            ctx_ptr = ctx_ptr->parent_;
+        }
+        return nullptr;
+    }
+
     void Context::InsertVariable(shared_ptr<Variable> variable) {
         variable_table_->Insert(variable->getName(), variable);
+    }
+
+    void Context::InsertFunction(shared_ptr<Function> function) {
+        function_table_->Insert(function->getName(), function);
     }
 
 }
