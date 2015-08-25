@@ -25,7 +25,7 @@ namespace apus {
         ParserContext(std::shared_ptr<VirtualMachine> vm);
         ~ParserContext();
 
-        std::shared_ptr<VirtualMachine> getVM();
+        std::shared_ptr<VirtualMachine> getVM() { return vm_; }
         void setVM(std::shared_ptr<VirtualMachine> vm);
 
         // send data type table to virtual machine
