@@ -86,12 +86,14 @@ else { }                \n\
 ";
 
 static char for_test[] =
-        "var s64 i = 0 \n\
-        for (i = 0;i < 3; i += 1) { \
-        var s64 a= 7 \n\
-        a+3 \n\
-        var s64 b = 3 \n\
-        b = a +2 + i\n if(b>=10){break\n}else{continue\n} } \n ";
+"var s64 i = 0 \n\
+for (i = 0;i < 3; i += 1) { \
+var s64 a= 7 \n\
+a+3 \n\
+var s64 b = 3 \n\
+b = a + 2 + i\n \
+printS64(b)\n \
+if (b%2 == 1) { printSTR8(\"b is odd_number!\")\n } \n } \n ";
 
 TEST (ParserTest, StmtCorrectTest) {
     int result;
