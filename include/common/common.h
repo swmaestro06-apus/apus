@@ -23,7 +23,7 @@ namespace apus {
         S8, S16, S32, S64,  // Signed Integer
         F32, F64,           // Floating Point Real Number
         C8, C16, C32,       // Character Type
-        STR8, STR16, STR32, // String Type
+        STR, STR8, STR16, STR32, // String Type
         STRUCT, UNION,      // Struct and Union
         ARRAY,              // Array
         STRUCT_ARRAY,       // Struct Array
@@ -36,7 +36,7 @@ namespace apus {
         "S8", "S16", "S32", "S64",
         "F32", "F64",
         "C8", "C16", "C32",
-        "STR8", "STR16", "STR32",
+        "STR", "STR8", "STR16", "STR32",
         "STRUCT", "UNION",
         "ARRAY",
         "STRUCT_ARRAY",
