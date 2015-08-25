@@ -32,7 +32,10 @@ namespace apus {
         cout << "[Context] Block Begin" << endl;
 
         Context child(*this);
-        // TODO : Insert params into child.variable_table_
+
+        for (VariablePtr varPtr : param_list_) {
+            child.InsertVariable(varPtr);
+        }
 
         return child;
     }
@@ -40,6 +43,8 @@ namespace apus {
     std::shared_ptr<Value> Context::BlockEnd() {
 
         cout << "[Context] Block End" << endl;
+
+        param_list_.clear();
 
         if (return_value_) {
             parent_->return_value_ = return_value_;
