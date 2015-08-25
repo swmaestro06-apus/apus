@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <string>
+#include <list>
 
 namespace apus {
 
@@ -160,6 +161,21 @@ namespace apus {
 
         std::string parent_name_;
         std::string child_name_;
+    };
+
+    class FunctionExpression : public Expression {
+    public:
+        FunctionExpression(std::string func_name, std::list<std::shared_ptr<Expression>> arg_expr);
+        FunctionExpression(char* func_name, std::list<std::shared_ptr<Expression>> arg_expr);
+        virtual ~FunctionExpression();
+
+        virtual std::shared_ptr<Value> Evaluate(Context& context);
+
+    private:
+
+        std::string func_name_;
+        std::list<std::shared_ptr<Expression>> arg_expr_;
+
     };
 
 }
