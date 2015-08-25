@@ -43,7 +43,7 @@ var struct id2[2][2][2] ll = [[[{1, 2}, {3, 4}], [{5, 6}, {7, 8}]],\n\
 
 TEST (ParserTest, ArrayCorrectTest) {
     int result;
-    apus::ParserContext pctx;
+    apus::ParserContext pctx(std::make_shared<apus::VirtualMachine>());
 
     yy_scan_string(one_dimension_test_1);
     result = yyparse(&pctx);
@@ -64,7 +64,7 @@ TEST (ParserTest, ArrayCorrectTest) {
 
 TEST (ParserTest, ArrayCRTest) {
     int result;
-    apus::ParserContext pctx;
+    apus::ParserContext pctx(std::make_shared<apus::VirtualMachine>());
 
     yy_scan_string(three_dimension_test_3);
     result = yyparse(&pctx);
