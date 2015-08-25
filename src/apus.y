@@ -56,6 +56,7 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
     TypeSpecifier type_specifier;
 
     list<shared_ptr<Statement>>* list_stmt;
+    list<shared_ptr<Expression>>* list_expr;
 
     Statement* stmt;
     Block* block_stmt;
@@ -101,13 +102,15 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 %type<stmt> action_declaration for_statement if_statement else_if jump_statement expression_statement var_def_statement variable_definition
 %type<block_stmt> block_statement
 
-%type<expr> expression expression_opt unary_expression primary_expression variable_expression init_expression
+%type<expr> expression expression_opt unary_expression primary_expression variable_expression init_expression function_expression
 %type<expr_type> assign_operator
 %type<type_specifier> type_specifier
+%type<list_expr> arg_expression_list arg_expression_opt
 
 %%
 program :
-    data_declaration_opt action_declaration_opt { 
+    data_declaration_opt action_declaration_opt {
+        pctx->SendDataTypeTableToVM();
         pctx->getVM()->setStmtList(*$2);
         cout << "Program : action_decl_list size "<< $2->size() << endl;
     }
@@ -244,15 +247,21 @@ variable_expression :
     | variable_expression DOT ID
     ;
 function_expression :
-    ID OPEN arg_expression_opt CLOSE
+    ID OPEN arg_expression_opt CLOSE { $$ = new FunctionExpression(string($1), *$3); }
     ;
 arg_expression_opt :
-    /* empty */
+    /* empty */ { $$ = new list<shared_ptr<Expression>>(); }
     | arg_expression_list
     ;
 arg_expression_list :
-    expression
-    | expression comma_line_opt arg_expression_list
+    expression {
+        $$ = new list<shared_ptr<Expression>>();
+        $$->push_back(shared_ptr<Expression>($1));
+    }
+    | expression comma_line_opt arg_expression_list {
+        $3->push_front(shared_ptr<Expression>($1));
+        $$ = $3;
+    }
     ;
 comma_line_opt :
     COMMA line_opt
