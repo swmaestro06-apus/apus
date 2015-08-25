@@ -3,10 +3,17 @@
 namespace apus {
 
     ParserContext::ParserContext() {
+        // make current data type instance
+        current_data_type_ = std::make_shared<DataType>();
+
+        // make DataTypeTable instance and add primitive data types
+        data_type_table_ = std::make_shared<DataTypeTable>();
+        data_type_table_->SetPrimitiveTypes();
     }
 
     ParserContext::ParserContext(std::shared_ptr<VirtualMachine> vm)
-        : vm_(vm) {
+        : ParserContext() {
+        vm_ = vm;
     }
 
     ParserContext::~ParserContext() {
@@ -18,6 +25,10 @@ namespace apus {
 
     void ParserContext::SendDataTypeTableToVM() {
         vm_->setDataTypeTable(data_type_table_);
+    }
+
+    DataTypeTablePtr ParserContext::getDataTypeTable() {
+        return data_type_table_;
     }
 
     void ParserContext::setCurrentName(const std::string& name) {
