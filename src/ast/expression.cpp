@@ -212,13 +212,13 @@ namespace apus {
 
     // FunctionExpression::
 
-    FunctionExpression::FunctionExpression(std::string func_name)
-            : Expression(EXP_FUNCTION), func_name_(func_name) {
+    FunctionExpression::FunctionExpression(std::string func_name, std::list<std::shared_ptr<Expression>> arg_expr)
+            : Expression(EXP_FUNCTION), func_name_(func_name), arg_expr_(arg_expr) {
 
     }
 
-    FunctionExpression::FunctionExpression(char* func_name)
-            : FunctionExpression(std::string(func_name)) {
+    FunctionExpression::FunctionExpression(char* func_name, std::list<std::shared_ptr<Expression>> arg_expr)
+            : FunctionExpression(std::string(func_name), arg_expr) {
     }
 
     FunctionExpression::~FunctionExpression() {
