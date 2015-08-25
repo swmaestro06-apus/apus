@@ -1,5 +1,6 @@
 #include "vm/virtual_machine.h"
 #include "vm/context.h"
+#include "vm/function_table.h"
 
 namespace apus {
 
@@ -29,7 +30,12 @@ namespace apus {
 
     void VirtualMachine::Run() {
         static int count = 0;
-        Context context;
+
+        Context context(data_type_table_);
+        // Insert Built-in function
+        std::shared_ptr<Function> printS64 = std::make_shared<PrintS64>(context);
+        context.InsertFunction(printS64);
+
         std::cout << "vm is Running..." << std::endl;
         
         for(std::shared_ptr<Statement> stmt : stmt_list_) {
