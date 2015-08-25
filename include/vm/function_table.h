@@ -53,6 +53,14 @@ namespace apus {
         FunctionMap map_;
     };
 
+    class PrintS64 : public Function {
+    public:
+        PrintS64(Context& context);
+        virtual ~PrintS64();
+
+        virtual std::shared_ptr<Value> Execute(Context& context) override;
+    };
+
 }
 
 #endif
