@@ -31,7 +31,7 @@ namespace apus {
 
         cout << "[Context] Block Begin" << endl;
 
-        Context child(data_type_table_);
+        Context child(*this);
         // TODO : Insert params into child.variable_table_
 
         return child;
@@ -95,6 +95,10 @@ namespace apus {
 
     void Context::InsertVariable(shared_ptr<Variable> variable) {
         variable_table_->Insert(variable->GetName(), variable);
+    }
+
+    void Context::InsertFunction(shared_ptr<Function> function) {
+        function_table_->Insert(function->getName(), function);
     }
 
 }

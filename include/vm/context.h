@@ -38,7 +38,7 @@ namespace apus {
 
         // Insert
         void InsertVariable(shared_ptr<Variable> variable);
-        // TODO : InsertFunction();
+        void InsertFunction(shared_ptr<Function> function);
 
         inline bool GetBreak() { return break_; }
         inline bool GetContinue() { return continue_; }
