@@ -1,26 +1,25 @@
-#include "ast/value/signed_int_value.h"
 #include "ast/value/unsigned_int_value.h"
-#include "ast/value/float_value.h"
+#include "ast/value/signed_int_value.h"
 #include "ast/value/character_value.h"
+#include "ast/value/float_value.h"
 
-#include "ast/expression.h"
 #include "common/common.h"
 
 namespace apus {
 
-    std::shared_ptr<SignedIntValue> SignedIntValue::Create(DataTypePtr data_type,
-                                                           int64_t value) {
+    std::shared_ptr<UnsignedIntValue> UnsignedIntValue::Create(DataTypePtr data_type, uint64_t value) {
+
         TypeSpecifier type = data_type->GetType();
-        if (type == S8 || type == S16 || type == S32 || type == S64) {
-            return std::shared_ptr<SignedIntValue>(new SignedIntValue(data_type, value));
+        if (type == U8 || type == U16 || type == U32 || type == U64) {
+            return std::shared_ptr<UnsignedIntValue>(new UnsignedIntValue(data_type, value));
         }
 
         return nullptr;
+
     }
 
-    ValuePtr SignedIntValue::Promote(const ValuePtr another) const {
-
-        // PROMOTE THIS, NOT another
+    std::shared_ptr<Value> UnsignedIntValue::Promote(
+            const std::shared_ptr<Value> another) const {
 
         const TypeSpecifier another_type = another->getType();
 
@@ -31,54 +30,55 @@ namespace apus {
 
         switch (another_type) {
 
-            case S8:
-            case S16:
-            case S32:
-            case S64: {
-                DataTypePtr return_type = getSize() > another->getSize() ? data_type_ : another->getDataType();
-                TypeSpecifier type = return_type->GetType();
-                return SignedIntValue::Create(return_type, this->getIntValue());
-            }
             case U8:
             case U16:
             case U32:
             case U64: {
+                DataTypePtr return_type = getSize() > another->getSize() ? data_type_ : another->getDataType();
+                TypeSpecifier type = return_type->GetType();
+                return UnsignedIntValue::Create(return_type, this->getUIntValue());
+            }
 
-                if (getSize() > another->getSize()) {
-                    return SignedIntValue::Create(data_type_, this->getIntValue());
+            case S8:
+            case S16:
+            case S32:
+            case S64: {
+
+                if (getSize() >= another->getSize()) {
+                    return UnsignedIntValue::Create(data_type_, this->getUIntValue());
                 }
                 else {
-                    return UnsignedIntValue::Create(another->getDataType(), this->getIntValue());
+                    return SignedIntValue::Create(another->getDataType(), this->getUIntValue());
                 }
             }
 
-            // case 3. Different class
             case F32:
             case F64: {
-                double double_value = static_cast<double>(this->getIntValue());
+                double double_value = static_cast<double>(this->getUIntValue());
                 return FloatValue::Create(another->getDataType(), double_value);
             }
 
             default:
                 return nullptr;
         }
+
     }
 
-    ValuePtr SignedIntValue::OperateBinary(
+    std::shared_ptr<Value> UnsignedIntValue::OperateBinary(
             const Expression::Type expression_type,
-            const ValuePtr &right_promoted) const {
+            const std::shared_ptr<Value> &right_promoted) const {
 
-        ValuePtr result = nullptr;
+        std::shared_ptr<Value> result = nullptr;
 
         // 'right' value MUST be same type with this's type;
         if (right_promoted->getType() == this->getType()) {
 
-            std::shared_ptr<SignedIntValue> right_dynamic = std::dynamic_pointer_cast<SignedIntValue>(right_promoted);
+            std::shared_ptr<UnsignedIntValue> right_dynamic = std::dynamic_pointer_cast<UnsignedIntValue>(right_promoted);
 
-            int64_t left_value = this->getIntValue();
-            int64_t right_value = right_dynamic->getIntValue();
+            uint64_t left_value = this->getUIntValue();
+            uint64_t right_value = right_dynamic->getUIntValue();
 
-            int64_t result_value = 0;
+            uint64_t result_value = 0;
 
             switch (expression_type) {
 
@@ -108,10 +108,6 @@ namespace apus {
                     result_value = left_value >= right_value;
                     break;
 
-                case Expression::Type::EXP_ASSIGN :
-                    result_value = right_value;
-                    break;
-                    
                 case Expression::Type::EXP_LSHIFT :
                 case Expression::Type::EXP_LSASSIGN :
                     result_value = left_value << right_value;
@@ -157,37 +153,37 @@ namespace apus {
                     return nullptr;
             }
 
-            result = SignedIntValue::Create(data_type_, result_value);
+            result = UnsignedIntValue::Create(data_type_, result_value);
         }
 
         return result;
     }
 
-    ValuePtr SignedIntValue::OperateUnary(
+    std::shared_ptr<Value> UnsignedIntValue::OperateUnary(
             const Expression::Type expression_type) const {
 
-        ValuePtr result = nullptr;
-        int64_t result_value = 0;
+        std::shared_ptr<Value> result = nullptr;
+        uint64_t result_value = 0;
 
         switch (expression_type) {
             case Expression::Type::EXP_NOT :
-                result_value = !(this->getIntValue());
+                result_value = !(this->getUIntValue());
                 break;
             case Expression::Type::EXP_REVERSE :
-                result_value = ~(this->getIntValue());
+                result_value = ~(this->getUIntValue());
                 break;
             case Expression::Type::EXP_SUB :
-                result_value = -(this->getIntValue());
+                result_value = -(this->getUIntValue());
                 break;
             case Expression::Type::EXP_ADD :
-                result_value = +(this->getIntValue());
+                result_value = +(this->getUIntValue());
                 break;
 
-                default:
-                    return nullptr;
+            default:
+                return nullptr;
         }
 
-        result = SignedIntValue::Create(data_type_, result_value);
+        result = UnsignedIntValue::Create(data_type_, result_value);
 
         return result;
     }

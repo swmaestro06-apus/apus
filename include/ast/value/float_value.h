@@ -10,12 +10,12 @@ namespace apus {
     class FloatValue : public Value {
     public:
 
-        static std::shared_ptr<FloatValue> Create(TypeSpecifier type, double value);
+        static std::shared_ptr<FloatValue> Create(DataTypePtr data_type, double value);
 
         virtual ~FloatValue() {}
 
         virtual ValuePtr Copy() const {
-            return FloatValue::Create(type_, getFloatValue());
+            return FloatValue::Create(data_type_, getFloatValue());
         }
         virtual ValuePtr Promote(const ValuePtr another) const override;
 
@@ -34,12 +34,12 @@ namespace apus {
 
         double NearlyEqual(double another) const;
 
-        FloatValue(TypeSpecifier type, double value)
-                : Value(type, std::make_shared<double>(value)) {
+        FloatValue(DataTypePtr data_type, double value)
+                : Value(data_type, std::make_shared<double>(value)) {
         }
 
-        FloatValue(TypeSpecifier type, std::shared_ptr<void> value_ptr)
-                : Value(type, value_ptr) {
+        FloatValue(DataTypePtr data_type, std::shared_ptr<void> value_ptr)
+                : Value(data_type, value_ptr) {
         }
 
     };

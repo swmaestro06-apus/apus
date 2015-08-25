@@ -6,11 +6,11 @@
 
 namespace apus {
 
-    std::shared_ptr<FloatValue> FloatValue::Create(TypeSpecifier type,
+    std::shared_ptr<FloatValue> FloatValue::Create(DataTypePtr data_type,
                                                    double value) {
-        // check 'type'
+        TypeSpecifier type = data_type->GetType();
         if (type == F32 || type == F64) {
-            return std::shared_ptr<FloatValue>(new FloatValue(type, value));
+            return std::shared_ptr<FloatValue>(new FloatValue(data_type, value));
         }
 
         return nullptr;
@@ -21,7 +21,7 @@ namespace apus {
         const TypeSpecifier another_type = another->getType();
 
         // case 1. Exactly same type
-        if (type_ == another_type) {
+        if (getType() == another_type) {
             return this->Copy();
         }
 
@@ -29,17 +29,21 @@ namespace apus {
 
             case F32:
             case F64: {
-                TypeSpecifier type = getSize() > another->getSize()
-                                     ? getType()
-                                     : another_type;
+                DataTypePtr return_type = getSize() > another->getSize()
+                                     ? data_type_
+                                     : another->getDataType();
 
-                return FloatValue::Create(type, this->getFloatValue());
+                return FloatValue::Create(return_type, this->getFloatValue());
             }
 
             case S8:
             case S16:
             case S32:
-            case S64: {
+            case S64:
+            case U8:
+            case U16:
+            case U32:
+            case U64:  {
 
                 return this->Copy();
 
@@ -67,7 +71,6 @@ namespace apus {
             double right_value = right_dynamic->getFloatValue();
 
             double result_value = 0;
-            TypeSpecifier type = this->getType();
 
             switch (expression_type) {
 
@@ -141,7 +144,7 @@ namespace apus {
                     return nullptr;
             }
 
-            result = FloatValue::Create(type, result_value);
+            result = FloatValue::Create(data_type_, result_value);
         }
 
         return result;
@@ -171,7 +174,7 @@ namespace apus {
                 return nullptr;
         }
 
-        result = FloatValue::Create(this->getType(), result_value);
+        result = FloatValue::Create(data_type_, result_value);
 
         return result;
     }
