@@ -159,24 +159,39 @@ namespace apus {
 
         if (expression_ != nullptr) {
 
-            // Find left value from the variable table
-            std::shared_ptr<Value> left = var_expr_->Evaluate(context);
-            std::shared_ptr<Value> right = expression_->Evaluate(context);
+            // Do NOT promote in case of simple assign
+            if (this->getType() == EXP_ASSIGN) {
 
-            if (left != nullptr && right != nullptr) {
+                std::shared_ptr<Value> right = expression_->Evaluate(context);
+                std::shared_ptr<Variable> var = std::dynamic_pointer_cast<VariableExpression>(var_expr_)->getVariable(context);
+                var->setValue(right);
 
-                std::shared_ptr<Value> right_promoted = right->Promote(left);
+                return right;
+            }
 
-                if (right_promoted != nullptr) {
+            else {
 
-                    std::shared_ptr<Value> result =
-                            left->OperateBinary(this->getType(), right_promoted);
+                // Find left value from the variable table
+                std::shared_ptr<Value> left = var_expr_->Evaluate(context);
+                std::shared_ptr<Value> right = expression_->Evaluate(context);
 
-                    // TODO : and, put 'result' value into the variable
-                    std::shared_ptr<Variable> var = std::dynamic_pointer_cast<VariableExpression>(var_expr_)->getVariable(context);
-                    var->setValue(result);
+                if (left != nullptr && right != nullptr) {
 
-                    return result;
+                    std::shared_ptr<Value> right_promoted = right->Promote(
+                            left);
+
+                    if (right_promoted != nullptr) {
+
+                        std::shared_ptr<Value> result =
+                                left->OperateBinary(this->getType(),
+                                                    right_promoted);
+
+                        std::shared_ptr<Variable> var =
+                                std::dynamic_pointer_cast<VariableExpression>(var_expr_)->getVariable(context);
+                        var->setValue(result);
+
+                        return result;
+                    }
                 }
             }
         }
