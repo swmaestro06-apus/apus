@@ -32,6 +32,10 @@ namespace apus {
 
         virtual std::shared_ptr<Value> Execute(Context& context) = 0;
 
+        std::string getName() { return name_; }
+        DataTypePtr getReturnType() { return return_type_; }
+        list<VariablePtr> getArgList() { return arg_list_; }
+
     protected:
         std::string name_;
         DataTypePtr return_type_;
