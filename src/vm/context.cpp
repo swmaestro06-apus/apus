@@ -3,6 +3,7 @@
 #include "ast/value/value.h"
 #include "vm/data_type_table.h"
 #include "vm/variable_table.h"
+#include "vm/function_table.h"
 
 namespace apus {
 
@@ -11,7 +12,7 @@ namespace apus {
           break_(false), continue_(false), return_(false), exit_(false) {
 
         variable_table_ = make_shared<VariableTable>();
-        // TODO : create function table
+        function_table_ = make_shared<FunctionTable>();
     }
 
     Context::Context(Context* context)
@@ -20,7 +21,7 @@ namespace apus {
         data_type_table_ = context->data_type_table_;
 
         variable_table_ = make_shared<VariableTable>();
-        // TODO : create function table
+        function_table_ = make_shared<FunctionTable>();
     }
 
     Context::~Context() {
@@ -54,7 +55,6 @@ namespace apus {
 
     shared_ptr<Variable> Context::FindVariable(string name) {
 
-        shared_ptr<VariableTable> var_tab = variable_table_;
         shared_ptr<Variable> var = nullptr;
 
         Context* ctx_ptr = this;
@@ -70,6 +70,26 @@ namespace apus {
         }
 
         cout << "[Context] variable NOT found " << endl;
+        return nullptr;
+    }
+
+    shared_ptr<Function> Context::FindFunction(string name) {
+
+        shared_ptr<Function> func = nullptr;
+
+        Context* ctx_ptr = this;
+
+        while (ctx_ptr) {
+
+            if ( (func = ctx_ptr->function_table_->Find(name)) ) {
+                cout << "[Context] Function found : " << name << endl;
+                return func;
+            }
+
+            ctx_ptr = ctx_ptr->parent_;
+        }
+
+        cout << "[Context] Function NOT found : " << name << endl;
         return nullptr;
     }
 

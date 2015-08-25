@@ -18,6 +18,9 @@ namespace apus {
     class Variable;
     class VariableTable;
 
+    class Function;
+    class FunctionTable;
+
     class Context {
     public:
 
@@ -31,7 +34,7 @@ namespace apus {
         // Find
         shared_ptr<DataType> FindDataType(string name);
         shared_ptr<Variable> FindVariable(string name);
-        // TODO : FindFunction();
+        shared_ptr<Function> FindFunction(string name);
 
         // Insert
         void InsertVariable(shared_ptr<Variable> variable);
@@ -43,6 +46,7 @@ namespace apus {
         inline bool GetExit() { return exit_; }
         std::shared_ptr<Value> GetReturnType() { return return_type_; }
         std::list<std::shared_ptr<Value>> GetArgList() { return arg_list_; }
+        std::shared_ptr<Value> GetReturnValue() { return return_value_; }
 
         inline void SetBreak(bool _break) { break_ = _break;}
         inline void SetContinue(bool _continue) { continue_ = _continue;}
@@ -57,8 +61,9 @@ namespace apus {
 
         shared_ptr<DataTypeTable> data_type_table_;
         shared_ptr<VariableTable> variable_table_;
+        shared_ptr<FunctionTable> function_table_;
 
-        list<shared_ptr<DataType>> param_list_;
+        list<shared_ptr<Variable>> param_list_;
         shared_ptr<Value> return_value_;
 
         bool break_;
