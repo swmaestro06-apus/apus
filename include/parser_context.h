@@ -11,10 +11,12 @@
 namespace apus {
 
     class DataType;
+    class DataTypeTable;
     class Statement;
     class VirtualMachine;
 
     typedef std::shared_ptr<DataType> DataTypePtr;
+    typedef std::shared_ptr<DataTypeTable> DataTypeTablePtr;
     typedef std::shared_ptr<Statement> StmtPtr;
 
     class ParserContext {
@@ -28,6 +30,8 @@ namespace apus {
 
         // send data type table to virtual machine
         void SendDataTypeTableToVM();
+
+        DataTypeTablePtr getDataTypeTable();
 
         // get/set method for name of current data type
         void setCurrentName(const std::string& name);
