@@ -71,18 +71,21 @@ namespace apus {
 
     std::shared_ptr<Value> PrintS64::Execute(Context & context) {
 
+        Context child = context.BlockBegin();
+
+        ValuePtr value = nullptr;
         VariablePtr var = context.FindVariable("val");
 
         if (var) {
-            ValuePtr value = var->GetValue();
+            value = var->GetValue();
 
             int64_t int_val = std::dynamic_pointer_cast<SignedIntValue>(value)->getIntValue();
-            cout << "[PrintS64]" << int_val << endl;
+            cout << ">> PrintS64 << " << int_val << endl;
 
-            return value;
         }
 
-        return nullptr;
+        child.BlockEnd();
+        return value;
     }
 
 }
