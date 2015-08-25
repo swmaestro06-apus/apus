@@ -230,7 +230,24 @@ namespace apus {
         std::shared_ptr<Function> function = context.FindFunction(func_name_);
         std::shared_ptr<Value> result = nullptr;
 
-        if (function != nullptr) {
+        // use '>=' ?
+        if (function != nullptr &&
+                arg_expr_.size() == function->getArgList().size()) {
+
+            // exprs -> values
+            list<shared_ptr<Variable>> param_list;
+            list<shared_ptr<Expression>>::iterator it = arg_expr_.begin();
+
+            for (VariablePtr variablePtr : function->getArgList()) {
+                // TODO : put nth arg_expr's value if datatype match
+                ValuePtr val = (*it)->Evaluate(context);
+                variablePtr->SetValue(val);
+
+                ++it;
+            }
+
+            context.SetParamList(function->getArgList());
+
             function->Execute(context);
             result = context.GetReturnValue();
         }
