@@ -14,9 +14,11 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 }
 
 %code requires {
+
     #include <memory>
     #include <list>
     #include <string>
+    #include <iostream>
 
     #include "common/common.h"
 
@@ -42,6 +44,9 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
     using namespace std;
     using namespace apus;
 
+    typedef shared_ptr<Statement> StmtPtr;
+    typedef list<StmtPtr> ListStmt;
+    typedef shared_ptr<ListStmt> ListStmtPtr; 
 }
 
 %union {
@@ -50,7 +55,8 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
     int char_val;
     char* str_val;
 
-    TypeSpecifier type_spec;
+    TypeSpecifier type_specifier;
+
     list<shared_ptr<Statement>>* list_stmt;
 
     Statement* stmt;
@@ -59,7 +65,6 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
     Expression::Type expr_type;
 
     Value* value;
-
 }
 
 %token<int_val> INT_LITERAL
@@ -95,17 +100,19 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 
 %type<list_stmt> action_declaration_list action_declaration_opt
 
-%type<stmt> action_declaration for_statement if_statement else_if jump_statement
-%type<stmt> expression_statement var_def_statement block_statement
+%type<stmt> action_declaration for_statement if_statement else_if jump_statement expression_statement var_def_statement variable_definition block_statement
 
-%type<expr> expression expression_opt unary_expression primary_expression variable_expression
-%type<expr> init_expression const_expression
-
-%type<type_spec> type_specifier struct_union_type
+%type<expr> expression expression_opt unary_expression primary_expression variable_expression init_expression const_expression
+%type<expr_type> assign_operator
+%type<type_specifier> type_specifier struct_union_type
 
 %%
 program :
-    data_declaration_opt action_declaration_opt
+    data_declaration_opt action_declaration_opt {
+        pctx->SendDataTypeTableToVM();
+        pctx->getVM()->setStmtList(*$2);
+        cout << "Program : action_decl_list size "<< $2->size() << endl;
+    }
     ;
 data_declaration_opt :
     /* empty */
@@ -199,20 +206,10 @@ dimension_array :
     ;
 expression_opt :
     /* empty */ { $$ = nullptr; }
-    | expression { $$ = $1; }
+    | expression
     ;
 expression :
-    variable_expression ASSIGN expression
-    | variable_expression ADDASSIGN expression
-    | variable_expression SUBASSIGN expression
-    | variable_expression MULASSIGN expression
-    | variable_expression DIVASSIGN expression
-    | variable_expression MODASSIGN expression
-    | variable_expression ORASSIGN expression
-    | variable_expression XORASSIGN expression
-    | variable_expression ANDASSIGN expression
-    | variable_expression LSASSIGN expression
-    | variable_expression RSASSIGN expression
+    variable_expression assign_operator expression { $$ = new AssignExpression($2, $1, $3); cout << "asdf" <<endl;}
     | expression LOR expression { $$ = new BinaryExpression(Expression::EXP_LOR, $1, $3); }
     | expression LAND expression { $$ = new BinaryExpression(Expression::EXP_LAND, $1, $3); }
     | expression OR expression { $$ = new BinaryExpression(Expression::EXP_OR, $1, $3); }
@@ -253,7 +250,7 @@ primary_expression :
     | function_expression
     ;
 variable_expression :
-    ID
+    ID { $$ = new VariableExpression(std::string($1)); }
     | ID dimension_array
     | variable_expression DOT ID
     | variable_expression DOT ID dimension_array
@@ -306,6 +303,19 @@ type_specifier :
     | STRING16 { $$ = TypeSpecifier::STR16; }
     | STRING32 { $$ = TypeSpecifier::STR32; }
     ;
+assign_operator :
+    ASSIGN { $$ = Expression::EXP_ASSIGN; }
+    | ADDASSIGN { $$ = Expression::EXP_ADDASSIGN; }
+    | SUBASSIGN { $$ = Expression::EXP_SUBASSIGN; }
+    | MULASSIGN { $$ = Expression::EXP_MULASSIGN; }
+    | DIVASSIGN { $$ = Expression::EXP_DIVASSIGN; }
+    | MODASSIGN { $$ = Expression::EXP_MODASSIGN; }
+    | ORASSIGN { $$ = Expression::EXP_ORASSIGN; }
+    | ANDASSIGN { $$ = Expression::EXP_ANDASSIGN; }
+    | XORASSIGN {  $$ = Expression::EXP_XORASSIGN; }
+    | LSASSIGN { $$ = Expression::EXP_LSASSIGN; }
+    | RSASSIGN { $$ = Expression::EXP_RSASSIGN; }
+    ;
 action_declaration : 
     block_statement
     | if_statement
@@ -338,12 +348,12 @@ expression_statement :
     expression line_list { $$ = new ExpressionStatement($1); }
     ;
 var_def_statement :
-    VAR variable_definition line_list { $$ = new VarDefStatement(); }
+    VAR variable_definition line_list { $$ = $2;}
     ;
 variable_definition :
     type_specifier ID
     | struct_union_type ID ID
-    | type_specifier ID ASSIGN init_expression
+    | type_specifier ID ASSIGN init_expression { $$ = new VarDefStatement($1, $2, $4); }
     | struct_union_type ID ID ASSIGN init_expression
     | type_specifier dimension_array ID
     | type_specifier dimension_array ID ASSIGN init_expression
