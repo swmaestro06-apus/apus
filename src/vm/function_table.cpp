@@ -1,4 +1,7 @@
 #include "vm/function_table.h"
+#include "vm/variable_table.h"
+
+#include "ast/value/signed_int_value.h"
 
 #include <iostream>
 
@@ -19,7 +22,7 @@ namespace apus {
         return_type_ = return_type;
     }
 
-    Function::Function(const std::string& name, DataTypePtr return_type, list<DataTypePtr> arg_list) {
+    Function::Function(const std::string& name, DataTypePtr return_type, list<VariablePtr> arg_list) {
         name_ = name;
         return_type_ = return_type;
         arg_list_ = arg_list;
