@@ -87,7 +87,7 @@ else { }                \n\
 
 TEST (ParserTest, StmtCorrectTest) {
     int result;
-    apus::ParserContext pctx;
+    apus::ParserContext pctx(std::make_shared<apus::VirtualMachine>());
 
     yy_scan_string(var_def_test_1);
     result = yyparse(&pctx);
@@ -116,7 +116,7 @@ TEST (ParserTest, StmtCorrectTest) {
 
 TEST (ParserTest, StmtLineTest) {
     int result;
-    apus::ParserContext pctx;
+    apus::ParserContext pctx(std::make_shared<apus::VirtualMachine>());
 
     yy_scan_string(if_stmt_test_3);
     result = yyparse(&pctx);
