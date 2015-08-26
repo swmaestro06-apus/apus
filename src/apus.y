@@ -36,6 +36,9 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 
     #include "ast/value/value.h"
     #include "ast/value/signed_int_value.h"
+    #include "ast/value/unsigned_int_value.h"
+    #include "ast/value/string_value.h"
+    #include "ast/value/character_value.h"
     #include "ast/value/float_value.h"
 
     using namespace std;
@@ -233,11 +236,11 @@ primary_expression :
     OPEN expression CLOSE { $$ = $2; }
     | INT_LITERAL { $$ = new ValueExpression(SignedIntValue::Create(pctx->getDataTypeTable()->Find(S64), $1)); }
     | DOUBLE_LITERAL { $$ = new ValueExpression(FloatValue::Create(pctx->getDataTypeTable()->Find(F64), $1)); }
-    | CHAR_LITERAL
-    | STRING_LITERAL
-    | BINARY_LITERAL
-    | OCTA_LITERAL
-    | HEXA_LITERAL
+    | CHAR_LITERAL { $$ = new ValueExpression(CharacterValue::Create(pctx->getDataTypeTable()->Find(C8), $1)); }
+    | STRING_LITERAL { $$ = new ValueExpression(StringValue::Create(pctx->getDataTypeTable()->Find(STR8), $1)); }
+    | BINARY_LITERAL { $$ = new ValueExpression(UnsignedIntValue::Create(pctx->getDataTypeTable()->Find(U64), $1)); }
+    | OCTA_LITERAL { $$ = new ValueExpression(UnsignedIntValue::Create(pctx->getDataTypeTable()->Find(U64), $1)); }
+    | HEXA_LITERAL { $$ = new ValueExpression(UnsignedIntValue::Create(pctx->getDataTypeTable()->Find(U64), $1)); }
     | variable_expression
     | function_expression
     ;
