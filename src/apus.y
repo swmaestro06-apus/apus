@@ -14,14 +14,52 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 }
 
 %code requires {
-    #include "common/common.h"
+    #include <memory>
+    #include <list>
+
+    #include "ast/statement/statement.h"
+    #include "ast/statement/block.h"
+    #include "ast/statement/for_statement.h"
+    #include "ast/statement/if_statement.h"
+    #include "ast/statement/jump_statement.h"
+    #include "ast/statement/expression_statement.h"
+    #include "ast/statement/var_def_statement.h"
+
+    #include "vm/virtual_machine.h"
+
+    #include "ast/expression.h"
+
+    #include "ast/value/value.h"
+    #include "ast/value/signed_int_value.h"
+    #include "ast/value/unsigned_int_value.h"
+    #include "ast/value/float_value.h"
+    #include "ast/value/character_value.h"
+    #include "ast/value/string_value.h"
+
+    using namespace std;
+    using namespace apus;
+
 }
+
 %union {
     int64_t int_val;
     double double_val;
     int char_val;
     char* str_val;
+
+    TypeSpecifier type_spec;
+
+    list<shared_ptr<Statement>>* list_stmt;
+
+    Statement* stmt;
+
+    Expression* expr;
+    Expression::Type expr_type;
+
+    Value* value;
+
 }
+
 %token<int_val> INT_LITERAL
 %token<double_val> DOUBLE_LITERAL
 %token<char_val> CHAR_LITERAL
@@ -29,11 +67,11 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 %token<str_val> ID
 %token<int_val> BINARY_LITERAL OCTA_LITERAL HEXA_LITERAL
 
-%token<int_val> UINT8 UINT16 UINT32 UINT64
-%token<int_val> SINT8 SINT16 SINT32 SINT64
-%token<double_val> FLOAT32 FLOAT64
-%token<char_val> CHAR8 CHAR16 CHAR32
-%token<str_val> STRING STRING8 STRING16 STRING32
+%token<type_spec> UINT8 UINT16 UINT32 UINT64
+%token<type_spec> SINT8 SINT16 SINT32 SINT64
+%token<type_spec> FLOAT32 FLOAT64
+%token<type_spec> CHAR8 CHAR16 CHAR32
+%token<type_spec> STRING STRING8 STRING16 STRING32
 %token STRUCT CONST UNION
 
 %token L_BRACE R_BRACE L_CASE R_CASE OPEN CLOSE
@@ -53,6 +91,16 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 %left MUL DIV MOD
 %right NOT REVERSE
 
+%type<list_stmt> action_declaration_list action_declaration_opt
+
+%type<stmt> action_declaration for_statement if_statement else_if jump_statement
+%type<stmt> expression_statement var_def_statement block_statement
+
+%type<expr> expression expression_opt unary_expression primary_expression variable_expression
+%type<expr> init_expression
+
+%type<type_spec> type_specifier
+
 %%
 program :
     data_declaration_opt action_declaration_opt
@@ -62,7 +110,7 @@ data_declaration_opt :
     | data_declaration_list
     ;
 action_declaration_opt :
-    /* empty */
+    /* empty */ { $$ = new list<shared_ptr<Statement>>(); }
     | action_declaration_list
     ;
 line_opt :
@@ -79,8 +127,14 @@ data_declaration_list :
     | line_list data_declaration_list
     ;
 action_declaration_list :
-    action_declaration
-    | action_declaration action_declaration_list
+    action_declaration {
+        $$ = new list<shared_ptr<Statement>>();
+        $$->push_back(shared_ptr<Statement>($1));
+    }
+    | action_declaration action_declaration_list {
+        $2->push_front(shared_ptr<Statement>($1));
+        $$ = $2;
+    }
     ;
 data_declaration :
     struct_union_type ID block_start member_definition_list R_BRACE line_list
@@ -128,8 +182,8 @@ dimension_array :
     | L_CASE expression R_CASE dimension_array
     ;
 expression_opt :
-    /* empty */
-    | expression
+    /* empty */ { $$ = nullptr; }
+    | expression { $$ = $1; }
     ;
 expression :
     variable_expression ASSIGN expression
@@ -143,42 +197,42 @@ expression :
     | variable_expression ANDASSIGN expression
     | variable_expression LSASSIGN expression
     | variable_expression RSASSIGN expression
-    | expression LOR expression
-    | expression LAND expression
-    | expression OR expression
-    | expression XOR expression
-    | expression AND expression
-    | expression EQL expression
-    | expression NEQ expression
-    | expression LSS expression
-    | expression GTR expression
-    | expression LEQ expression
-    | expression GEQ expression
-    | expression LSHIFT expression
-    | expression RSHIFT expression
-    | expression ADD expression
-    | expression SUB expression
-    | expression MUL expression
-    | expression DIV expression
-    | expression MOD expression
+    | expression LOR expression { $$ = new BinaryExpression(Expression::EXP_LOR, $1, $3); }
+    | expression LAND expression { $$ = new BinaryExpression(Expression::EXP_LAND, $1, $3); }
+    | expression OR expression { $$ = new BinaryExpression(Expression::EXP_OR, $1, $3); }
+    | expression XOR expression { $$ = new BinaryExpression(Expression::EXP_XOR, $1, $3); }
+    | expression AND expression { $$ = new BinaryExpression(Expression::EXP_AND, $1, $3); }
+    | expression EQL expression { $$ = new BinaryExpression(Expression::EXP_EQL, $1, $3); }
+    | expression NEQ expression { $$ = new BinaryExpression(Expression::EXP_NEQ, $1, $3); }
+    | expression LSS expression { $$ = new BinaryExpression(Expression::EXP_LSS, $1, $3); }
+    | expression GTR expression { $$ = new BinaryExpression(Expression::EXP_GTR, $1, $3); }
+    | expression LEQ expression { $$ = new BinaryExpression(Expression::EXP_LEQ, $1, $3); }
+    | expression GEQ expression { $$ = new BinaryExpression(Expression::EXP_GEQ, $1, $3); }
+    | expression LSHIFT expression { $$ = new BinaryExpression(Expression::EXP_LSHIFT, $1, $3); }
+    | expression RSHIFT expression { $$ = new BinaryExpression(Expression::EXP_RSHIFT, $1, $3); }
+    | expression ADD expression { $$ = new BinaryExpression(Expression::EXP_ADD, $1, $3); }
+    | expression SUB expression { $$ = new BinaryExpression(Expression::EXP_SUB, $1, $3); }
+    | expression MUL expression { $$ = new BinaryExpression(Expression::EXP_MUL, $1, $3); }
+    | expression DIV expression { $$ = new BinaryExpression(Expression::EXP_DIV, $1, $3); }
+    | expression MOD expression { $$ = new BinaryExpression(Expression::EXP_MOD, $1, $3); }
     | unary_expression
     ;
 unary_expression :
     primary_expression
-    | NOT unary_expression
-    | REVERSE unary_expression
-    | SUB primary_expression
-    | ADD primary_expression
+    | NOT unary_expression { $$ = new UnaryExpression(Expression::EXP_NOT, $2); }
+    | REVERSE unary_expression { $$ = new UnaryExpression(Expression::EXP_REVERSE, $2); }
+    | SUB primary_expression { $$ = new UnaryExpression(Expression::EXP_SUB, $2); }
+    | ADD primary_expression { $$ = new UnaryExpression(Expression::EXP_ADD, $2); }
     ;
 primary_expression :
-    OPEN expression CLOSE
-    | INT_LITERAL
-    | DOUBLE_LITERAL
-    | CHAR_LITERAL
-    | STRING_LITERAL
-    | BINARY_LITERAL
-    | OCTA_LITERAL
-    | HEXA_LITERAL
+    OPEN expression CLOSE { $$ = $2; }
+    | INT_LITERAL { $$ = new ValueExpression(SignedIntValue::Create(pctx->getDataTypeTable()->Find(S64), $1)); }
+    | DOUBLE_LITERAL { $$ = new ValueExpression(FloatValue::Create(pctx->getDataTypeTable()->Find(F64), $1)); }
+    | CHAR_LITERAL { $$ = new ValueExpression(CharacterValue::Create(pctx->getDataTypeTable()->Find(C8), $1)); }
+    | STRING_LITERAL { $$ = new ValueExpression(StringValue::Create(pctx->getDataTypeTable()->Find(STR8), $1)); }
+    | BINARY_LITERAL { $$ = new ValueExpression(SignedIntValue::Create(pctx->getDataTypeTable()->Find(U64), $1)); }
+    | OCTA_LITERAL { $$ = new ValueExpression(UnsignedIntValue::Create(pctx->getDataTypeTable()->Find(U64), $1)); }
+    | HEXA_LITERAL { $$ = new ValueExpression(UnsignedIntValue::Create(pctx->getDataTypeTable()->Find(U64), $1)); }
     | variable_expression
     | function_expression
     ;
@@ -217,11 +271,23 @@ semi_start :
     line_opt SEMI line_opt
     ;
 type_specifier :
-    UINT8 | UINT16 | UINT32 | UINT64
-    | SINT8 | SINT16 | SINT32 | SINT64
-    | FLOAT32 | FLOAT64
-    | CHAR8 | CHAR16 | CHAR32
-    | STRING | STRING8 | STRING16 | STRING32
+    UINT8 { $$ = TypeSpecifier::U8; }
+    | UINT16 { $$ = TypeSpecifier::U16; }
+    | UINT32 { $$ = TypeSpecifier::U32; }
+    | UINT64 { $$ = TypeSpecifier::U64; }
+    | SINT8 { $$ = TypeSpecifier::S8; }
+    | SINT16 { $$ = TypeSpecifier::S16; }
+    | SINT32 { $$ = TypeSpecifier::S32; }
+    | SINT64 { $$ = TypeSpecifier::S64; }
+    | FLOAT32 { $$ = TypeSpecifier::F32; }
+    | FLOAT64 { $$ = TypeSpecifier::F64; }
+    | CHAR8 { $$ = TypeSpecifier::C8; }
+    | CHAR16 { $$ = TypeSpecifier::C16; }
+    | CHAR32 { $$ = TypeSpecifier::C32; }
+    | STRING { $$ = TypeSpecifier::STR8; }
+    | STRING8 { $$ = TypeSpecifier::STR8; }
+    | STRING16 { $$ = TypeSpecifier::STR16; }
+    | STRING32 { $$ = TypeSpecifier::STR32; }
     ;
 action_declaration : 
     block_statement
@@ -232,30 +298,30 @@ action_declaration :
     | var_def_statement
     ;
 block_statement :
-    block_start action_declaration_opt block_end
+    block_start action_declaration_opt block_end { $$ = new Block(*$2); }
     ;
 if_statement :
-    IF paren_start expression paren_end block_statement else_if
+    IF paren_start expression paren_end block_statement else_if { $$ = new IfStatement($3, $5, $6); }
     ;
 else_if :
-    /* empty */
-    | ELSE if_statement
-    | ELSE block_statement
+    /* empty */ { $$ = nullptr; }
+    | ELSE if_statement { $$ = $2; }
+    | ELSE block_statement { $$ = $2; }
     ;
 for_statement :
-    FOR paren_start expression_opt semi_start expression_opt semi_start expression_opt paren_end block_statement
+    FOR paren_start expression_opt semi_start expression_opt semi_start expression_opt paren_end block_statement { $$ = new ForStatement($3, $5, $7, $9); }
     ;
 jump_statement :
-    BREAK line_list
-    | CONTINUE line_list
-    | RETURN expression_opt line_list
-    | EXIT expression_opt line_list
+    BREAK line_list { $$ = new BreakStatement(); }
+    | CONTINUE line_list { $$ = new ContinueStatement(); }
+    | RETURN expression_opt line_list { $$ = new ReturnStatement($2); }
+    | EXIT expression_opt line_list { $$ = new ExitStatement($2); }
     ;
 expression_statement :
-    expression line_list
+    expression line_list { $$ = new ExpressionStatement($1); }
     ;
 var_def_statement :
-    VAR variable_definition line_list
+    VAR variable_definition line_list { $$ = new VarDefStatement(); }
     ;
 variable_definition :
     type_specifier ID
