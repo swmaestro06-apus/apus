@@ -54,12 +54,39 @@ TEST(variable_test, string_init_test) {
     vt->Insert(var->getName(), var);
 }
 
+// struct A {
+//     S32 aa
+//     C8 bb
+// }
+//
+// var struct A d
+TEST(variable_test, struct_variable_test) {
+
+    std::shared_ptr<DataType> struct_A = std::make_shared<DataType>(STRUCT);
+    struct_A->Insert("aa", dtt->Find(S32));
+    struct_A->Insert("bb", dtt->Find(C8));
+    EXPECT_TRUE(struct_A->HasChild());
+
+    VarPtr var = std::make_shared<Variable>("d", struct_A);
+    ASSERT_TRUE(var->IsStructVariable());
+
+    ASSERT_TRUE(var->getChildVariable("aa") != NULL);
+    EXPECT_EQ(var->getChildVariable("aa")->getType(), S32);
+
+    ASSERT_TRUE(var->getChildVariable("bb") != NULL);
+    EXPECT_EQ(var->getChildVariable("bb")->getType(), C8);
+
+    vt->Insert(var->getName(), var);
+}
+
 TEST(variable_table_test, find_test) {
     std::shared_ptr<Variable> var_a = vt->Find("a");
     std::shared_ptr<Variable> var_b = vt->Find("b");
     std::shared_ptr<Variable> var_c = vt->Find("c");
+    std::shared_ptr<Variable> var_d = vt->Find("d");
 
     ASSERT_TRUE(var_a != NULL);
     ASSERT_TRUE(var_b != NULL);
     ASSERT_TRUE(var_c != NULL);
+    ASSERT_TRUE(var_d != NULL);
 }
