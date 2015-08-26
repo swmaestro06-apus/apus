@@ -279,6 +279,58 @@ TEST (ASTTest, Expression_Promote) {
         EXPECT_EQ(U32 , result->getType());
     }
 
+    // "Hello" + 3 (STR8 + U32)
+    {
+        std::shared_ptr<Expression> _hello = std::make_shared<ValueExpression>(StringValue::Create(dtt->Find("STR8"), std::string("hello")));
+        std::shared_ptr<Expression> _3 = std::make_shared<ValueExpression>(UnsignedIntValue::Create(dtt->Find("U32"), 3));
+
+        std::shared_ptr<Expression> add_expr = std::make_shared<BinaryExpression>(Expression::EXP_ADD, _hello, _3);
+
+        std::shared_ptr<StringValue> result = std::dynamic_pointer_cast<StringValue>(add_expr->Evaluate(ctx));
+
+        EXPECT_EQ(std::string("hello3"), result->getStringValue());
+        EXPECT_EQ(STR8 , result->getType());
+    }
+
+    // "Hello" + 3 (STR8 + S32)
+    {
+        std::shared_ptr<Expression> _hello = std::make_shared<ValueExpression>(StringValue::Create(dtt->Find("STR8"), std::string("hello")));
+        std::shared_ptr<Expression> _3 = std::make_shared<ValueExpression>(SignedIntValue::Create(dtt->Find("S32"), 3));
+
+        std::shared_ptr<Expression> add_expr = std::make_shared<BinaryExpression>(Expression::EXP_ADD, _hello, _3);
+
+        std::shared_ptr<StringValue> result = std::dynamic_pointer_cast<StringValue>(add_expr->Evaluate(ctx));
+
+        EXPECT_EQ(std::string("hello3"), result->getStringValue());
+        EXPECT_EQ(STR8 , result->getType());
+    }
+
+    // "Hello" + 3.5 (STR8 + F64)
+    {
+        std::shared_ptr<Expression> _hello = std::make_shared<ValueExpression>(StringValue::Create(dtt->Find("STR8"), std::string("hello")));
+        std::shared_ptr<Expression> _3 = std::make_shared<ValueExpression>(FloatValue::Create(dtt->Find("F64"), 3.141592));
+
+        std::shared_ptr<Expression> add_expr = std::make_shared<BinaryExpression>(Expression::EXP_ADD, _hello, _3);
+
+        std::shared_ptr<StringValue> result = std::dynamic_pointer_cast<StringValue>(add_expr->Evaluate(ctx));
+
+        EXPECT_EQ(std::string("hello3.141592"), result->getStringValue());
+        EXPECT_EQ(STR8 , result->getType());
+    }
+
+    // "Hello" + 'o' (STR8 + C8)
+    {
+        std::shared_ptr<Expression> _hello = std::make_shared<ValueExpression>(StringValue::Create(dtt->Find("STR8"), std::string("hello")));
+        std::shared_ptr<Expression> _3 = std::make_shared<ValueExpression>(CharacterValue::Create(dtt->Find("C8"), 'o'));
+
+        std::shared_ptr<Expression> add_expr = std::make_shared<BinaryExpression>(Expression::EXP_ADD, _hello, _3);
+
+        std::shared_ptr<StringValue> result = std::dynamic_pointer_cast<StringValue>(add_expr->Evaluate(ctx));
+
+        EXPECT_EQ(std::string("helloo"), result->getStringValue());
+        EXPECT_EQ(STR8 , result->getType());
+    }
+
 }
 TEST (ASTTest, IsTrue) {
 
