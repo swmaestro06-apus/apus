@@ -30,9 +30,9 @@
 "var"   { return VAR; }
 
 "include"  { return INCLUDE; }
-"union"    { return UNION; }
-"struct"   { return STRUCT; }
-"const"    { return CONST; }
+"union"    { return UNION_TYPE; }
+"struct"   { return STRUCT_TYPE; }
+"const"    { return CONST_TYPE; }
 "if"       { return IF; }
 "else"     { return ELSE; }
 "for"      { return FOR; }

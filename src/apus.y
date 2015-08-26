@@ -74,7 +74,7 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 %token<type_spec> FLOAT32 FLOAT64
 %token<type_spec> CHAR8 CHAR16 CHAR32
 %token<type_spec> STRING STRING8 STRING16 STRING32
-%token STRUCT CONST UNION
+%token<type_spec> STRUCT_TYPE CONST_TYPE UNION_TYPE
 
 %token L_BRACE R_BRACE L_CASE R_CASE OPEN CLOSE
 %token COMMENT CR DOT VAR SEMI COMMA
