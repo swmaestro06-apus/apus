@@ -114,12 +114,12 @@
 }
 
 \"([^"\n]|\\\")*\" {
-    char* tmp = (char*)malloc(yyleng-1);
+    int i;
     yylval.str_val = (char*)malloc(yyleng-1);
     yytext[yyleng-1] = '\0';
-    sscanf(yytext, "\"%s", tmp);
-    sprintf(yylval.str_val, "%s", tmp);
-    free(tmp);
+    for(i = 0; i < yyleng-1; i++) {
+        yylval.str_val[i] = yytext[i+1];
+    }
     return STRING_LITERAL;
 }
 
