@@ -17,9 +17,12 @@
 
 using namespace apus;
 
-apus::Context ctx;
 
 TEST (ASTTest, Expression_nullptr) {
+
+    DataTypeTablePtr dtt = std::make_shared<DataTypeTable>();
+    dtt->SetPrimitiveTypes();
+    apus::Context ctx(dtt, "");
 
     //  nullptr input
     {
@@ -39,6 +42,7 @@ TEST (ASTTest, Expression_ASMD) {
 
     DataTypeTablePtr dtt = std::make_shared<DataTypeTable>();
     dtt->SetPrimitiveTypes();
+    apus::Context ctx(dtt, "");
 
     // 1 + 2 == 3
     {
@@ -105,6 +109,7 @@ TEST (ASTTest, Expression_Int_Compare) {
 
     DataTypeTablePtr dtt = std::make_shared<DataTypeTable>();
     dtt->SetPrimitiveTypes();
+    apus::Context ctx(dtt, "");
 
     {
         std::shared_ptr<Expression> _2 = std::make_shared<ValueExpression>(SignedIntValue::Create(dtt->Find("S32"), 2));
@@ -137,6 +142,7 @@ TEST (ASTTest, Expression_Float_Compare) {
 
     DataTypeTablePtr dtt = std::make_shared<DataTypeTable>();
     dtt->SetPrimitiveTypes();
+    apus::Context ctx(dtt, "");
 
     const double __2_5 = 2.000000000005;
     const double __2_7 = 2.000000000007;
@@ -172,6 +178,7 @@ TEST (ASTTest, Expression_Float_EQL_Compare) {
 
     DataTypeTablePtr dtt = std::make_shared<DataTypeTable>();
     dtt->SetPrimitiveTypes();
+    apus::Context ctx(dtt, "");
 
     const double a = 0.15 + 0.15;
     const double b = 0.1 + 0.2;
@@ -201,6 +208,7 @@ TEST (ASTTest, Expression_Promote) {
 
     DataTypeTablePtr dtt = std::make_shared<DataTypeTable>();
     dtt->SetPrimitiveTypes();
+    apus::Context ctx(dtt, "");
 
     // 2 * 3.5 (S16 * F32)
     {
@@ -284,6 +292,7 @@ TEST (ASTTest, IsTrue) {
 
     DataTypeTablePtr dtt = std::make_shared<DataTypeTable>();
     dtt->SetPrimitiveTypes();
+    apus::Context ctx(dtt, "");
 
     bool result = false;
 
@@ -321,6 +330,7 @@ TEST (ASTTest, Expression_String_Add) {
 
     DataTypeTablePtr dtt = std::make_shared<DataTypeTable>();
     dtt->SetPrimitiveTypes();
+    apus::Context ctx(dtt, "");
 
     {
         std::shared_ptr<Expression> _hello = std::make_shared<ValueExpression>(StringValue::Create(dtt->Find("STR8"), std::string("Hello ") ) );
