@@ -2,6 +2,7 @@
 #include "vm/variable_table.h"
 
 #include "ast/value/signed_int_value.h"
+#include "ast/value/string_value.h"
 #include "vm/function_table.h"
 
 #include <iostream>
@@ -81,6 +82,42 @@ namespace apus {
 
             int64_t int_val = std::dynamic_pointer_cast<SignedIntValue>(value)->getIntValue();
             cout << ">> PrintS64 << " << int_val << endl;
+
+        }
+
+        child.BlockEnd();
+        return value;
+    }
+
+
+    PrintSTR8::PrintSTR8(Context& context) {
+        name_ = "printSTR8";
+        return_type_ = context.GetDataTypeTable()->Find(STR8);
+
+        VariablePtr arg =
+                std::make_shared<Variable>(
+                        std::string("val"),
+                        context.GetDataTypeTable()->Find(STR8)
+                );
+
+        arg_list_.push_back(arg);
+    }
+
+    PrintSTR8::~PrintSTR8() {
+    }
+
+    std::shared_ptr<Value> PrintSTR8::Execute(Context & context) {
+
+        Context child = context.BlockBegin();
+
+        ValuePtr value = nullptr;
+        VariablePtr var = context.FindVariable("val");
+
+        if (var) {
+            value = var->GetValue();
+
+            std::string str_val = std::dynamic_pointer_cast<StringValue>(value)->getStringValue();
+            cout << ">> PrintSTR8 << " << str_val << endl;
 
         }
 

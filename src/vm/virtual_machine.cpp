@@ -33,8 +33,8 @@ namespace apus {
 
         Context context(data_type_table_);
         // Insert Built-in function
-        std::shared_ptr<Function> printS64 = std::make_shared<PrintS64>(context);
-        context.InsertFunction(printS64);
+        context.InsertFunction(std::make_shared<PrintS64>(context));
+        context.InsertFunction(std::make_shared<PrintSTR8>(context));
 
         std::cout << "vm is Running..." << std::endl;
         

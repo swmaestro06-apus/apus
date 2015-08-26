@@ -61,6 +61,14 @@ namespace apus {
         virtual std::shared_ptr<Value> Execute(Context& context) override;
     };
 
+    class PrintSTR8 : public Function {
+    public:
+        PrintSTR8(Context& context);
+        virtual ~PrintSTR8();
+
+        virtual std::shared_ptr<Value> Execute(Context& context) override;
+    };
+
 }
 
 #endif
