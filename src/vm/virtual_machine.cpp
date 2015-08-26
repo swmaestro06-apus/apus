@@ -28,10 +28,9 @@ namespace apus {
         data_type_table_ = data_type_table;
     }
 
-    void VirtualMachine::Run() {
-
-        Context context(data_type_table_);
-
+    void VirtualMachine::Run(std::string binary_file_path) {
+        
+        Context context(data_type_table_, binary_file_path);
         // Insert Built-in function
         context.InsertFunction(std::make_shared<PrintS64>(context));
         context.InsertFunction(std::make_shared<PrintSTR8>(context));

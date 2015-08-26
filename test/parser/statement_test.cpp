@@ -140,5 +140,5 @@ TEST (ParserTest, StmtForTest) {
     yy_scan_string(for_test);
     result = yyparse(&pctx);
     EXPECT_EQ (result, 0);
-    pctx.getVM()->Run();
+    pctx.getVM()->Run("");
 }

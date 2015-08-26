@@ -7,8 +7,8 @@
 
 namespace apus {
 
-    Context::Context(shared_ptr<DataTypeTable> data_type_table)
-        : parent_(nullptr), data_type_table_(data_type_table) {
+    Context::Context(shared_ptr<DataTypeTable> data_type_table, std::string binary_file_path)
+        : parent_(nullptr), data_type_table_(data_type_table), binary_file_path_(binary_file_path) {
 
         break_ = std::make_shared<bool>(false);
         continue_ = std::make_shared<bool>(false);
@@ -20,12 +20,13 @@ namespace apus {
 
     Context::Context(Context* context) {
         parent_ = context;
-
+        
         break_ = parent_->break_;
         continue_ = parent_->continue_;
         return_ = parent_->return_;
 
         data_type_table_ = parent_->data_type_table_;
+        binary_file_path_ = context->binary_file_path_;
 
         variable_table_ = make_shared<VariableTable>();
         function_table_ = make_shared<FunctionTable>();
