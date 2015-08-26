@@ -125,7 +125,7 @@ line_list :
     ;
 data_declaration_list :
     data_declaration
-    | data_declaration data_declaration_list
+    | data_declaration_list data_declaration
     | line_list data_declaration_list
     ;
 action_declaration_list :
@@ -174,10 +174,6 @@ const_struct_init :
     ;
 const_array_init : 
     L_CASE const_expression_list R_CASE
-    ;
-array :
-    dimension_array ID
-    | dimension_array ID ASSIGN const_expression_list
     ;
 dimension_array :
     L_CASE expression R_CASE
@@ -330,8 +326,10 @@ variable_definition :
     | struct_union_type ID ID
     | type_specifier ID ASSIGN init_expression
     | struct_union_type ID ID ASSIGN init_expression
-    | type_specifier array
-    | struct_union_type ID array
+    | type_specifier dimension_array ID
+    | type_specifier dimension_array ID ASSIGN init_expression
+    | struct_union_type ID dimension_array ID
+    | struct_union_type ID dimension_array ID ASSIGN init_expression
     ;
 init_expression_list :
     init_expression
