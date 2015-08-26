@@ -24,7 +24,7 @@ namespace apus {
     class Context {
     public:
 
-        Context(shared_ptr<DataTypeTable> data_type_table = nullptr);
+        Context(shared_ptr<DataTypeTable> data_type_table, std::string binary_file_path);
         Context(Context* context);
         virtual ~Context();
 
@@ -45,6 +45,7 @@ namespace apus {
         inline bool GetReturn() { return *return_; }
         std::shared_ptr<Value> GetReturnValue() { return return_value_; }
         shared_ptr<DataTypeTable> GetDataTypeTable() { return data_type_table_; }
+        std::string GetBinaryFilePath() { return binary_file_path_; }
 
         inline void SetBreak(bool _break) { *break_ = _break;}
         inline void SetContinue(bool _continue) { *continue_ = _continue;}
@@ -55,6 +56,8 @@ namespace apus {
     private:
 
         Context* parent_; // I'm not having it
+
+        std::string binary_file_path_;
 
         shared_ptr<DataTypeTable> data_type_table_;
         shared_ptr<VariableTable> variable_table_;
