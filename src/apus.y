@@ -166,6 +166,9 @@ const_expression :
     | DOUBLE_LITERAL
     | CHAR_LITERAL
     | STRING_LITERAL
+    | BINARY_LITERAL
+    | OCTA_LITERAL
+    | HEXA_LITERAL
     | const_struct_init
     | const_array_init
     ;
@@ -237,7 +240,8 @@ primary_expression :
 variable_expression :
     ID
     | ID dimension_array
-    | variable_expression DOT variable_expression
+    | variable_expression DOT ID
+    | variable_expression DOT ID dimension_array
     ;
 function_expression :
     ID OPEN arg_expression_opt CLOSE
