@@ -16,6 +16,7 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 %code requires {
     #include <memory>
     #include <list>
+    #include <string>
 
     #include "common/common.h"
 
@@ -50,7 +51,6 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
     char* str_val;
 
     TypeSpecifier type_spec;
-
     list<shared_ptr<Statement>>* list_stmt;
 
     Statement* stmt;
@@ -99,9 +99,9 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 %type<stmt> expression_statement var_def_statement block_statement
 
 %type<expr> expression expression_opt unary_expression primary_expression variable_expression
-%type<expr> init_expression
+%type<expr> init_expression const_expression
 
-%type<type_spec> type_specifier
+%type<type_spec> type_specifier struct_union_type
 
 %%
 program :
@@ -139,36 +139,51 @@ action_declaration_list :
     }
     ;
 data_declaration :
-    struct_union_type ID block_start member_definition_list R_BRACE line_list
+    struct_union_type ID {
+        std::string str = $2;
+        pctx->setCurrentDataType(std::make_shared<DataType>($1));
+        pctx->setCurrentName(str);
+    } block_start member_definition_list R_BRACE line_list {
+        pctx->ChangeCurrentDataType();
+    }
     ;
 struct_union_type :
-    STRUCT
-    | UNION
+    STRUCT_TYPE { $$ = TypeSpecifier::STRUCT; }
+    | UNION_TYPE { $$ = TypeSpecifier::UNION; }
     ;
 member_definition_list :
     member_definition line_opt
     | member_definition line_list member_definition_list
     ;
 member_definition :
-    type_specifier ID
-    | struct_union_type ID ID
+    type_specifier ID {
+        std::string str = $2;
+        pctx->AddToCurrentDataType(str, $1);
+    }
+    | struct_union_type ID ID {
+        std::string str = $2;
+        std::string str2 = $3;
+        pctx->AddToCurrentDataType(str2, str);
+    }
     | type_specifier ID ASSIGN const_expression
     | struct_union_type ID ID ASSIGN const_expression
-    | type_specifier array
-    | struct_union_type ID array
+    | type_specifier dimension_array ID
+    | type_specifier dimension_array ID ASSIGN const_expression_list
+    | struct_union_type ID dimension_array ID
+    | struct_union_type ID dimension_array ID ASSIGN const_expression_list
     ;
 const_expression_list :
     const_expression
     | const_expression comma_line_opt const_expression_list
     ;
 const_expression :
-    INT_LITERAL
-    | DOUBLE_LITERAL
-    | CHAR_LITERAL
-    | STRING_LITERAL
-    | BINARY_LITERAL
-    | OCTA_LITERAL
-    | HEXA_LITERAL
+    INT_LITERAL { $$ = new ValueExpression(SignedIntValue::Create(pctx->getDataTypeTable()->Find(S64), $1)); }
+    | DOUBLE_LITERAL { $$ = new ValueExpression(FloatValue::Create(pctx->getDataTypeTable()->Find(F64), $1)); }
+    | CHAR_LITERAL { $$ = new ValueExpression(CharacterValue::Create(pctx->getDataTypeTable()->Find(C8), $1)); }
+    | STRING_LITERAL { $$ = new ValueExpression(StringValue::Create(pctx->getDataTypeTable()->Find(STR8), $1)); }
+    | BINARY_LITERAL { $$ = new ValueExpression(UnsignedIntValue::Create(pctx->getDataTypeTable()->Find(U64), $1)); }
+    | OCTA_LITERAL { $$ = new ValueExpression(UnsignedIntValue::Create(pctx->getDataTypeTable()->Find(U64), $1)); }
+    | HEXA_LITERAL { $$ = new ValueExpression(UnsignedIntValue::Create(pctx->getDataTypeTable()->Find(U64), $1)); }
     | const_struct_init
     | const_array_init
     ;
