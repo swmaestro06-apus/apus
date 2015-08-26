@@ -31,8 +31,12 @@ namespace apus {
         void Insert(const std::string& name, DataTypePtr elem);
         DataTypePtr Find(const std::string& name);
 
+        DataTypeMap GetMap();
+
         void SetByteSize(int byte_size);
         virtual int GetByteSize();
+
+        DataTypePtr GetChildDataType(int index);
 
         void SetInitExpr(Expression* expr);
         ExprPtr GetInitExpr();
@@ -45,8 +49,10 @@ namespace apus {
     protected:
         TypeSpecifier type_;            // type of the data type
         DataTypeMap map_;               // list of child data types
+        int current_index_;            // current offset
+        // index of child data types
+        std::map<int, DataTypePtr> index_;
         int byte_size_;                 // size of bytes to be assigned
-        int offset_;                    // offset in list of parent data type
         ExprPtr init_expr_;             // expression to be initialized
     };
 
