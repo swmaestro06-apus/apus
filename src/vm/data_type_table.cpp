@@ -7,7 +7,7 @@ namespace apus {
 
     DataType::DataType() {
         byte_size_ = 0;
-        offset_ = 0;
+        current_index_ = 0;
     }
 
     DataType::DataType(TypeSpecifier type): DataType() {
@@ -20,10 +20,12 @@ namespace apus {
     void DataType::Insert(const std::string& name, DataType* elem) {
         DataTypePtr elem_ptr(elem); // pointer to shared_ptr
         map_[name] = elem_ptr;
+        index_[current_index_++] = elem_ptr;
     }
 
     void DataType::Insert(const std::string& name, DataTypePtr elem) {
         map_[name] = elem;
+        index_[current_index_++] = elem;
     }
 
     DataTypePtr DataType::Find(const std::string& name) {
@@ -32,6 +34,10 @@ namespace apus {
             return it->second;
         }
         return nullptr;
+    }
+
+    DataTypeMap DataType::GetMap() {
+        return map_;
     }
 
     void DataType::SetByteSize(int byte_size) {
@@ -58,6 +64,14 @@ namespace apus {
         }
         // If byte_size_ is set, just return it
         return byte_size_;
+    }
+
+    DataTypePtr DataType::GetChildDataType(int index) {
+        if (index < index_.size()) {
+            return index_[index];
+        } else {
+            return nullptr;
+        }
     }
     
     void DataType::SetInitExpr(Expression* expr_ptr) {

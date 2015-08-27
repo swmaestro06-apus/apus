@@ -23,8 +23,6 @@ namespace apus {
 
     class Variable {
     public:
-        Variable();
-        Variable(const std::string& name);
         Variable(const std::string& name, DataTypePtr type);
         ~Variable();
 
@@ -36,12 +34,20 @@ namespace apus {
         DataTypePtr getDataType();
         void setDataType(DataTypePtr type);
 
+        VarPtr getChildVariable(const std::string& name);
+        void InsertChildVariable(const std::string& name, VarPtr var);
+
         ValuePtr getValue();
         void setValue(ValuePtr value);
+
+        bool IsStructVariable();
+
+        void CreateChildVariables();
 
     protected:
         std::string name_;                  // name of variable
         DataTypePtr data_type_;             // data type
+        VariableMap map_;                   // list of child variables
         ValuePtr value_;                    // value
     };
 
