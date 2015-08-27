@@ -73,7 +73,7 @@ namespace apus {
         Context child = context.BlockBegin();
 
         ValuePtr value = nullptr;
-        VariablePtr var = context.FindVariable("val");
+        VariablePtr var = child.FindVariable("val");
 
         if (var) {
             value = var->getValue();
@@ -81,6 +81,7 @@ namespace apus {
             int64_t int_val = std::dynamic_pointer_cast<SignedIntValue>(value)->getIntValue();
             cout << int_val << endl;
 
+            child.SetReturnValue(value);
         }
 
         child.BlockEnd();
@@ -109,7 +110,7 @@ namespace apus {
         Context child = context.BlockBegin();
 
         ValuePtr value = nullptr;
-        VariablePtr var = context.FindVariable("val");
+        VariablePtr var = child.FindVariable("val");
 
         if (var) {
             value = var->getValue();
@@ -117,6 +118,7 @@ namespace apus {
             std::string str_val = std::dynamic_pointer_cast<StringValue>(value)->getStringValue();
             cout << str_val << endl;
 
+            child.SetReturnValue(value);
         }
 
         child.BlockEnd();
