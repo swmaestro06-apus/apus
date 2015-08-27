@@ -1,5 +1,11 @@
+#include <cstdlib>
+
 #include "ast/statement/jump_statement.h"
 #include "ast/statement/for_statement.h"
+
+#include "ast/value/signed_int_value.h"
+#include "ast/value/unsigned_int_value.h"
+
 #include "vm/context.h"
 
 namespace apus {
@@ -46,11 +52,22 @@ namespace apus {
 
     void ExitStatement::Execute(Context &context) {
 
+        int int_val = 0;
+
         if (expression_) {
-            expression_->Evaluate(context);
+            ValuePtr val = expression_->Evaluate(context);
+            TypeSpecifier val_type = val->getType();
+
+            if (S8 <= val_type && val_type <= S64) {
+                int_val = std::dynamic_pointer_cast<SignedIntValue>(val)->getIntValue();
+            }
+            else if (U8 <= val_type && val_type <= U64) {
+                int_val = std::dynamic_pointer_cast<UnsignedIntValue>(val)->getUIntValue();
+            }
+
         }
 
-        context.SetExit(true);
+        exit(int_val);
     }
 
 }
