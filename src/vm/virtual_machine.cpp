@@ -2,6 +2,8 @@
 #include "vm/context.h"
 #include "vm/function_table.h"
 
+#include "vm/builtin_functions.h"
+
 namespace apus {
 
     VirtualMachine::VirtualMachine() {
@@ -31,10 +33,12 @@ namespace apus {
     void VirtualMachine::Run(std::string binary_file_path) {
         
         Context context(data_type_table_, binary_file_path);
+
         // Insert Built-in function
         context.InsertFunction(std::make_shared<PrintS64>(context));
         context.InsertFunction(std::make_shared<PrintSTR8>(context));
         context.InsertFunction(std::make_shared<ReadS64>(context));
+        context.InsertFunction(std::make_shared<ReadU32>(context));
         
         for(std::shared_ptr<Statement> stmt : stmt_list_) {
             stmt->Execute(context);
