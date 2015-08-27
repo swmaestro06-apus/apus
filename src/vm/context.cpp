@@ -7,17 +7,24 @@
 namespace apus {
 
     Context::Context(shared_ptr<DataTypeTable> data_type_table)
-        : parent_(nullptr), data_type_table_(data_type_table),
-          break_(false), continue_(false), return_(false), exit_(false) {
+        : parent_(nullptr), data_type_table_(data_type_table) {
+
+        break_ = std::make_shared<bool>(false);
+        continue_ = std::make_shared<bool>(false);
+        return_ = std::make_shared<bool>(false);
 
         variable_table_ = make_shared<VariableTable>();
         // TODO : create function table
     }
 
-    Context::Context(Context* context)
-        : break_(false), continue_(false), return_(false), exit_(false) {
+    Context::Context(Context* context) {
         parent_ = context;
-        data_type_table_ = context->data_type_table_;
+
+        break_ = parent_->break_;
+        continue_ = parent_->continue_;
+        return_ = parent_->return_;
+
+        data_type_table_ = parent_->data_type_table_;
 
         variable_table_ = make_shared<VariableTable>();
         // TODO : create function table

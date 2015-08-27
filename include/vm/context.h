@@ -37,19 +37,13 @@ namespace apus {
         void InsertVariable(shared_ptr<Variable> variable);
         // TODO : InsertFunction();
 
-        inline bool GetBreak() { return break_; }
-        inline bool GetContinue() { return continue_; }
-        inline bool GetReturn() { return return_; }
-        inline bool GetExit() { return exit_; }
-        std::shared_ptr<Value> GetReturnType() { return return_type_; }
-        std::list<std::shared_ptr<Value>> GetArgList() { return arg_list_; }
+        inline bool GetBreak() { return *break_; }
+        inline bool GetContinue() { return *continue_; }
+        inline bool GetReturn() { return *return_; }
 
-        inline void SetBreak(bool _break) { break_ = _break;}
-        inline void SetContinue(bool _continue) { continue_ = _continue;}
-        inline void SetReturn(bool _return) { return_ = _return; }
-        inline void SetExit(bool _exit) { exit_ = _exit; }
-        void SetReturnType(std::shared_ptr<Value> _return_type) { return_type_ = _return_type; }
-        void SetArgList(std::list<std::shared_ptr<Value>> _arg_list) { arg_list_ = _arg_list; }
+        inline void SetBreak(bool _break) { *break_ = _break;}
+        inline void SetContinue(bool _continue) { *continue_ = _continue;}
+        inline void SetReturn(bool _return) { *return_ = _return; }
 
     private:
 
@@ -61,13 +55,9 @@ namespace apus {
         list<shared_ptr<DataType>> param_list_;
         shared_ptr<Value> return_value_;
 
-        bool break_;
-        bool continue_;
-        bool return_;
-        bool exit_;
-
-        std::list<std::shared_ptr<Value>> arg_list_;
-        std::shared_ptr<Value> return_type_;
+        shared_ptr<bool> break_;
+        shared_ptr<bool> continue_;
+        shared_ptr<bool> return_;
 
     };
 

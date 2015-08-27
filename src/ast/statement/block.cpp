@@ -29,8 +29,7 @@ namespace apus {
 
             stmt->Execute(child);
 
-            if (context.GetBreak() || context.GetContinue()
-                || context.GetReturn() || context.GetExit()) {
+            if (context.GetBreak() || context.GetContinue() || context.GetReturn()) {
                 break;
             }
         }
