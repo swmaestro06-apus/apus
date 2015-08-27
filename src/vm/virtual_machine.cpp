@@ -34,6 +34,7 @@ namespace apus {
         // Insert Built-in function
         context.InsertFunction(std::make_shared<PrintS64>(context));
         context.InsertFunction(std::make_shared<PrintSTR8>(context));
+        context.InsertFunction(std::make_shared<ReadS64>(context));
         
         for(std::shared_ptr<Statement> stmt : stmt_list_) {
             stmt->Execute(context);
