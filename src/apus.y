@@ -51,6 +51,7 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 
 %union {
     int64_t int_val;
+    uint64_t uint_val;
     double double_val;
     int char_val;
     char* str_val;

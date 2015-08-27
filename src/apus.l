@@ -124,8 +124,7 @@
     int num_tmp;
     char* tmp = (char*)malloc(yyleng);
     sscanf(yytext, "0b%s", tmp);
-    num_tmp = strtol(tmp, NULL, 2);
-    yylval.int_val = num_tmp;
+    yylval.uint_val = strtoul(tmp, NULL, 16);
     free(tmp);
     return BINARY_LITERAL;
 }
@@ -134,8 +133,7 @@
     int num_tmp;
     char* tmp = (char*)malloc(yyleng);
     sscanf(yytext, "0%s", tmp);
-    num_tmp = strtol(tmp, NULL, 8);
-    yylval.int_val = num_tmp;
+    yylval.uint_val = strtoul(tmp, NULL, 16);
     free(tmp);
     return OCTA_LITERAL;
 }
@@ -144,8 +142,7 @@
     int num_tmp;
     char* tmp = (char*)malloc(yyleng);
     sscanf(yytext, "0x%s", tmp);
-    num_tmp = strtol(tmp, NULL, 16);
-    yylval.int_val = num_tmp;
+    yylval.uint_val = strtoul(tmp, NULL, 16);
     free(tmp);
     return HEXA_LITERAL;
 }
