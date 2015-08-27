@@ -29,11 +29,13 @@ namespace apus {
 
     Context Context::BlockBegin() {
         
-        Context child(*this);
+        Context child(this);
 
         for (VariablePtr varPtr : param_list_) {
             child.InsertVariable(varPtr);
         }
+
+        param_list_.clear();
 
         return child;
     }

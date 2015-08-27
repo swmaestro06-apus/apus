@@ -53,6 +53,7 @@ namespace apus {
         inline void SetReturn(bool _return) { return_ = _return; }
         inline void SetExit(bool _exit) { exit_ = _exit; }
         void SetReturnType(std::shared_ptr<Value> _return_type) { return_type_ = _return_type; }
+        void SetReturnValue(std::shared_ptr<Value> value) { return_value_ = value; }
         void SetParamList(list<shared_ptr<Variable>> param_list) { param_list_ = param_list; }
 
     private:
