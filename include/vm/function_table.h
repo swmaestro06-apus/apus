@@ -73,6 +73,13 @@ namespace apus {
         virtual std::shared_ptr<Value> BlockBody(Context& context) override;
     };
 
+    class ReadS64 : public BuiltInFunction {
+    public:
+        ReadS64(Context& context);
+        virtual ~ReadS64();
+
+        virtual std::shared_ptr<Value> BlockBody(Context& context) override;
+    };
 }
 
 #endif

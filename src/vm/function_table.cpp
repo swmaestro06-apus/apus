@@ -3,6 +3,9 @@
 
 #include "ast/value/signed_int_value.h"
 #include "ast/value/string_value.h"
+
+#include "utils/BinaryReader.h"
+
 #include "vm/function_table.h"
 
 namespace apus {
@@ -127,5 +130,31 @@ namespace apus {
 
         return value;
     }
+
+    ReadS64::ReadS64(Context& context) {
+        name_ = "readS64";
+        return_type_ = context.GetDataTypeTable()->Find(std::string("S64"));
+    }
+
+    ReadS64::~ReadS64() {
+    }
+
+    std::shared_ptr<Value> ReadS64::BlockBody(Context & context) {
+
+        shared_ptr<SignedIntValue> value = nullptr;
+        shared_ptr<BinaryReader> bin_reader = context.GetBinaryReader();
+
+        if (bin_reader) {
+
+            uint64_t int_val;
+            context.GetBinaryReader()->ReadInt(S64, int_val);
+            value = SignedIntValue::Create(context.GetDataTypeTable()->Find(S64), int_val);
+
+        }
+
+        context.SetReturnValue(value);
+        return value;
+    }
+
 
 }
