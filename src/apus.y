@@ -108,9 +108,9 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 
 %%
 program :
-    data_declaration_opt action_declaration_opt {
+    line_opt data_declaration_opt action_declaration_opt {
         pctx->SendDataTypeTableToVM();
-        pctx->getVM()->setStmtList(*$2);
+        pctx->getVM()->setStmtList(*$3);
     }
     ;
 data_declaration_opt :
@@ -355,9 +355,9 @@ variable_definition :
     | type_specifier ID ASSIGN init_expression { $$ = new VarDefStatement($1, $2, $4); }
     | struct_union_type ID ID ASSIGN init_expression
     | type_specifier dimension_array ID
-    | type_specifier dimension_array ID ASSIGN init_expression
+    | type_specifier dimension_array ID ASSIGN init_expression_list
     | struct_union_type ID dimension_array ID
-    | struct_union_type ID dimension_array ID ASSIGN init_expression
+    | struct_union_type ID dimension_array ID ASSIGN init_expression_list
     ;
 init_expression_list :
     init_expression
