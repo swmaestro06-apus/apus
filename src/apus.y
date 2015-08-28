@@ -51,6 +51,7 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 
 %union {
     int64_t int_val;
+    uint64_t uint_val;
     double double_val;
     int char_val;
     char* str_val;
@@ -73,7 +74,7 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 %token<char_val> CHAR_LITERAL
 %token<str_val> STRING_LITERAL
 %token<str_val> ID
-%token<int_val> BINARY_LITERAL OCTA_LITERAL HEXA_LITERAL
+%token<uint_val> BINARY_LITERAL OCTA_LITERAL HEXA_LITERAL
 
 %token<type_spec> UINT8 UINT16 UINT32 UINT64
 %token<type_spec> SINT8 SINT16 SINT32 SINT64
@@ -109,9 +110,9 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 
 %%
 program :
-    data_declaration_opt action_declaration_opt {
+    line_opt data_declaration_opt action_declaration_opt {
         pctx->SendDataTypeTableToVM();
-        pctx->getVM()->setStmtList(*$2);
+        pctx->getVM()->setStmtList(*$3);
     }
     ;
 data_declaration_opt :
@@ -175,9 +176,9 @@ member_definition :
     | type_specifier ID ASSIGN const_expression
     | struct_union_type ID ID ASSIGN const_expression
     | type_specifier dimension_array ID
-    | type_specifier dimension_array ID ASSIGN const_expression_list
+    | type_specifier dimension_array ID ASSIGN const_expression
     | struct_union_type ID dimension_array ID
-    | struct_union_type ID dimension_array ID ASSIGN const_expression_list
+    | struct_union_type ID dimension_array ID ASSIGN const_expression
     ;
 const_expression_list :
     const_expression
