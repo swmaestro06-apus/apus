@@ -351,13 +351,21 @@ expression_statement :
     expression line_list { $$ = new ExpressionStatement($1); }
     ;
 var_def_statement :
-    VAR variable_definition line_list { $$ = $2;}
+    VAR variable_definition line_list { $$ = $2; }
     ;
 variable_definition :
-    type_specifier ID
-    | struct_union_type ID ID
-    | type_specifier ID ASSIGN init_expression { $$ = new VarDefStatement($1, $2, $4); }
-    | struct_union_type ID ID ASSIGN init_expression
+    type_specifier ID {
+        $$ = new VarDefStatement($1, string($2));
+    }
+    | struct_union_type ID ID {
+        $$ = new VarDefStatement(string($2), string($3));
+    }
+    | type_specifier ID ASSIGN init_expression {
+        $$ = new VarDefStatement($1, string($2), $4);
+    }
+    | struct_union_type ID ID ASSIGN init_expression {
+        $$ = new VarDefStatement(string($2), string($3), $5);
+    }
     | type_specifier dimension_array ID
     | type_specifier dimension_array ID ASSIGN init_expression
     | struct_union_type ID dimension_array ID
@@ -368,7 +376,7 @@ init_expression_list :
     | init_expression comma_line_opt init_expression_list
     ;
 init_expression :
-    expression
+    expression { $$ = $1; }
     | struct_init
     | array_init
     ;
