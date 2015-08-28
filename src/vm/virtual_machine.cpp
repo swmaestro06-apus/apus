@@ -37,8 +37,20 @@ namespace apus {
         // Insert Built-in function
         context.InsertFunction(std::make_shared<PrintS64>(context));
         context.InsertFunction(std::make_shared<PrintSTR8>(context));
+
+        context.InsertFunction(std::make_shared<ReadS8>(context));
+        context.InsertFunction(std::make_shared<ReadS16>(context));
+        context.InsertFunction(std::make_shared<ReadS32>(context));
         context.InsertFunction(std::make_shared<ReadS64>(context));
+
+        context.InsertFunction(std::make_shared<ReadU8>(context));
+        context.InsertFunction(std::make_shared<ReadU16>(context));
         context.InsertFunction(std::make_shared<ReadU32>(context));
+        context.InsertFunction(std::make_shared<ReadU64>(context));
+
+        context.InsertFunction(std::make_shared<ReadC8>(context));
+        context.InsertFunction(std::make_shared<ReadC16>(context));
+        context.InsertFunction(std::make_shared<ReadC32>(context));
         
         for(std::shared_ptr<Statement> stmt : stmt_list_) {
             stmt->Execute(context);
