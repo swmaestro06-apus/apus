@@ -35,7 +35,7 @@ union id6 { u32 aa }\n\
 
 TEST (ParserTest, DataDeclTest) {
     int result;
-    apus::ParserContext pctx;
+    apus::ParserContext pctx(std::make_shared<apus::VirtualMachine>());
 
     yy_scan_string(data_decl_test);
     result = yyparse(&pctx);

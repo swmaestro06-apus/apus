@@ -1,6 +1,10 @@
 #include "ast/statement/block.h"
 #include "vm/context.h"
 
+#include <iostream>
+
+using namespace std;
+
 namespace apus {
 
     Block::Block(std::list<StmtPtr> statements)
@@ -17,14 +21,18 @@ namespace apus {
 
     void Block::Execute(Context& context) {
 
-        for (StmtPtr stmt : statements_) {
-            stmt->Execute(context);
+        Context child = context.BlockBegin();
 
-            if (context.GetBreak() || context.GetContinue()
-                || context.GetReturn() || context.GetExit()) {
+        for (StmtPtr stmt : statements_) {
+
+            stmt->Execute(child);
+
+            if (child.GetBreak() || child.GetContinue() || child.GetReturn()) {
                 break;
             }
         }
+
+        child.BlockEnd();
     }
 
 }
