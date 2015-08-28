@@ -121,30 +121,30 @@
 }
 
 0b[0-1]* {
-    int num_tmp;
+    unsigned int num_tmp;
     char* tmp = (char*)malloc(yyleng);
     sscanf(yytext, "0b%s", tmp);
-    num_tmp = strtol(tmp, NULL, 2);
+    num_tmp = strtoul(tmp, NULL, 2);
     yylval.int_val = num_tmp;
     free(tmp);
     return BINARY_LITERAL;
 }
 
 0[0-7]* {
-    int num_tmp;
+    unsigned int num_tmp;
     char* tmp = (char*)malloc(yyleng);
     sscanf(yytext, "0%s", tmp);
-    num_tmp = strtol(tmp, NULL, 8);
+    num_tmp = strtoul(tmp, NULL, 8);
     yylval.int_val = num_tmp;
     free(tmp);
     return OCTA_LITERAL;
 }
 
 0x[0-9a-fA-F]* {
-    int num_tmp;
+    unsigned int num_tmp;
     char* tmp = (char*)malloc(yyleng);
     sscanf(yytext, "0x%s", tmp);
-    num_tmp = strtol(tmp, NULL, 16);
+    num_tmp = strtoul(tmp, NULL, 16);
     yylval.int_val = num_tmp;
     free(tmp);
     return HEXA_LITERAL;
