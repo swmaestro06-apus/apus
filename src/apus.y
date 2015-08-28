@@ -146,9 +146,8 @@ action_declaration_list :
     ;
 data_declaration :
     struct_union_type ID {
-        std::string str = $2;
         pctx->setCurrentDataType(std::make_shared<DataType>($1));
-        pctx->setCurrentName(str);
+        pctx->setCurrentName(string($2));
     } block_start member_definition_list R_BRACE line_list {
         pctx->ChangeCurrentDataType();
     }
@@ -163,13 +162,10 @@ member_definition_list :
     ;
 member_definition :
     type_specifier ID {
-        std::string str = $2;
-        pctx->AddToCurrentDataType(str, $1);
+        pctx->AddToCurrentDataType(string($2), $1);
     }
     | struct_union_type ID ID {
-        std::string str = $2;
-        std::string str2 = $3;
-        pctx->AddToCurrentDataType(str2, str);
+        pctx->AddToCurrentDataType(string($3), string($2));
     }
     | type_specifier ID ASSIGN const_expression
     | struct_union_type ID ID ASSIGN const_expression
