@@ -100,7 +100,8 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 
 %type<list_stmt> action_declaration_list action_declaration_opt
 
-%type<stmt> action_declaration for_statement if_statement else_if jump_statement expression_statement var_def_statement variable_definition block_statement
+%type<stmt> action_declaration for_statement if_statement else_if jump_statement
+%type<stmt> expression_statement var_def_statement block_statement variable_definition
 
 %type<expr> expression expression_opt unary_expression primary_expression variable_expression init_expression const_expression
 %type<expr_type> assign_operator
@@ -343,13 +344,21 @@ expression_statement :
     expression line_list { $$ = new ExpressionStatement($1); }
     ;
 var_def_statement :
-    VAR variable_definition line_list { $$ = $2;}
+    VAR variable_definition line_list { $$ = $2; }
     ;
 variable_definition :
-    type_specifier ID
-    | struct_union_type ID ID
-    | type_specifier ID ASSIGN init_expression { $$ = new VarDefStatement($1, $2, $4); }
-    | struct_union_type ID ID ASSIGN init_expression
+    type_specifier ID {
+        $$ = new VarDefStatement($1, string($2));
+    }
+    | struct_union_type ID ID {
+        $$ = new VarDefStatement(string($2), string($3));
+    }
+    | type_specifier ID ASSIGN init_expression {
+        $$ = new VarDefStatement($1, string($2), $4);
+    }
+    | struct_union_type ID ID ASSIGN init_expression {
+        $$ = new VarDefStatement(string($2), string($3), $5);
+    }
     | type_specifier dimension_array ID
     | type_specifier dimension_array ID ASSIGN init_expression_list
     | struct_union_type ID dimension_array ID
@@ -360,7 +369,7 @@ init_expression_list :
     | init_expression comma_line_opt init_expression_list
     ;
 init_expression :
-    expression
+    expression { $$ = $1; }
     | struct_init
     | array_init
     ;
