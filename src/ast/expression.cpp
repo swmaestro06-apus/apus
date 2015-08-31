@@ -4,6 +4,8 @@
 #include "vm/variable_table.h"
 #include "vm/context.h"
 
+#include "vm/function_table.h"
+
 namespace apus {
 
     // Expression::
@@ -202,6 +204,51 @@ namespace apus {
         std::shared_ptr<Value> result = nullptr;
 
         // find variable member
+
+        return result;
+    }
+
+    // FunctionExpression::
+
+    FunctionExpression::FunctionExpression(std::string func_name, std::list<std::shared_ptr<Expression>> arg_expr)
+            : Expression(EXP_FUNCTION), func_name_(func_name), arg_expr_(arg_expr) {
+
+    }
+
+    FunctionExpression::FunctionExpression(char* func_name, std::list<std::shared_ptr<Expression>> arg_expr)
+            : FunctionExpression(std::string(func_name), arg_expr) {
+    }
+
+    FunctionExpression::~FunctionExpression() {
+
+    }
+
+    std::shared_ptr<Value> FunctionExpression::Evaluate(Context &context) {
+
+        std::shared_ptr<Function> function = context.FindFunction(func_name_);
+        std::shared_ptr<Value> result = nullptr;
+
+        // use '>=' ?
+        if (function != nullptr &&
+                arg_expr_.size() == function->getArgList().size()) {
+
+            // exprs -> values
+            list<shared_ptr<Variable>> param_list;
+            list<shared_ptr<Expression>>::iterator it = arg_expr_.begin();
+
+            for (VariablePtr variablePtr : function->getArgList()) {
+                // TODO : put nth arg_expr's value if datatype match
+                ValuePtr val = (*it)->Evaluate(context);
+                variablePtr->setValue(val);
+
+                ++it;
+            }
+
+            context.SetParamList(function->getArgList());
+
+            function->Execute(context);
+            result = context.GetReturnValue();
+        }
 
         return result;
     }

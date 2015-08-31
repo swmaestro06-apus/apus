@@ -18,6 +18,9 @@ namespace apus {
     class Variable;
     class VariableTable;
 
+    class Function;
+    class FunctionTable;
+
     class Context {
     public:
 
@@ -32,19 +35,23 @@ namespace apus {
         shared_ptr<DataType> FindDataType(TypeSpecifier type);
         shared_ptr<DataType> FindDataType(string name);
         shared_ptr<Variable> FindVariable(string name);
-        // TODO : FindFunction();
+        shared_ptr<Function> FindFunction(string name);
 
         // Insert
         void InsertVariable(shared_ptr<Variable> variable);
-        // TODO : InsertFunction();
+        void InsertFunction(shared_ptr<Function> function);
 
         inline bool GetBreak() { return *break_; }
         inline bool GetContinue() { return *continue_; }
         inline bool GetReturn() { return *return_; }
+        std::shared_ptr<Value> GetReturnValue() { return return_value_; }
+        shared_ptr<DataTypeTable> GetDataTypeTable() { return data_type_table_; }
 
         inline void SetBreak(bool _break) { *break_ = _break;}
         inline void SetContinue(bool _continue) { *continue_ = _continue;}
         inline void SetReturn(bool _return) { *return_ = _return; }
+        void SetReturnValue(std::shared_ptr<Value> value) { return_value_ = value; }
+        void SetParamList(list<shared_ptr<Variable>> param_list) { param_list_ = param_list; }
 
     private:
 
@@ -52,8 +59,9 @@ namespace apus {
 
         shared_ptr<DataTypeTable> data_type_table_;
         shared_ptr<VariableTable> variable_table_;
+        shared_ptr<FunctionTable> function_table_;
 
-        list<shared_ptr<DataType>> param_list_;
+        list<shared_ptr<Variable>> param_list_;
         shared_ptr<Value> return_value_;
 
         shared_ptr<bool> break_;
