@@ -51,6 +51,7 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 
 %union {
     int64_t int_val;
+    unsigned int uint_val;
     double double_val;
     int char_val;
     char* str_val;
@@ -72,7 +73,7 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 %token<char_val> CHAR_LITERAL
 %token<str_val> STRING_LITERAL
 %token<str_val> ID
-%token<int_val> BINARY_LITERAL OCTA_LITERAL HEXA_LITERAL
+%token<uint_val> BINARY_LITERAL OCTA_LITERAL HEXA_LITERAL
 
 %token<type_spec> UINT8 UINT16 UINT32 UINT64
 %token<type_spec> SINT8 SINT16 SINT32 SINT64
@@ -100,7 +101,8 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 
 %type<list_stmt> action_declaration_list action_declaration_opt
 
-%type<stmt> action_declaration for_statement if_statement else_if jump_statement expression_statement var_def_statement variable_definition block_statement
+%type<stmt> action_declaration for_statement if_statement else_if jump_statement
+%type<stmt> expression_statement var_def_statement block_statement variable_definition
 
 %type<expr> expression expression_opt unary_expression primary_expression variable_expression init_expression const_expression
 %type<expr_type> assign_operator
@@ -108,9 +110,9 @@ extern int yyerror(apus::ParserContext* pctx, char const *str);
 
 %%
 program :
-    data_declaration_opt action_declaration_opt {
+    line_opt data_declaration_opt action_declaration_opt {
         pctx->SendDataTypeTableToVM();
-        pctx->getVM()->setStmtList(*$2);
+        pctx->getVM()->setStmtList(*$3);
     }
     ;
 data_declaration_opt :
@@ -146,9 +148,8 @@ action_declaration_list :
     ;
 data_declaration :
     struct_union_type ID {
-        std::string str = $2;
         pctx->setCurrentDataType(std::make_shared<DataType>($1));
-        pctx->setCurrentName(str);
+        pctx->setCurrentName(string($2));
     } block_start member_definition_list R_BRACE line_list {
         pctx->ChangeCurrentDataType();
     }
@@ -163,13 +164,10 @@ member_definition_list :
     ;
 member_definition :
     type_specifier ID {
-        std::string str = $2;
-        pctx->AddToCurrentDataType(str, $1);
+        pctx->AddToCurrentDataType(string($2), $1);
     }
     | struct_union_type ID ID {
-        std::string str = $2;
-        std::string str2 = $3;
-        pctx->AddToCurrentDataType(str2, str);
+        pctx->AddToCurrentDataType(string($3), string($2));
     }
     | type_specifier ID ASSIGN const_expression
     | struct_union_type ID ID ASSIGN const_expression
@@ -347,24 +345,32 @@ expression_statement :
     expression line_list { $$ = new ExpressionStatement($1); }
     ;
 var_def_statement :
-    VAR variable_definition line_list { $$ = $2;}
+    VAR variable_definition line_list { $$ = $2; }
     ;
 variable_definition :
-    type_specifier ID
-    | struct_union_type ID ID
-    | type_specifier ID ASSIGN init_expression { $$ = new VarDefStatement($1, $2, $4); }
-    | struct_union_type ID ID ASSIGN init_expression
+    type_specifier ID {
+        $$ = new VarDefStatement($1, string($2));
+    }
+    | struct_union_type ID ID {
+        $$ = new VarDefStatement(string($2), string($3));
+    }
+    | type_specifier ID ASSIGN init_expression {
+        $$ = new VarDefStatement($1, string($2), $4);
+    }
+    | struct_union_type ID ID ASSIGN init_expression {
+        $$ = new VarDefStatement(string($2), string($3), $5);
+    }
     | type_specifier dimension_array ID
-    | type_specifier dimension_array ID ASSIGN init_expression
+    | type_specifier dimension_array ID ASSIGN init_expression_list
     | struct_union_type ID dimension_array ID
-    | struct_union_type ID dimension_array ID ASSIGN init_expression
+    | struct_union_type ID dimension_array ID ASSIGN init_expression_list
     ;
 init_expression_list :
     init_expression
     | init_expression comma_line_opt init_expression_list
     ;
 init_expression :
-    expression
+    expression { $$ = $1; }
     | struct_init
     | array_init
     ;
