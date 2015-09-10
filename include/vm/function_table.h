@@ -50,29 +50,6 @@ namespace apus {
         FunctionMap map_;
     };
 
-    class BuiltInFunction : public Function {
-    public:
-        virtual ~BuiltInFunction() {}
-        virtual std::shared_ptr<Value> Execute(Context& context) final;
-        virtual std::shared_ptr<Value> BlockBody(Context& context) = 0;
-    };
-
-    class PrintS64 : public BuiltInFunction {
-    public:
-        PrintS64(Context& context);
-        virtual ~PrintS64();
-
-        virtual std::shared_ptr<Value> BlockBody(Context& context) override;
-    };
-
-    class PrintSTR8 : public BuiltInFunction {
-    public:
-        PrintSTR8(Context& context);
-        virtual ~PrintSTR8();
-
-        virtual std::shared_ptr<Value> BlockBody(Context& context) override;
-    };
-
 }
 
 #endif

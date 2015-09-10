@@ -5,10 +5,16 @@
 #include "vm/variable_table.h"
 #include "vm/function_table.h"
 
+#include "utils/BinaryReader.h"
+
 namespace apus {
 
-    Context::Context(shared_ptr<DataTypeTable> data_type_table)
+    Context::Context(shared_ptr<DataTypeTable> data_type_table, std::string binary_file_path)
         : parent_(nullptr), data_type_table_(data_type_table) {
+
+        if (binary_file_path.empty() == false) {
+            binary_reader_ = std::make_shared<BinaryReader>(binary_file_path);
+        }
 
         break_ = std::make_shared<bool>(false);
         continue_ = std::make_shared<bool>(false);
@@ -20,12 +26,13 @@ namespace apus {
 
     Context::Context(Context* context) {
         parent_ = context;
-
+        
         break_ = parent_->break_;
         continue_ = parent_->continue_;
         return_ = parent_->return_;
 
         data_type_table_ = parent_->data_type_table_;
+        binary_reader_ = context->binary_reader_;
 
         variable_table_ = make_shared<VariableTable>();
         function_table_ = make_shared<FunctionTable>();

@@ -29,7 +29,7 @@ namespace apus {
         DataTypeTablePtr getDataTypeTable();
         void setDataTypeTable(DataTypeTablePtr data_type_table);
 
-        void Run();
+        void Run(std::string binary_file_path = "");
 
     private:
         StmtPtrList stmt_list_;
