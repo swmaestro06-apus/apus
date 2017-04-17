@@ -367,9 +367,9 @@ variable_definition :
         $$ = new VarDefStatement(string($2), string($3), $5);
     }
     | type_specifier dimension_array ID
-    | type_specifier dimension_array ID ASSIGN init_expression
+    | type_specifier dimension_array ID ASSIGN init_expression_list
     | struct_union_type ID dimension_array ID
-    | struct_union_type ID dimension_array ID ASSIGN init_expression
+    | struct_union_type ID dimension_array ID ASSIGN init_expression_list
     ;
 init_expression_list :
     init_expression
